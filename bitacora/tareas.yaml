@@ -1,0 +1,72 @@
+- id: TAR-001
+  tarea: Pedir a la organización el teamspace, cupos y acceso del jurado
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: Preguntar también quién puede crear la integración de Notion en el espacio oficial
+- id: TAR-002
+  tarea: Confirmar si la organización entrega el snapshot común y en qué fecha
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-003
+  tarea: Consultar la inconsistencia del intervalo de fechas (sección 6 vs. sección 7)
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: 'Sección 7 excluye fuera de [2024-01-01, 2025-10-01); sección 6 pide los 30 días previos a la extracción'
+- id: TAR-004
+  tarea: Confirmar si CU-05 (banca) es obligatorio en la modalidad editorial
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-005
+  tarea: Script de descarga de fuentes y generación de manifest.json
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-006
+  tarea: Validación de carga y reporte de calidad (T01)
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-007
+  tarea: Clasificación temática y agrupación de eventos, con baseline TF-IDF
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-008
+  tarea: Motor de puntaje con reglas versionadas y estado de evidencia
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-009
+  tarea: Generación con citas y validador de citas
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-010
+  tarea: Interfaz con bandeja, ficha, borrador y revisión
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-011
+  tarea: Ejecutar T01–T10 y benchmark de desarrollo
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''
+- id: TAR-012
+  tarea: Preparar y ensayar el pitch desde Notion con demo offline
+  responsable: Guille
+  estado: Pendiente
+  fecha: '2026-10-06'
+  notas: ''

@@ -1,0 +1,11 @@
+.env
+.venv/
+.notion_state*.json
+.notion_sync.log
+__pycache__/
+.pytest_cache/
+# Local tooling caches
+.codegraph/
+.atl/.skill-registry.cache.json
+# The TVN RSS carries article descriptions: not redistributed (recipe in ingesta/).
+data/raw/tvn/

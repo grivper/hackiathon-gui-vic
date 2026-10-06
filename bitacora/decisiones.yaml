@@ -1,0 +1,28 @@
+- id: DEC-001
+  decision: Documentación como código, sincronizada con Notion por API
+  fecha: '2026-10-06'
+  estado: Vigente
+  contexto: El teamspace oficial aún no está asignado y la documentación tiende a quedar para el final
+  alternativas: Escribir directamente en Notion; documentar al cierre del evento
+  justificacion: >-
+    La bitácora vive en el repositorio con fecha de cada registro y se sincroniza en cada commit.
+    Migrar al teamspace consiste en cambiar el destino y volver a ejecutar la sincronización.
+  decidio: Guille
+- id: DEC-002
+  decision: Modalidad editorial (TVN · principal)
+  fecha: '2026-10-06'
+  estado: Propuesta
+  contexto: El reto admite editorial o bancaria; la editorial es la recomendada
+  alternativas: Modalidad bancaria; ambas modalidades
+  justificacion: Es la recomendada, TVN es el patrocinador y el reto pide no dispersarse en dos productos
+  decidio: Guille
+- id: DEC-003
+  decision: Base de datos local (DuckDB); Notion solo como bitácora y presentación
+  fecha: '2026-10-06'
+  estado: Propuesta
+  contexto: El documento no exige una base de datos específica y la demo debe funcionar sin internet (T10)
+  alternativas: Notion como base de datos; SQLite; PostgreSQL
+  justificacion: >-
+    Un solo archivo, sin servidor y funciona offline. Notion requiere conexión, limita la API
+    a unas 3 solicitudes por segundo y no permite búsqueda semántica.
+  decidio: Guille

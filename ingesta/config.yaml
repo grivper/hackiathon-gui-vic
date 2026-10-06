@@ -1,0 +1,56 @@
+# Configuración del snapshot "Panamá · Señales y Evidencias" (versión de desarrollo propia).
+# Cuando llegue el paquete oficial, se reemplaza la carpeta data/ y este archivo queda como receta.
+version: v0-dev
+data_dir: data
+
+tvn:
+  # Copiar la URL del enlace [2] "TVN · feed RSS público" del PDF del reto.
+  url: ""
+
+gdelt:
+  url: https://api.gdeltproject.org/api/v2/doc/doc
+  dias_atras: 30        # ventana por defecto si no se pasa --desde/--hasta
+  ventana_dias: 7       # cada consulta se divide en ventanas; si una llega a 250, se parte a la mitad
+  pausa_segundos: 6     # GDELT pide no más de una solicitud cada 5 segundos
+  # GDELT busca sobre texto traducido al inglés, por eso las palabras clave van en inglés.
+  # Una consulta por fila; "tema" es el tema de BÚSQUEDA, no una etiqueta verificada.
+  consultas:
+    - {id: eco, tema: economia, query: 'Panama (economy OR inflation OR unemployment OR GDP)'}
+    - {id: canal, tema: logistica_canal, query: '"Panama Canal"'}
+    - {id: log, tema: logistica_canal, query: 'Panama (shipping OR port OR logistics)'}
+    - {id: tur, tema: turismo, query: 'Panama (tourism OR tourists OR cruise)'}
+    - {id: ser, tema: servicios_publicos, query: 'Panama (water OR electricity OR transport)'}
+    - {id: nat, tema: eventos_naturales, query: 'Panama (earthquake OR flood OR drought OR storm)'}
+    - {id: reg, tema: regulacion, query: 'Panama (law OR regulation OR decree)'}
+
+banco_mundial:
+  url: https://api.worldbank.org/v2
+  desde: 2010
+  hasta: 2024
+  paises: {PAN: PA, CRI: CR, COL: CO, DOM: DO, MEX: MX, GTM: GT}
+  licencia: CC BY 4.0 (revisar excepciones por indicador en los metadatos)
+  indicadores:
+    - {id: NY.GDP.MKTP.KD.ZG, unidad: "% anual"}
+    - {id: FP.CPI.TOTL.ZG, unidad: "% anual"}
+    - {id: SL.UEM.TOTL.ZS, unidad: "% de la fuerza laboral total"}
+    - {id: SP.POP.TOTL, unidad: "personas"}
+    - {id: IT.NET.USER.ZS, unidad: "% de la población"}
+    - {id: NE.EXP.GNFS.ZS, unidad: "% del PIB"}
+
+usgs:
+  url: https://earthquake.usgs.gov/fdsnws/event/1/query
+  desde: "2024-01-01T00:00:00"
+  hasta: "2024-12-31T23:59:59"
+  minlatitude: 5
+  maxlatitude: 12
+  minlongitude: -86
+  maxlongitude: -76
+  minmagnitude: 3
+
+# Regla de la sección 7: excluir registros fuera de [2024-01-01, 2025-10-01).
+# Desactivada hasta que la organización aclare el período (TAR-003). Si se activa, los
+# registros fuera del intervalo van a excluidos.csv con su motivo; no se borran.
+filtro_intervalo:
+  activo: false
+  desde: "2024-01-01T00:00:00Z"
+  hasta: "2025-10-01T00:00:00Z"

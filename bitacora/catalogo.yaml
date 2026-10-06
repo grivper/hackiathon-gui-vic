@@ -1,0 +1,29 @@
+# Se usa mientras no exista data/manifest.json. Cuando el script de descarga genere el
+# manifest con una lista "fuentes" con estas mismas claves, el catálogo se toma de ahí.
+- id: SRC-TVN
+  fuente: TVN · feed RSS
+  url: null
+  cobertura: Pendiente de extracción
+  campos: titulo, url, fecha_publicacion, descripcion
+  licencia: Solo metadatos; el RSS no implica licencia abierta sobre artículos, videos o imágenes
+- id: SRC-GDELT
+  fuente: GDELT DOC 2.0
+  url: https://api.gdeltproject.org/api/v2/doc/doc
+  cobertura: Pendiente de extracción
+  campos: titulo, url, dominio, idioma, seendate
+  licencia: La API no transfiere derechos de los medios enlazados
+  transformaciones: seendate se guarda como fecha_deteccion, nunca como fecha_publicacion
+- id: SRC-WB
+  fuente: Banco Mundial · Indicators API v2
+  url: https://api.worldbank.org/v2/
+  cobertura: PAN, CRI, COL, DOM, MEX, GTM · 2010–2024 · 6 indicadores
+  campos: pais_iso3, indicador_id, anio, valor, unidad
+  licencia: CC BY 4.0 salvo excepciones por indicador
+  transformaciones: Cuadrícula completa de 1.350 combinaciones; nulos conservados
+- id: SRC-USGS
+  fuente: USGS · catálogo sísmico
+  url: https://earthquake.usgs.gov/fdsnws/event/1/
+  cobertura: 2024 · lat 5 a 12 · lon -86 a -76 · magnitud >= 3
+  campos: id, magnitude, time, updated, longitude, latitude, depth, place, status, url
+  licencia: Verificar condiciones de datos de terceros
+  transformaciones: Solo para hechos sísmicos; la caja regional no equivale al territorio de Panamá
