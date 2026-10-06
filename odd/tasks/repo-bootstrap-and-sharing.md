@@ -10,9 +10,9 @@ Make `hackiathon-gui-vic` an independent Git repository, publish it as a private
 - Roles stay "Propuesto" in the bitacora unless both agree.
 
 ## Tasks
-- [ ] T1 Add `.gitignore` and `.env.example` (missing from the folder; documented in the handoff).
-- [ ] T2 `git init` on `main`, secrets check, first commit (Conventional Commit).
-- [ ] T3 Create private GitHub repo and push; invite `vicmat04`.
+- [~] T1 Add `.gitignore` (done) and `.env.example` (BLOCKED: Gentle AI safety policy denies writing that path; needs a user-approved plan).
+- [x] T2 `git init -b main`, secrets scan clean, first commit `74a9775`.
+- [ ] T3 Create private GitHub repo and push; invite `vicmat04`. BLOCKED: `gh` PAT lacks createRepository permission; user creates the empty private repo in the web UI.
 - [ ] T4 Enable `core.hooksPath hooks`; validate `notion_sync.py --dry-run`.
 - [ ] T5 Export project memories with `engram sync` for the collaborator.
 
