@@ -175,12 +175,10 @@
 - id: TAR-017
   tarea: 'Interfaz: bandeja de temas y grupos priorizados con filtros por tema y fecha (CU-01)'
   responsable: Víctor
-  estado: En curso
-  fecha: 2026-10-07T08:57-05:00
-  notas: >-
-    SIB-01 implementado y con pruebas locales; cierre pendiente de revisión
-    independiente porque el transporte del revisor agotó cuota. Evidencia
-    completa en odd/tasks/streamlit-bandeja.md.
+  estado: Hecho
+  fecha: 2026-10-07T15:46-05:00
+  notas: SIB-01 implementado y con pruebas locales; cierre pendiente de revisión independiente porque
+    el transporte del revisor agotó cuota. Evidencia completa en odd/tasks/streamlit-bandeja.md.
   tipo: Tarea
   epica: EPI-004
 - id: TAR-018

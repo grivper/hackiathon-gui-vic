@@ -5,10 +5,10 @@ from datetime import date, datetime
 import duckdb
 import pytest
 
-from app.data import fetch_inbox_groups, open_inbox_repository
+from app.data import ScoreUnavailableError, fetch_inbox_groups, open_inbox_repository
 
 
-def _create_databases(tmp_path):
+def _create_databases(tmp_path, *, with_scores=True):
     motor_path = tmp_path / "motor.duckdb"
     signals_path = tmp_path / "senales.duckdb"
 
@@ -71,6 +71,22 @@ def _create_databases(tmp_path):
                 )
                 classifications.append((news_id, "embeddings", topic, 0.8, None, None, "modelo", None))
         motor.executemany("INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?, ?)", classifications)
+        if with_scores:
+            motor.execute("""
+                CREATE TABLE puntaje (
+                    grupo_id TEXT, tema TEXT, R DOUBLE, I DOUBLE, U DOUBLE, N DOUBLE, E DOUBLE,
+                    puntaje DOUBLE, prioridad TEXT, estado_evidencia TEXT,
+                    version_reglas TEXT, motivos TEXT
+                )
+            """)
+            scores = [
+                ("G-NUEVO", "economia", 1.0, 0.8, 0.7, 0.1, 0.2, 85.0, "alto", "insuficiente", "v0.3", "requiere contraste"),
+                ("G-FUENTES", "salud", 1.0, 0.5, 0.2, 1.0, 0.8, 80.0, "alto", "suficiente", "v0.3", "fuentes independientes"),
+                ("G-ALFA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial"),
+                ("G-BETA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial"),
+                ("G-OTROS", "otros", 0.0, 0.0, 1.0, 1.0, 0.0, 95.0, "alto", "suficiente", "v0.3", "excluido"),
+            ]
+            motor.executemany("INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", scores)
     finally:
         motor.close()
 
@@ -79,13 +95,20 @@ def _create_databases(tmp_path):
     return motor_path, signals_path
 
 
-def test_fetch_inbox_groups_uses_one_dominant_embeddings_topic_per_group_and_orders(tmp_path):
+def test_fetch_inbox_groups_returns_score_metadata_and_exact_score_order(tmp_path):
     motor_path, signals_path = _create_databases(tmp_path)
 
     rows = fetch_inbox_groups(motor_path, signals_path)
 
     assert [row.grupo_id for row in rows] == ["G-NUEVO", "G-FUENTES", "G-ALFA", "G-BETA"]
     assert [row.tema for row in rows] == ["economia", "salud", "educacion", "educacion"]
+    assert rows[0].puntaje == 85.0
+    assert rows[0].U == 0.7
+    assert rows[0].prioridad == "alto"
+    assert rows[0].estado_evidencia == "insuficiente"
+    assert rows[0].version_reglas == "v0.3"
+    assert rows[0].motivos == "requiere contraste"
+    assert (rows[0].R, rows[0].I, rows[0].N, rows[0].E) == (1.0, 0.8, 0.1, 0.2)
     assert rows[0].n_noticias == 5
     assert rows[0].n_procedencias == 1
     assert rows[0].corroboracion == 1
@@ -99,6 +122,13 @@ def test_fetch_inbox_groups_filters_dates_topic_and_limit_inclusively(tmp_path):
     assert [row.grupo_id for row in fetch_inbox_groups(motor_path, signals_path, start_date=date(2026, 1, 4))] == ["G-NUEVO", "G-FUENTES"]
     assert [row.grupo_id for row in fetch_inbox_groups(motor_path, signals_path, end_date=date(2026, 1, 4))] == ["G-FUENTES", "G-ALFA", "G-BETA"]
     assert [row.grupo_id for row in fetch_inbox_groups(motor_path, signals_path, limit=2)] == ["G-NUEVO", "G-FUENTES"]
+
+
+def test_fetch_inbox_groups_requires_the_scoring_table(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path, with_scores=False)
+
+    with pytest.raises(ScoreUnavailableError, match="Ejecute el motor de puntaje"):
+        fetch_inbox_groups(motor_path, signals_path)
 
 
 def test_open_inbox_repository_keeps_motor_database_read_only(tmp_path):
