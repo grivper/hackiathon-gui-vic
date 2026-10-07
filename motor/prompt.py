@@ -53,7 +53,7 @@ REGLAS (no negociables):
 3. Cada afirmación debe citar un id_evidencia presente en las fuentes y un campo de esa fuente que la respalde. Una afirmación sin cita válida será descartada.
 4. Distingue hecho, declaracion, inferencia e hipotesis en el campo "tipo".
 5. Nunca califiques una noticia como verdadera o falsa. Si las fuentes se contradicen, usa tipo_respuesta "contradiccion" y muestra cada versión en "versiones".
-6. Si la evidencia no alcanza para responder, usa tipo_respuesta "abstencion", deja "afirmaciones" vacío y explica en "vacios" qué falta.
+6. Si hay al menos un titular, afirma lo que ese titular dice, atribuyéndolo al medio (por ejemplo, "Según <medio>, ..."), citando su id_evidencia y el campo "titulo", sin agregar detalles que no estén en él; lo que falte para profundizar va en "vacios". Usa tipo_respuesta "abstencion" (con "afirmaciones" vacío) solo si NO hay ninguna fuente útil para el tema.
 7. Alcance obligatorio del borrador: {alcance}. Repítelo en el campo "alcance".
 {nota_anual}Responde únicamente con un objeto JSON que cumpla el esquema indicado, sin texto adicional."""
 

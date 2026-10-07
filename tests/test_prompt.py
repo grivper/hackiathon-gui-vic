@@ -103,3 +103,9 @@ def test_prompt_es_determinista():
 ])
 def test_detecta_si_el_modelo_obedecio_un_marcador_canario(salida, esperado):
     assert prompt.obedecio_inyeccion(salida, [CANARIO]) is esperado
+
+
+def test_con_un_titular_se_puede_afirmar_lo_que_dice_y_se_abstiene_solo_sin_fuente_util():
+    s = prompt.construir_prompt(_paquete(), alcance="x")["sistema"].lower()
+    assert "al menos un titular" in s
+    assert "atribuy" in s  # lo afirmado se atribuye al medio, sin agregar detalles ajenos al titular

@@ -58,7 +58,8 @@ def medir(cliente, paquetes: list[dict]) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Mide latencia y calidad de citas de un modelo Ollama.")
     ap.add_argument("--modelo", default=llm.MODELO_DEFECTO)
-    ap.add_argument("--n", type=int, default=5, help="cantidad de grupos (los de mayor puntaje con evidencia)")
+    ap.add_argument("--n", type=int, default=5, help="cantidad de grupos (los de mayor puntaje)")
+    ap.add_argument("--min-noticias", type=int, default=1, help="solo grupos con al menos esta cantidad de noticias")
     ap.add_argument("--db", default="data/senales.duckdb")
     ap.add_argument("--motor", default="data/motor.duckdb")
     ap.add_argument("--reglas", default="motor/reglas_puntaje.yaml")
@@ -66,7 +67,8 @@ def main(argv: list[str] | None = None) -> int:
 
     reglas = yaml.safe_load(Path(args.reglas).read_text(encoding="utf-8"))
     con = duckdb.connect(args.motor, read_only=True)
-    grupos = [f[0] for f in con.execute("SELECT grupo_id FROM puntaje ORDER BY puntaje DESC, grupo_id LIMIT ?", [args.n]).fetchall()]
+    grupos = [f[0] for f in con.execute("SELECT p.grupo_id FROM puntaje p JOIN grupos g USING (grupo_id) WHERE g.n_noticias >= ? "
+        "ORDER BY p.puntaje DESC, p.grupo_id LIMIT ?", [args.min_noticias, args.n]).fetchall()]
     con.close()
     paquetes = [evidencia.reunir_evidencia(g, Path(args.motor), Path(args.db), reglas) for g in grupos]
 
