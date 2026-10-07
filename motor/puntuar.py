@@ -13,7 +13,11 @@ Entradas (ambas solo lectura salvo la escritura final de las tablas propias):
     Este script le agrega SUS propias tablas (`puntaje`, `meta_puntaje`) sin tocar las
     demás, igual que agrupar.py respecto de clasificar.py.
   - `--db` (por defecto data/senales.duckdb): contexto oficial de solo lectura
-    (`indicadores` del Banco Mundial, `eventos` sísmicos de USGS) para el componente E.
+    (`indicadores` del Banco Mundial, `eventos` sísmicos de USGS), de nivel-tema. Desde
+    v0.2 es puro contexto informativo en la columna `contexto_oficial`: nunca suma al
+    componente E ni afecta `estado_evidencia` (no hay vínculo verificable entre una
+    noticia concreta y un dato agregado del tema, reto: "si no existe relación
+    sustentada, no forzarla").
 
 Nunca etiqueta una noticia como verdadera o falsa: el puntaje es una herramienta de
 ordenamiento editorial, no una afirmación de hechos. El texto de las noticias (títulos)
@@ -32,7 +36,7 @@ from pathlib import Path
 import duckdb
 import yaml
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2  # v0.2: nueva columna `contexto_oficial` en `puntaje` (TAR-008 ampliacion)
 RUTA_REGLAS_DEFECTO = Path(__file__).resolve().parent / "reglas_puntaje.yaml"
 
 
@@ -106,12 +110,11 @@ def componente_N(es_repeticion: bool, reglas: dict) -> float:
     return cfg["repeticion"] if es_repeticion else cfg["nuevo"]
 
 
-def componente_E(
-    corroboracion: int, es_fuente_primaria: bool, hay_dato_oficial: bool, reglas: dict
-) -> float:
+def componente_E(corroboracion: int, es_fuente_primaria: bool, reglas: dict) -> float:
     """Evidencia disponible: procedencias independientes además de la primera
-    (`corroboracion`, NUNCA n_noticias) + fuente primaria/oficial identificable + dato
-    oficial vinculado (Banco Mundial / USGS), capado en 1.0."""
+    (`corroboracion`, NUNCA n_noticias) + fuente primaria/oficial identificable
+    (.gob.pa y similares), capado en 1.0. El contexto oficial de nivel-tema (Banco
+    Mundial / USGS) NO suma aquí (v0.2): es puro contexto, ver `contexto_oficial_de`."""
     cfg = reglas["evidencia"]
     por_procedencias = min(
         cfg["peso_por_procedencia_adicional"] * max(corroboracion - 1, 0),
@@ -120,8 +123,6 @@ def componente_E(
     total = por_procedencias
     if es_fuente_primaria:
         total += cfg["peso_fuente_primaria"]
-    if hay_dato_oficial:
-        total += cfg["peso_dato_oficial"]
     return min(total, 1.0)
 
 
@@ -142,15 +143,15 @@ def prioridad(puntaje: float, rangos: dict) -> str:
     raise ValueError(f"puntaje {puntaje} fuera de los rangos de prioridad")
 
 
-def estado_evidencia(corroboracion: int, es_fuente_primaria: bool, hay_dato_oficial: bool) -> str:
-    """Independiente del puntaje. `suficiente` exige corroboracion >= 2 Y (fuente
-    primaria O dato oficial); `parcial` exige al menos una de las dos condiciones;
-    si no hay ninguna, `insuficiente`."""
-    fuente_fuerte = es_fuente_primaria or hay_dato_oficial
+def estado_evidencia(corroboracion: int, es_fuente_primaria: bool) -> str:
+    """Independiente del puntaje y del contexto oficial de nivel-tema (v0.2: Banco
+    Mundial / USGS nunca afectan esto). `suficiente` exige corroboracion >= 2 Y fuente
+    primaria; `parcial` exige al menos una de las dos condiciones; si no hay ninguna,
+    `insuficiente`."""
     tiene_corroboracion = corroboracion >= 2
-    if tiene_corroboracion and fuente_fuerte:
+    if tiene_corroboracion and es_fuente_primaria:
         return "suficiente"
-    if tiene_corroboracion or fuente_fuerte:
+    if tiene_corroboracion or es_fuente_primaria:
         return "parcial"
     return "insuficiente"
 
@@ -185,20 +186,51 @@ def es_fuente_primaria(procedencias: str | None, reglas: dict) -> bool:
     return False
 
 
-def hay_indicador_vinculado(tema: str, indicadores_disponibles: set[str], reglas: dict) -> bool:
-    prefijos = (reglas["evidencia"].get("indicadores_por_tema") or {}).get(tema) or []
+def indicadores_vinculados(tema: str, indicadores_disponibles: set[str], reglas: dict) -> list[str]:
+    """Indicadores del Banco Mundial (ids completos, ordenados) que coinciden con los
+    prefijos de `contexto_oficial.contexto_por_tema` para `tema`. Puro contexto
+    informativo (v0.2): no afecta a E ni a `estado_evidencia`."""
+    prefijos = (reglas.get("contexto_oficial", {}).get("contexto_por_tema") or {}).get(tema) or []
     if not prefijos:
-        return False
-    return any(
-        indicador.startswith(prefijo) for indicador in indicadores_disponibles for prefijo in prefijos
+        return []
+    return sorted(
+        {indicador for indicador in indicadores_disponibles if any(indicador.startswith(p) for p in prefijos)}
     )
 
 
-def hay_evento_sismico_en_ventana(
+def contar_eventos_en_ventana(
     fecha_max: datetime, fechas_eventos: list[datetime], ventana_dias: float
-) -> bool:
+) -> int:
+    """Cantidad de eventos sísmicos de USGS dentro de la ventana (en días) alrededor de
+    `fecha_max`. Puro contexto informativo (v0.2): no afecta a E ni a `estado_evidencia`."""
     limite_segundos = ventana_dias * 86400
-    return any(abs((fecha_max - fecha_evento).total_seconds()) <= limite_segundos for fecha_evento in fechas_eventos)
+    return sum(
+        1 for fecha_evento in fechas_eventos if abs((fecha_max - fecha_evento).total_seconds()) <= limite_segundos
+    )
+
+
+def contexto_oficial_de(
+    tema: str,
+    fecha_max: datetime,
+    indicadores_disponibles: set[str],
+    fechas_eventos: list[datetime],
+    reglas: dict,
+) -> str:
+    """Texto plano de contexto oficial de nivel-tema, sin afirmar una relación
+    verificada con la noticia: indicadores del Banco Mundial para economía, cantidad de
+    eventos USGS en ventana para eventos_naturales, cadena vacía en cualquier otro caso
+    (reto: \"si no existe relación sustentada, no forzarla\"). Nunca contribuye a E ni a
+    `estado_evidencia`."""
+    if tema == "economia":
+        encontrados = indicadores_vinculados(tema, indicadores_disponibles, reglas)
+        return ", ".join(encontrados)
+    if tema == "eventos_naturales":
+        ventana = reglas["contexto_oficial"]["ventana_dias_evento_natural"]
+        n = contar_eventos_en_ventana(fecha_max, fechas_eventos, ventana)
+        if n == 0:
+            return ""
+        return f"{n} evento(s) sísmico(s) USGS en los últimos {ventana} días (contexto, sin relación establecida con la noticia)"
+    return ""
 
 
 def ordenar_filas(filas: list[dict]) -> list[dict]:
@@ -211,7 +243,8 @@ def construir_motivos(tema: str, es_nacional: bool, alcance: str, R: float, I: f
     return (
         f"R={R} (tema={tema}, medio_nacional={es_nacional}); "
         f"I={I} (alcance={alcance}); U={U} (antigüedad vs fecha_ref); "
-        f"N={N} (repetición={'sí' if N < 1.0 else 'no'}); E={E} (procedencias/fuente primaria/dato oficial)"
+        f"N={N} (repetición={'sí' if N < 1.0 else 'no'}); E={E} (procedencias/fuente primaria; "
+        f"contexto oficial de nivel-tema no suma, ver contexto_oficial)"
     )
 
 
@@ -320,26 +353,24 @@ def calcular_filas(
         es_nacional = es_medio_nacional(g["procedencias"], reglas)
         alcance = _alcance_de(g["titulo_representativo"], reglas)
         primaria = es_fuente_primaria(g["procedencias"], reglas)
-
-        if tema == "eventos_naturales":
-            ventana = reglas["evidencia"]["ventana_dias_evento_natural"]
-            oficial = hay_evento_sismico_en_ventana(g["fecha_max"], fechas_eventos, ventana)
-        else:
-            oficial = hay_indicador_vinculado(tema, indicadores_disponibles, reglas)
+        contexto_oficial = contexto_oficial_de(
+            tema, g["fecha_max"], indicadores_disponibles, fechas_eventos, reglas
+        )
 
         R = componente_R(tema, es_nacional, reglas)
         I = componente_I(g["titulo_representativo"], reglas)
         U = componente_U(g["fecha_max"], fecha_ref, reglas)
         N = componente_N(g["es_repeticion"], reglas)
-        E = componente_E(g["corroboracion"], primaria, oficial, reglas)
+        E = componente_E(g["corroboracion"], primaria, reglas)
 
         puntaje = puntaje_total(R, I, U, N, E, reglas["pesos"])
         filas.append({
             "grupo_id": g["grupo_id"], "tema": tema, "R": R, "I": I, "U": U, "N": N, "E": E,
             "puntaje": puntaje, "prioridad": prioridad(puntaje, reglas["rangos"]),
-            "estado_evidencia": estado_evidencia(g["corroboracion"], primaria, oficial),
+            "estado_evidencia": estado_evidencia(g["corroboracion"], primaria),
             "version_reglas": reglas["version"],
             "motivos": construir_motivos(tema, es_nacional, alcance, R, I, U, N, E),
+            "contexto_oficial": contexto_oficial,
         })
     return ordenar_filas(filas)
 
@@ -353,7 +384,8 @@ def escribir_resultados(out_path: Path, filas: list[dict], entrada_hash: str, fe
         con.execute("""
             CREATE TABLE puntaje (
                 grupo_id TEXT, tema TEXT, R DOUBLE, I DOUBLE, U DOUBLE, N DOUBLE, E DOUBLE,
-                puntaje DOUBLE, prioridad TEXT, estado_evidencia TEXT, version_reglas TEXT, motivos TEXT
+                puntaje DOUBLE, prioridad TEXT, estado_evidencia TEXT, version_reglas TEXT, motivos TEXT,
+                contexto_oficial TEXT
             )
         """)
         con.execute("""
@@ -363,11 +395,12 @@ def escribir_resultados(out_path: Path, filas: list[dict], entrada_hash: str, fe
             )
         """)
         con.executemany(
-            "INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 (
                     f["grupo_id"], f["tema"], f["R"], f["I"], f["U"], f["N"], f["E"], f["puntaje"],
                     f["prioridad"], f["estado_evidencia"], f["version_reglas"], f["motivos"],
+                    f["contexto_oficial"],
                 )
                 for f in filas
             ],

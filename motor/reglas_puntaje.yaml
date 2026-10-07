@@ -3,7 +3,16 @@
 # pesos, los tramos de urgencia o los rangos de prioridad es un cambio de reglas: se
 # debe subir `version` (motor/puntuar.py guarda la versión usada en cada fila de
 # `puntaje`, así una corrida vieja nunca se confunde con una nueva).
-version: v0.1
+#
+# v0.2 (este cambio): el reto pide "si no existe relación sustentada, no forzarla".
+# Los indicadores del Banco Mundial y los eventos sísmicos de USGS son de nivel-tema
+# (no vinculan una noticia concreta a un dato concreto), así que dejan de contar como
+# evidencia: se retira `peso_dato_oficial` del componente E y el dato oficial deja de
+# afectar `estado_evidencia`. Pasan a ser puro contexto informativo en la nueva columna
+# `contexto_oficial` de la tabla `puntaje` (texto plano, sin afirmar una relación
+# verificada). Alcance de `contexto_por_tema` reducido a economía (se retiran
+# servicios_publicos y logistica_canal, que no tenían sustento temático claro).
+version: v0.2
 
 # Pesos del componente (deben sumar 100; motor/puntuar.py.cargar_reglas lo valida).
 pesos:
@@ -94,29 +103,35 @@ novedad:
   nuevo: 1.0
   repeticion: 0.2
 
-# E · Evidencia disponible: independiente del `estado_evidencia`. Se arma con (a)
-# procedencias independientes además de la primera (grupos.corroboracion, NUNCA
-# n_noticias: repetir no es corroborar), con un tope; (b) tener alguna procedencia
-# primaria/oficial; (c) tener un dato oficial vinculado (indicador del Banco Mundial
-# para el tema, o evento USGS en ventana de tiempo para eventos_naturales). Suma
-# capada en 1.0.
+# E · Evidencia disponible: independiente del `estado_evidencia` salvo por el hecho de
+# que ambos miran corroboración y fuente primaria. Se arma SOLO con (a) procedencias
+# independientes además de la primera (grupos.corroboracion, NUNCA n_noticias: repetir
+# no es corroborar), con un tope; y (b) tener alguna procedencia primaria/oficial
+# (.gob.pa y similares). El contexto oficial de nivel-tema (Banco Mundial / USGS) NO
+# suma aquí (v0.2): no hay vínculo verificable entre una noticia concreta y un dato
+# agregado del tema, así que no se fuerza como evidencia (ver
+# `contexto_oficial` más abajo). Suma capada en 1.0.
 evidencia:
   peso_por_procedencia_adicional: 0.2
   tope_procedencias: 0.4
   peso_fuente_primaria: 0.4
-  peso_dato_oficial: 0.4
+
+# Contexto oficial de nivel-tema (v0.2): informativo únicamente, nunca contribuye al
+# puntaje ni al estado de evidencia. Se guarda en texto plano en `puntaje.contexto_oficial`
+# sin afirmar una relación verificada entre la noticia y el dato.
+contexto_oficial:
+  # Ventana en días alrededor de `fecha_max` del grupo para contar eventos sísmicos de
+  # USGS (tema eventos_naturales).
   ventana_dias_evento_natural: 7
   # Prefijos de `indicador_id` (Banco Mundial, tabla `indicadores` de
-  # data/senales.duckdb) que cuentan como dato oficial vinculado a cada tema. Temas sin
-  # entrada aquí (turismo, regulación) solo pueden obtener el dato oficial vía eventos
-  # USGS si aplica (eventos_naturales) o quedan sin esa vía (no se fuerza una relación
-  # sin sustento, ver etapa 3 del reto).
-  indicadores_por_tema:
+  # data/senales.duckdb) que se listan como contexto para cada tema. Solo economía
+  # tiene una relación temática clara y sostenida con estos indicadores agregados de
+  # país; el resto de los temas (turismo, regulación, servicios_publicos,
+  # logistica_canal) no se fuerzan (reto: "si no existe relación sustentada, no
+  # forzarla").
+  contexto_por_tema:
     economia:
       - FP.CPI
       - NY.GDP
       - SL.UEM
-    logistica_canal:
       - NE.EXP
-    servicios_publicos:
-      - IT.NET
