@@ -34,7 +34,7 @@ lo commitea; la otra solo hace `git pull`.
 ## Motor: clasificación por tema y agrupación de eventos
 
 ```
-make motor        # descarga el modelo si falta (una vez, ~470 MB) y corre clasificar + agrupar (idempotente)
+make motor        # descarga el modelo si falta (una vez, ~470 MB) y corre clasificar + agrupar + puntuar (idempotente)
 make muestra      # genera la muestra ciega a etiquetar a mano (data/etiquetas/muestra_etiquetado.csv)
 make evaluar      # macro-F1 contra las etiquetas humanas (data/evaluacion_clasificacion.md)
 ```
