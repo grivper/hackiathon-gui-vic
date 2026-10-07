@@ -24,7 +24,7 @@ El código de la interfaz va en `app/`. No toques `motor/`, `ingesta/` ni `data/
 |---|---|---|---|
 | 1 | Bandeja | Lista de grupos de noticias priorizados, con filtro por tema y por fecha. Caso CU-01: "¿qué cinco temas merecen revisión y por qué?" | TAR-017 |
 | 2 | Ficha de evidencia | Titulares del grupo, quién lo reporta (procedencias), corroboración, fecha original, qué falta verificar | TAR-018 |
-| 3 | Contexto oficial | Indicadores del Banco Mundial y sismos USGS relacionados. No confundir un dato anual histórico con uno de hoy | TAR-019 |
+| 3 | Contexto oficial | Indicadores del Banco Mundial y sismos USGS (columna `puntaje.contexto_oficial`, solo contexto). Un sismo USGS verificado para la noticia queda en `puntaje.evento_usgs_id`. No confundir un dato anual histórico con uno de hoy | TAR-019 |
 | 4 | Consulta | Caja de pregunta en español. Respuesta con citas, o abstención explicada (CU-04) | TAR-020 |
 | 5 | Borrador y revisión | Borrador con citas por afirmación y 5 estados de revisión | TAR-021 |
 
