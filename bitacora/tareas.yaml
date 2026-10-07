@@ -144,3 +144,14 @@
     --solo tvn. Las capturas se acumulan y se deduplican. Capturas hechas: 1 (2026-10-07).'
   tipo: Tarea
   epica: EPI-002
+- id: TAR-014
+  tarea: Reintentar GDELT desde otra red o más tarde (opcional)
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-06T21:43-05:00
+  notas: '2026-10-07: 429 persistente desde la IP de casa, incluso con consultas aisladas y 90 s de espera.
+    Ya hay 30154 noticias de TVN por sitemaps, así que GDELT solo aporta variedad de medios. Opciones:
+    otra red (datos del celular) o horas después. Comando: python ingesta/descargar_snapshot.py --solo
+    gdelt'
+  tipo: Tarea
+  epica: EPI-002
