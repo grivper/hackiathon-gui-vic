@@ -7,8 +7,7 @@ y Víctor (producto, interfaz, Notion y pruebas). Plan detallado: `documentacion
 
 1. `git clone https://github.com/grivper/hackiathon-gui-vic.git` y `cd hackiathon-gui-vic`.
 2. `make instalar`.
-3. `git checkout feat/notion-epicas-tareas` hasta que esa rama se integre a `main`.
-4. Para ver el avance, abre las páginas de Notion que te compartieron. No necesitas el token.
+3. Para ver el avance, abre las páginas de Notion que te compartieron. No necesitas el token.
 
 **Quién sincroniza:** solo una persona ejecuta `python notion_sync.py`. El estado de la sincronización
 (`.notion_state.json`) es local y no se sube a git: si dos personas sincronizan, Notion queda con
