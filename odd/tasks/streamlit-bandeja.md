@@ -41,7 +41,7 @@ The data and grouping pipelines are available, but editors have no product surfa
 - Verification commands go through the delegated writer first; independent verification follows the native assessment plan.
 
 ## Tasks
-- [ ] **SIB-01 — Bootstrap a tested read-only inbox query.** Status: in progress. Mark TAR-010 and TAR-017 in progress; add the Streamlit dependency; create the app/query boundary; use test-first development to prove topic exclusion, read-only access, filtering inputs, and deterministic temporary ordering. Commit evidence: pending.
+- [ ] **SIB-01 — Bootstrap a tested read-only inbox query.** Status: in progress; independent verification blocked. TAR-010 and TAR-017 are in progress; Streamlit, the app/query boundary, and focused tests are implemented. Commit evidence: pending checkpoint.
 - [ ] **SIB-02 — Deliver the Bandeja screen.** Status: pending. Render topic/date controls and prioritized group cards, document startup on Windows without GNU Make, run focused and full checks, mark TAR-017 done while TAR-010 remains in progress, and commit the work unit. Commit evidence: pending.
 
 ## Acceptance criteria
@@ -57,6 +57,9 @@ The data and grouping pipelines are available, but editors have no product surfa
 - 2026-10-07: Repository, interface brief, task ledger, and current data/motor state reviewed. Manifest hash confirmed as `dd87ee41678220046d145506ebf51d7966470540c432388a58015d95416900f6`.
 - 2026-10-07: Local setup completed with direct Python commands because GNU Make is unavailable. Generated report timestamp drift was diagnosed as non-semantic and restored with user approval.
 - 2026-10-07: TAR-010 and TAR-017 moved to `En curso`. Verification: `notion_sync.py --dry-run` reported no errors; full suite passed (`72 passed`); `git diff --check` passed. The configured verification subagent was unavailable, so these bounded checks ran in the parent session.
+- 2026-10-07: SIB-01 implementation added `streamlit==1.54.0`, a read-only DuckDB query boundary, a minimal Spanish Streamlit shell, and temporary-database tests. Observed TDD: RED (`ModuleNotFoundError: app`), then GREEN (`3 passed`); writer full suite `75 passed`; Notion dry-run and `git diff --check` passed.
+- 2026-10-07: Parent spot check passed (`3 passed`), Streamlit started headlessly on port 8517, both DuckDB SHA-256 values stayed unchanged, and LSP diagnostics were clean for all three Python files.
+- 2026-10-07: Native reliability review lineage `review-e4cdfa14b87ef2b9` is blocked before verdict because the reviewer transport reported quota exhaustion (retry horizon approximately 72 hours). Native assessment therefore requires an independent verifier, but the configured `gentle-ai-verify` agent failed twice without executing tools. No review verdict or independent-verifier evidence exists; SIB-01 remains open.
 
 ## Next step
-Delegate SIB-01 as a test-first multi-file implementation, then verify and close its work-unit commit.
+Share the verified implementation as an explicitly incomplete checkpoint, then resume the frozen native review when reviewer capacity returns. Do not mark SIB-01 complete until the required independent verification or terminal native review is observed.

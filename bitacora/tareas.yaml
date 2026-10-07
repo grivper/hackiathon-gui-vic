@@ -177,7 +177,10 @@
   responsable: Víctor
   estado: En curso
   fecha: 2026-10-07T08:57-05:00
-  notas: ''
+  notas: >-
+    SIB-01 implementado y con pruebas locales; cierre pendiente de revisión
+    independiente porque el transporte del revisor agotó cuota. Evidencia
+    completa en odd/tasks/streamlit-bandeja.md.
   tipo: Tarea
   epica: EPI-004
 - id: TAR-018
