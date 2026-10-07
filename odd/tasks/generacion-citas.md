@@ -20,7 +20,7 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
 
 ## Tasks
 - [x] G1 Evidence retrieval `motor/evidencia.py` (test-first, fixtures)
-- [ ] G2 Citation validator `motor/citas.py` (test-first: invalid id, wrong campo, invented figure, no citation, coverage)
+- [x] G2 Citation validator `motor/citas.py` (test-first: invalid id, wrong campo, invented figure, no citation, coverage)
 - [ ] G3 Abstention rules `motor/abstencion.py` (test-first: T06 unanswerable, null value, year out of range, titles-only scope text)
 - [ ] G4 Prompt builder with injection defense (test-first: T07 canary in a synthetic headline)
 - [ ] G5 LLM client with fake and Ollama backends; model and params recorded
@@ -33,3 +33,4 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
 
 ## Evidence
 - G1: RED (collection error, module missing) then GREEN (8 passed); full suite 138 passed. Real data check: economia group returns 3 news + 4 World Bank indicators (latest non-null year, 2024); the USGS-linked group returns 2 news + event us6000ril5. Indicators are annual: the prompt/validator must keep year and unit visible (CU-02).
+- G2: RED (collection error, module missing) then GREEN (19 passed); full suite 157 passed. Discard reasons: sin_cita, evidencia_inexistente, campo_inexistente, campo_nulo, cifra_no_sustentada, tipo_invalido, texto_vacio, afirmacion_invalida; schema failures and zero surviving claims degrade to `abstencion`. Figures may match rounded values; "1.400" is read both as 1,4 and 1400.
