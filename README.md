@@ -14,6 +14,23 @@ y Víctor (producto, interfaz, Notion y pruebas). Plan detallado: `documentacion
 páginas duplicadas. Los demás editan los archivos de `bitacora/` (`tareas.yaml`, `decisiones.yaml`,
 `paginas/*.md`), hacen `git push` y quien sincroniza hace `git pull` y ejecuta el sync.
 
+## Datos para trabajar (espejo entre los dos)
+
+El snapshot (`data/processed/`, `data/manifest.json`, `data/diccionario.md`, `data/reporte_calidad.md`) está en
+git. La base DuckDB (`data/senales.duckdb`) es derivada y no se sube: se construye igual en cada máquina.
+
+```
+git pull --rebase
+source .venv/bin/activate
+make arrancar        # instalar dependencias + construir la base (idempotente)
+```
+
+`make db` vuelve a construir la base solo si cambió el `manifest.json` (compara su SHA-256). Para forzarla:
+`python motor/cargar_db.py --forzar`. El hash del manifest aparece en `data/reporte_calidad.md`: el mismo hash
+en las dos máquinas significa los mismos datos. Los registros con fecha inválida o sin campos obligatorios van a
+la tabla `rechazados` y no frenan la carga (prueba T01). Solo una persona regenera el snapshot (`make datos`) y
+lo commitea; la otra solo hace `git pull`.
+
 ## Datos: snapshot propio de desarrollo
 
 Mientras no llegue el paquete oficial, `ingesta/descargar_snapshot.py` descarga las cuatro
