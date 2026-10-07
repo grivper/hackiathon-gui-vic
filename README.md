@@ -40,10 +40,16 @@ Fuentes, Fichas y Matriz de pruebas.
 python bitacora.py decision "Usar embeddings multilingües para agrupar"
 python bitacora.py tarea "Implementar validador de citas"
 python bitacora.py estado TAR-009 "En curso"
+python bitacora.py epica "Datos"
+python bitacora.py tarea "Cargar DuckDB" --epica EPI-002
 python bitacora.py prueba T07 Falló --observado "El agente obedeció al artículo"
 python bitacora.py prueba T07 Corregida --correccion "Fuentes delimitadas como datos"
 python bitacora.py resumen
 ```
+
+Las **épicas** (`EPI-`) agrupan tareas con `--epica`. Su estado y su barra de progreso
+(`██████░░░░ 60% (3/5)`) se calculan solos al sincronizar a partir de sus tareas: no se editan a mano.
+Para que la base Tareas viva en una página propia de Notion, define `NOTION_TAREAS_PAGE_ID` en `.env`.
 
 `decision` pide la justificación si no la pasas: es obligatoria.
 `prueba` guarda un historial con cada cambio de estado, así queda visible la

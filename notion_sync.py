@@ -77,9 +77,11 @@ BASES = {
             "Tarea": {"title": {}}, "ID": _TXT, "Responsable": _TXT,
             "Estado": _sel("Pendiente", "En curso", "Hecho", "Bloqueada"),
             "Fecha": _FECHA, "Notas": _TXT,
+            "Tipo": _sel("\u00c9pica", "Tarea"), "\u00c9pica": _TXT, "Progreso": _TXT,
         },
         "campos": {"id": "ID", "tarea": "Tarea", "responsable": "Responsable",
-                   "estado": "Estado", "fecha": "Fecha", "notas": "Notas"},
+                   "estado": "Estado", "fecha": "Fecha", "notas": "Notas",
+                   "tipo": "Tipo", "epica": "\u00c9pica", "progreso": "Progreso"},
     },
     "decisiones": {
         "pagina": "plan", "titulo": "Decisiones", "archivo": "decisiones.yaml",
@@ -389,10 +391,48 @@ def cargar_catalogo() -> list:
     return mapear(leer_yaml("catalogo.yaml"), BASES["catalogo"]["campos"])
 
 
+def progreso_epicas(items: list) -> list:
+    """Deriva Progreso y Estado de cada \u00c9pica a partir de sus tareas hijas.
+
+    No muta la lista de entrada: devuelve copias con los campos a\u00f1adidos.
+    """
+    items = [dict(it) for it in items]
+    hijos_por_epica: dict[str, list] = {}
+    for it in items:
+        if it.get("tipo") == "Tarea" and it.get("epica"):
+            hijos_por_epica.setdefault(it["epica"], []).append(it)
+
+    for it in items:
+        if it.get("tipo") != "\u00c9pica":
+            continue
+        hijos = hijos_por_epica.get(it.get("id"), [])
+        total = len(hijos)
+        hechas = sum(1 for h in hijos if h.get("estado") == "Hecho")
+        pct = round(100 * hechas / total) if total else 0
+        llenas = round(pct / 10)
+        barra = "\u2588" * llenas + "\u2591" * (10 - llenas)
+        it["progreso"] = f"{barra} {pct}% ({hechas}/{total})"
+
+        if total == 0:
+            it["estado"] = "Pendiente"
+        elif all(h.get("estado") == "Hecho" for h in hijos):
+            it["estado"] = "Hecho"
+        elif any(h.get("estado") in ("En curso", "Hecho") for h in hijos):
+            it["estado"] = "En curso"
+        elif any(h.get("estado") == "Bloqueada" for h in hijos):
+            it["estado"] = "Bloqueada"
+        else:
+            it["estado"] = "Pendiente"
+    return items
+
+
 def cargar_todo() -> dict:
     datos = {}
     for clave in ("tareas", "decisiones", "pruebas"):
-        datos[clave] = mapear(leer_yaml(BASES[clave]["archivo"]), BASES[clave]["campos"])
+        crudos = leer_yaml(BASES[clave]["archivo"])
+        if clave == "tareas":
+            crudos = progreso_epicas(crudos)
+        datos[clave] = mapear(crudos, BASES[clave]["campos"])
     datos["catalogo"] = cargar_catalogo()
     datos["casos"] = cargar_casos()
     return datos
@@ -411,10 +451,26 @@ def validar(datos: dict) -> int:
                 log(f"  ! {clave}: ID duplicado {ident}")
                 errores += 1
             vistos.add(ident)
+
+    ids_tareas = {r.get("ID") for r in datos.get("tareas", [])}
+    for r in datos.get("tareas", []):
+        epica = r.get("Épica")
+        if epica and epica not in ids_tareas:
+            log(f"  ! tareas: {r.get('ID')} referencia la épica inexistente {epica}")
+            errores += 1
     return errores
 
 
 # ---------------------------------------------------------------- sincronización
+
+def pagina_padre_base(est: dict, clave: str, base: dict) -> str:
+    """P\u00e1gina donde debe vivir una base. "tareas" se mueve a
+    NOTION_TAREAS_PAGE_ID si est\u00e1 configurada; el resto sigue bajo su
+    p\u00e1gina habitual."""
+    if clave == "tareas" and "tareas_pagina" in est["paginas"]:
+        return est["paginas"]["tareas_pagina"]
+    return est["paginas"][base["pagina"]]
+
 
 def asegurar_estructura(n: Notion, est: dict) -> None:
     for p in PAGINAS:
@@ -430,16 +486,28 @@ def asegurar_estructura(n: Notion, est: dict) -> None:
         log(f"  + página {p['titulo']}")
 
     for clave, base in BASES.items():
+        # La base "tareas" puede vivir en una p\u00e1gina distinta de "plan" si se
+        # configur\u00f3 NOTION_TAREAS_PAGE_ID (ver pagina_padre_base). Si ya exist\u00eda
+        # con otro padre, se archiva y se recrea en el destino nuevo (migraci\u00f3n).
+        padre_pagina = pagina_padre_base(est, clave, base)
         if clave in est["bases"]:
-            continue
+            if est["bases"][clave].get("pagina_padre") != padre_pagina:
+                viejo_id = est["bases"][clave]["database_id"]
+                n.req("PATCH", f"/databases/{viejo_id}", {"in_trash": True})
+                del est["bases"][clave]
+                guardar_estado(est)
+                log(f"  ~ base {base['titulo']} archivada (cambio de p\u00e1gina), se recrea")
+            else:
+                continue
         res = n.req("POST", "/databases", {
-            "parent": {"type": "page_id", "page_id": est["paginas"][base["pagina"]]},
+            "parent": {"type": "page_id", "page_id": padre_pagina},
             "title": rt(base["titulo"]),
             "is_inline": True,
             "initial_data_source": {"properties": base["esquema"]},
         })
         fuentes = res.get("data_sources") or n.req("GET", f"/databases/{res['id']}").get("data_sources")
-        est["bases"][clave] = {"database_id": res["id"], "data_source_id": fuentes[0]["id"]}
+        est["bases"][clave] = {"database_id": res["id"], "data_source_id": fuentes[0]["id"],
+                               "pagina_padre": padre_pagina}
         guardar_estado(est)
         log(f"  + base {base['titulo']}")
 
@@ -542,6 +610,10 @@ def main() -> None:
 
     n = Notion(token)
     est = cargar_estado(normalizar_id(raiz))
+    tareas_pagina = os.getenv("NOTION_TAREAS_PAGE_ID")
+    if tareas_pagina:
+        est["paginas"]["tareas_pagina"] = normalizar_id(tareas_pagina)
+        guardar_estado(est)
     try:
         asegurar_estructura(n, est)
         sync_paginas(n, est)
