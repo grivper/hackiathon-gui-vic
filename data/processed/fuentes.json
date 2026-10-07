@@ -1,0 +1,1367 @@
+[
+  {
+    "medio": "tvn-2.com",
+    "origen": [
+      "tvn_rss",
+      "tvn_sitemap"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 30003,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "panamaamerica.com.pa",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 10,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "prensa.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 5,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "riotimesonline.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 4,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "acento.com.do",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 3,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "revistaeyn.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 3,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "analitica.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "diaadia.com.pa",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "globalsecurity.org",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "indianexpress.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "lajornadadeoriente.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "nzherald.co.nz",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "telemetro.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "theepochtimes.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 2,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "24heures.ch",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "fr"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "actualidad.rt.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "adnsureste.info",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "africaleader.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "al-sharq.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "arabic"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "aninews.in",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "asiabulletin.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "auckland.scoop.co.nz",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "bignewsnetwork.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "busan.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "korean"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "business.scoop.co.nz",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "calcuttanews.net",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "caribbeanherald.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "critica.com.pa",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "dailysignal.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "diariodigitalrd.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "dnes.dir.bg",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "bulgarian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "dw.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "turkish"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "ec.ltn.com.tw",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "zh"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "ecoticias.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "edition.cnn.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "egyptwindow.net",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "arabic"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "eju.tv",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "elcaribe.com.do",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "eldiariodechihuahua.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "eleconomista.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "elfinancierocr.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "elinformador.com.co",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "elmanana.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "elpais.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "eltiempo.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "eluniverso.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "english.elpais.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "epravda.com.ua",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "ukrainian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "esmmagazine.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "euronews.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "excelsior.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "expreso.ec",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "finance.eastmoney.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "zh"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "foco.lanacion.com.py",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "forbes.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "foreignpolicy.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "gestion.pe",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "globalnews.ca",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "greaterbelize.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "haberaktuel.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "turkish"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "hoy.com.do",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "hppr.org",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "iefimerida.gr",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "greek"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "index.hu",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "hungarian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "indiagazette.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "inewsgr.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "greek"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "iprofesional.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "kenyastar.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "khaskhabar.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "hindi"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "kommersant.ru",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "russian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "lahaine.org",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "lahora.gt",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "laopinion.co",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "laopinion.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "larepublica.co",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "larouchepub.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "latimes.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "lbc.co.uk",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "lgz.ru",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "russian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "mdzol.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "middle-east-online.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "mire.gob.pa",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "morningadvertiser.co.uk",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "nacion.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "nbd.com.cn",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "zh"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "news.ifeng.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "zh"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "newsinamerica.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "newsroompanama.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "newstalkzb.co.nz",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "newswire.co.nz",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "ng.ru",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "russian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "ntn24.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "observatoriodaimprensa.com.br",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "pt"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "oem.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "pacocol.org",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "pcmag.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "planoinformativo.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "politicargentina.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "portafolio.co",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "prensa-latina.cu",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "pulzo.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "razon.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "redaccionrosario.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "rpp.pe",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "sdpnoticias.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "semana.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "southeastasiapost.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "stanradar.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "russian"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "tabascohoy.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "tdg.ch",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "fr"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "techgear.gr",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "greek"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "thegazette.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "theglobeandmail.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "thehindubusinessline.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "thenationonlineng.net",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "townhall.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "trinidadtimes.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "udn.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "zh"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "vietnamtribune.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "voachinese.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "zh"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "wradio.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "wsls.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "yucatan.com.mx",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "es"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  },
+  {
+    "medio": "zimbabwestar.com",
+    "origen": [
+      "gdelt"
+    ],
+    "idiomas": [
+      "en"
+    ],
+    "registros": 1,
+    "condiciones": "Solo metadatos (titular, URL, fechas). Los derechos del contenido pertenecen al medio; no se redistribuyen artículos, imágenes ni videos."
+  }
+]
