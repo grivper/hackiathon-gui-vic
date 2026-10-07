@@ -37,13 +37,14 @@ description: Project-specific development instructions for hackiathon-gui-vic (H
 
 ## Project-specific rules
 
-- **Sync reminder (mandatory).** Every time a task changes state, or the user says they are stopping, leaving, or ending the session, remind them of this checklist, in order, before closing:
+- **Standing authorization (granted by the user): auto-sync.** Every time a task changes state, or the user says they are stopping, leaving, or ending the session, the agent does the following itself, in order, without asking, and reports one short summary at the end:
   1. Record the progress: `python bitacora.py estado TAR-xxx "Hecho"` (or edit `bitacora/*.yaml`).
-  2. Commit the work (Conventional Commit).
-  3. `git pull --rebase` and then `git push` so the teammate sees it.
-  4. Sync Notion: `python notion_sync.py`. Only one person syncs at a time (currently Guille), because the sync state is local and a second sync duplicates pages.
-- **Session start.** Remind the user to run `git pull` before starting work, so they do not overwrite the teammate's changes.
-- Keep these reminders short, one message, and never push or run the sync without the user's go-ahead.
+  2. Verify: `python notion_sync.py --dry-run` and `.venv/bin/python -m pytest tests -q`. If either fails, stop and report; do not commit.
+  3. Commit with a Conventional Commit message. Stage only intended files, never `.env` or any `.env.*`.
+  4. `git pull --rebase`, then `git push` on the current branch.
+  5. `python notion_sync.py`, only if a local `.env` with a Notion token exists. Otherwise skip it and tell the user that the person holding the token must sync (the sync state is local; two people syncing duplicates pages).
+- **Safety limits.** Stop and report, never improvise, on any of these: rebase or merge conflict, failing check, push rejected, a secret in the diff, or Notion returning an error. Never force-push, never rewrite history that was already pushed, never push to `main` unless the user asked for it.
+- **Session start.** Run `git pull --rebase` before starting work, so the teammate's changes are not overwritten.
 
 ## Relevant skills
 
