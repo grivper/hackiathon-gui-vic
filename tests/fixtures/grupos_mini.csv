@@ -1,0 +1,26 @@
+caso,id_noticia,titulo,url,medio,fecha
+t02,N-T02-1,Terremoto de magnitud 6.2 sacude la costa pacifica de Panama esta manana,https://www.tvn-2.com/nacionales/terremoto-6-2-costa-pacifica_1_1.html,tvn-2.com,2026-01-10T08:00:00
+t02,N-T02-2,Un terremoto de magnitud 6.2 sacude la costa pacifica de Panama esta manana,https://www.panamaamerica.com.pa/nacion/terremoto-6-2-costa-pacifica,panamaamerica.com.pa,2026-01-10T09:30:00
+t02,N-T02-3,Terremoto magnitud 6.2 sacude costa pacifica de Panama esta manana segun Sinaproc,https://www.prensa.com/panama/terremoto-sinaproc,prensa.com,2026-01-11T07:00:00
+tvn_repeticion,N-REP-1,Gobierno anuncia aumento del salario minimo nacional para el proximo ano 2026,https://www.tvn-2.com/nacionales/salario-minimo-2026_1_2.html,tvn-2.com,2026-02-01T08:00:00
+tvn_repeticion,N-REP-2,Gobierno anuncia aumento del salario minimo nacional para el proximo ano,https://www.tvn-2.com/tvmax/salario-minimo_1_3.html,tvn-2.com,2026-02-01T10:00:00
+tvn_repeticion,N-REP-3,Video Gobierno anuncia aumento del salario minimo nacional para el proximo ano 2026,https://www.tvn-2.com/videos/noticias/video-salario-minimo_8_4.html,tvn-2.com,2026-02-02T09:00:00
+texto_lejos,N-FAR-1,Elecciones generales se celebraran en mayo,https://www.tvn-2.com/nacionales/elecciones-mayo-2024_1_5.html,tvn-2.com,2024-10-01T08:00:00
+texto_lejos,N-FAR-2,Elecciones generales se celebraran en mayo,https://www.tvn-2.com/nacionales/elecciones-mayo-2026_1_6.html,tvn-2.com,2026-09-01T08:00:00
+efe,N-EFE-1,Terremoto en Chile deja varios heridos y danos materiales informa agencia EFE,https://www.panamaamerica.com.pa/mundo/terremoto-chile-efe,panamaamerica.com.pa,2026-03-05T08:00:00
+efe,N-EFE-2,Terremoto en Chile deja varios heridos y danos materiales segun la EFE,https://www.prensa.com/mundo/terremoto-chile,prensa.com,2026-03-05T12:00:00
+cadena,N-CAD-A,reforma portuaria aumenta eficiencia logistica en el canal de panama,https://www.tvn-2.com/economia/reforma-portuaria_1_7.html,tvn-2.com,2026-04-01T08:00:00
+cadena,N-CAD-B,canal de panama amplia capacidad logistica y crece el turismo en la region,https://www.tvn-2.com/economia/canal-turismo_1_8.html,tvn-2.com,2026-04-01T10:00:00
+cadena,N-CAD-C,crece el turismo en la region por nuevas inversiones hoteleras internacionales,https://www.tvn-2.com/turismo/inversiones-hoteleras_1_9.html,tvn-2.com,2026-04-02T08:00:00
+idempotencia,N-IDEM-1,Panama Coffee Week reunira mas de 35 variedades del mejor cafe del mundo en octubre,https://www.tvn-2.com/nacionales/panama-coffee-week_1_10.html,tvn-2.com,2026-05-01T08:00:00
+idempotencia,N-IDEM-2,Panama Coffee Week reunira las variedades del mejor cafe del mundo en octubre,https://www.tvn-2.com/videos/noticias/video-panama-coffee-week_8_11.html,tvn-2.com,2026-05-01T09:00:00
+diario,N-DIA-01,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_20.html,tvn-2.com,2026-06-01T07:00:00
+diario,N-DIA-02,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_21.html,tvn-2.com,2026-06-02T07:00:00
+diario,N-DIA-03,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_22.html,tvn-2.com,2026-06-03T07:00:00
+diario,N-DIA-04,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_23.html,tvn-2.com,2026-06-04T07:00:00
+diario,N-DIA-05,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_24.html,tvn-2.com,2026-06-05T07:00:00
+diario,N-DIA-06,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_25.html,tvn-2.com,2026-06-06T07:00:00
+diario,N-DIA-07,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_26.html,tvn-2.com,2026-06-07T07:00:00
+diario,N-DIA-08,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_27.html,tvn-2.com,2026-06-08T07:00:00
+diario,N-DIA-09,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_28.html,tvn-2.com,2026-06-09T07:00:00
+diario,N-DIA-10,Clima en Panama: lluvias dispersas en el pacifico y el caribe esta tarde,https://www.tvn-2.com/clima/clima-diario_1_29.html,tvn-2.com,2026-06-10T07:00:00

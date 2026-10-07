@@ -1,0 +1,290 @@
+# Temas del reto (TAR-007): clasificación zero-shot por similitud a estos prototipos.
+# Este archivo lo edita el compañero (producto): cada tema tiene una `descripcion` en
+# español (1-2 frases) y una lista de `semillas` (frases/palabras clave cortas en español).
+# El prototipo de cada tema = embedding/TF-IDF de "descripcion + semillas".
+# No hay un tema `otros` aquí: es el resultado implícito de la abstención (umbral_score /
+# umbral_margen en `parametros`), para los titulares que no encajan claramente en ninguno.
+
+parametros:
+  modelo: paraphrase-multilingual-MiniLM-L12-v2
+  # Umbrales elegidos tras correr motor/clasificar.py sobre los ~30k titulares reales y
+  # mirar la distribución de similitud coseno a los 6 prototipos (ver resumen impreso por
+  # el script). Con este modelo multilingüe la similitud máxima de un titular claramente
+  # relacionado suele caer en 0.38-0.60; el ruido general (deportes, espectáculos, sucesos)
+  # ronda 0.15-0.30. umbral_score=0.30 separa razonablemente ambos grupos sin abstener casi
+  # todo. umbral_margen=0.03 evita decidir entre dos temas casi empatados (p. ej. economía
+  # vs. logística_canal en noticias de comercio exterior), mandándolos a `otros` en vez de
+  # forzar una elección arbitraria. El baseline TF-IDF es más disperso (vocabulario exacto),
+  # así que usa sus propios umbrales, más bajos.
+  umbral_score: 0.25
+  umbral_margen: 0.02
+  umbral_score_tfidf: 0.12
+  umbral_margen_tfidf: 0.02
+
+temas:
+  economia:
+    descripcion: >
+      Noticias sobre la economía panameña: inflación, empleo y desempleo, salarios,
+      impuestos, comercio, inversión, bancos y el presupuesto del Estado.
+    semillas:
+      - inflación
+      - desempleo
+      - empleo formal
+      - salario mínimo
+      - impuestos
+      - presupuesto del Estado
+      - Ministerio de Economía y Finanzas
+      - inversión extranjera
+      - comercio exterior
+      - crecimiento económico
+      - deuda pública
+      - mercado laboral
+
+  logistica_canal:
+    descripcion: >
+      Noticias sobre el Canal de Panamá, puertos, tránsito de buques, logística
+      marítima, rutas comerciales y la competitividad del centro logístico del país.
+    semillas:
+      - Canal de Panamá
+      - tránsito de buques
+      - puertos
+      - carga marítima
+      - logística portuaria
+      - zona libre de Colón
+      - esclusas
+      - peajes del canal
+      - cadena de suministro
+      - comercio marítimo
+      - Autoridad del Canal de Panamá
+      - calado del canal
+      - tarifas de cruce por el canal
+      - bloqueo de ruta marítima
+      - estrecho de Ormuz
+      - ruta alterna de navegación
+
+  turismo:
+    descripcion: >
+      Noticias sobre turismo en Panamá: visitantes, hoteles, playas, cruceros,
+      aerolíneas, promoción turística y eventos que atraen viajeros.
+    semillas:
+      - turismo
+      - turistas
+      - hoteles
+      - playas
+      - cruceros
+      - aerolíneas
+      - Autoridad de Turismo de Panamá
+      - destino turístico
+      - ocupación hotelera
+      - visitantes extranjeros
+      - viajes
+      - temporada alta turística
+
+  servicios_publicos:
+    descripcion: >
+      Noticias sobre servicios públicos en Panamá: agua potable, energía eléctrica,
+      transporte público y recolección de basura (infraestructura y prestación del
+      servicio por el Estado, no noticias generales de salud o educación).
+    semillas:
+      - agua potable
+      - cortes de energía eléctrica
+      - IDAAN
+      - transporte público
+      - Metro de Panamá
+      - recolección de basura
+      - apagones
+      - servicio eléctrico
+      - ETESA
+      - tarifa eléctrica
+      - alcantarillado
+      - falla en el servicio público
+
+  eventos_naturales:
+    descripcion: >
+      Noticias sobre eventos naturales en Panamá: sismos y terremotos, inundaciones,
+      sequía, tormentas, deslizamientos y otros fenómenos climáticos o geológicos.
+    semillas:
+      - terremoto
+      - sismo
+      - inundaciones
+      - sequía
+      - tormenta tropical
+      - deslizamiento de tierra
+      - fenómeno de El Niño
+      - lluvias intensas
+      - alerta meteorológica
+      - temporada de lluvias
+      - desastre natural
+      - crecida de río
+
+  regulacion:
+    descripcion: >
+      Noticias sobre leyes, decretos, regulaciones y decisiones de instituciones del
+      Estado panameño: Asamblea Nacional, nuevas leyes, reglamentos y fallos judiciales.
+    semillas:
+      - Asamblea Nacional
+      - proyecto de ley
+      - decreto ejecutivo
+      - reglamento
+      - Corte Suprema de Justicia
+      - fallo judicial
+      - nueva ley
+      - reforma legal
+      - normativa
+      - Gaceta Oficial
+      - Contraloría General
+      - marco regulatorio
+
+# Grupos de contraste (no son temas del reto): representan los grandes bloques de
+# noticias reales que NO son ninguno de los 6 temas de arriba (deportes, sucesos
+# policiales, política general, espectáculos, salud y educación genéricas, conflictos
+# internacionales ajenos a Panamá, clima cotidiano sin evento). Se construyen como
+# prototipos igual que los temas; si el prototipo más cercano a un titular es uno de
+# contraste, el resultado es `otros` y se guarda cuál grupo ganó (columna `contraste`
+# de la tabla `clasificacion`) para poder explicarlo en vez de dejar un `otros` mudo.
+# Añadidos tras mirar a ojo 30154 titulares reales: sin esto, ruido de deportes/sucesos/
+# política terminaba clasificado como un tema del reto por no tener dónde más caer.
+contraste:
+  deportes:
+    descripcion: >
+      Noticias deportivas: fútbol, béisbol, boxeo, selección nacional, campeonatos,
+      resultados de partidos y lesiones de atletas.
+    semillas:
+      - selección de Panamá
+      - fútbol
+      - béisbol
+      - boxeo
+      - campeonato deportivo
+      - liga deportiva
+      - gol
+      - partido amistoso
+      - eliminatoria mundialista
+      - atleta
+      - entrenador
+      - estadio
+
+  sucesos_policiales:
+    descripcion: >
+      Sucesos y crónica policial: homicidios, robos, detenciones, narcotráfico,
+      accidentes de tránsito y operativos de la policía.
+    semillas:
+      - homicidio
+      - robo
+      - detenido
+      - Policía Nacional
+      - narcotráfico
+      - droga sintética
+      - accidente de tránsito
+      - operativo policial
+      - ganado robado
+      - pandillas
+      - arma de fuego
+      - fiscalía
+
+  politica_general:
+    descripcion: >
+      Política partidista y gobierno general no vinculada a una ley o regulación
+      concreta: elecciones, partidos, declaraciones de funcionarios, giras oficiales.
+    semillas:
+      - elecciones
+      - partido político
+      - candidato presidencial
+      - campaña electoral
+      - Presidente de la República
+      - gabinete
+      - diputado
+      - declaraciones políticas
+      - Tribunal Electoral
+      - encuesta de opinión
+      - oposición política
+      - gira oficial
+
+  espectaculos_cultura:
+    descripcion: >
+      Espectáculos, cultura y entretenimiento: conciertos, cine, televisión,
+      celebridades, moda y vida de farándula.
+    semillas:
+      - concierto
+      - cantante
+      - actor
+      - película
+      - farándula
+      - celebridad
+      - festival cultural
+      - telenovela
+      - moda
+      - premios musicales
+      - feria artesanal
+      - exposición de arte
+
+  salud:
+    descripcion: >
+      Noticias generales de salud y medicina, sin ser un problema de servicio público
+      estatal: enfermedades, tratamientos, investigaciones médicas y casos clínicos.
+    semillas:
+      - enfermedad
+      - brote de dengue
+      - vacuna
+      - tratamiento médico
+      - paciente
+      - especialista en salud
+      - hospital privado
+      - estudio médico
+      - salud mental
+      - nutrición
+      - pandemia
+      - covid-19
+
+  educacion:
+    descripcion: >
+      Noticias generales de educación, sin ser un problema de servicio público
+      estatal: universidades, becas, resultados académicos y vida estudiantil.
+    semillas:
+      - universidad
+      - estudiantes
+      - beca educativa
+      - examen de admisión
+      - rector
+      - graduación
+      - currículo escolar
+      - maestría
+      - investigación académica
+      - colegio privado
+      - profesor
+      - matrícula
+
+  internacional_conflictos:
+    descripcion: >
+      Noticias internacionales ajenas a Panamá: conflictos bélicos, política exterior
+      de otros países y crisis internacionales sin impacto directo descrito en Panamá.
+    semillas:
+      - guerra
+      - conflicto armado
+      - Medio Oriente
+      - Rusia
+      - Ucrania
+      - Estados Unidos
+      - Unión Europea
+      - Naciones Unidas
+      - sanciones internacionales
+      - crisis diplomática
+      - ataque militar
+      - gobierno extranjero
+
+  clima_cotidiano_no_evento:
+    descripcion: >
+      Clima cotidiano sin ser un evento natural destacable: pronóstico diario,
+      temperatura, parte meteorológico rutinario.
+    semillas:
+      - pronóstico del tiempo
+      - temperatura del día
+      - parte meteorológico
+      - clima soleado
+      - nublado parcial
+      - índice UV
+      - probabilidad de lluvia
+      - humedad relativa
+      - viento ligero
+      - clima de hoy
+      - boletín meteorológico diario
+      - amanecer despejado

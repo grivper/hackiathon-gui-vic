@@ -1,0 +1,25 @@
+id_noticia,titulo,medio,fecha,tema_humano,notas
+DEV-001,La inflación en Panamá se desacelera por la baja en el precio de los alimentos,TVN Noticias,2026-01-05,economia,
+DEV-002,El desempleo juvenil preocupa a economistas tras el último informe laboral,TVN Noticias,2026-01-12,economia,
+DEV-003,El Ministerio de Economía anuncia recorte al presupuesto del Estado para 2026,TVN Noticias,2026-02-03,economia,
+DEV-004,El Canal de Panamá bate récord de tránsito de buques este trimestre,TVN Noticias,2026-01-08,logistica_canal,
+DEV-005,La Autoridad del Canal ajusta los peajes a las navieras que usan las esclusas,TVN Noticias,2026-02-14,logistica_canal,
+DEV-006,El bloqueo del estrecho de Ormuz eleva las tarifas de cruce por el Canal de Panamá,TVN Noticias,2026-03-02,logistica_canal,
+DEV-007,Turistas extranjeros llenan los hoteles de Bocas del Toro en temporada alta,TVN Noticias,2026-01-20,turismo,
+DEV-008,Una nueva ruta de cruceros llegará al puerto de Colón esta temporada,TVN Noticias,2026-02-09,turismo,
+DEV-009,La Autoridad de Turismo de Panamá lanza campaña para atraer visitantes europeos,TVN Noticias,2026-03-11,turismo,
+DEV-010,Cortes de agua potable afectan a tres distritos por mantenimiento del IDAAN,TVN Noticias,2026-01-15,servicios_publicos,
+DEV-011,El Metro de Panamá amplía su horario de servicio los fines de semana,TVN Noticias,2026-02-18,servicios_publicos,
+DEV-012,Apagones prolongados generan quejas contra la empresa de energía eléctrica,TVN Noticias,2026-03-05,servicios_publicos,
+DEV-013,Un fuerte sismo de magnitud 5.8 se sintió en varias provincias del país,TVN Noticias,2026-01-22,eventos_naturales,
+DEV-014,Inundaciones dejan decenas de familias damnificadas cerca del río La Villa,TVN Noticias,2026-02-25,eventos_naturales,
+DEV-015,Alerta meteorológica por la llegada de una tormenta tropical al Caribe panameño,TVN Noticias,2026-03-19,eventos_naturales,
+DEV-016,La Asamblea Nacional aprueba en primer debate una nueva ley laboral,TVN Noticias,2026-01-28,regulacion,
+DEV-017,La Corte Suprema de Justicia emite un fallo sobre un caso de corrupción,TVN Noticias,2026-02-21,regulacion,
+DEV-018,El Gobierno firma un decreto ejecutivo que regula el transporte de carga pesada,TVN Noticias,2026-03-27,regulacion,
+DEV-019,La selección de Panamá golea en un amistoso previo a la eliminatoria mundialista,TVN Noticias,2026-01-30,otros,deportes
+DEV-020,La Policía recupera ganado robado en una finca de Chiriquí,TVN Noticias,2026-02-04,otros,sucesos_policiales
+DEV-021,Autoridades decomisan droga sintética en un operativo contra el narcotráfico,TVN Noticias,2026-02-27,otros,sucesos_policiales
+DEV-022,El candidato presidencial inicia su gira electoral por el interior del país,TVN Noticias,2026-03-08,otros,politica_general
+DEV-023,Especialistas alertan sobre un brote de dengue en la capital,TVN Noticias,2026-03-22,otros,salud
+DEV-024,El cantante colombiano anuncia una gira de conciertos en Panamá,TVN Noticias,2026-01-18,otros,espectaculos_cultura
