@@ -100,7 +100,7 @@ def test_procesamiento_completo(tmp_path):
     assert p["time"] == "2024-01-01T00:00:00Z" and p["latitude"] == 7.9
 
     assert manifest["archivos"]["processed/noticias.csv"]["sha256"] == ds.sha256(proc / "noticias.csv")
-    assert [f["id"] for f in manifest["fuentes"]] == ["SRC-TVN", "SRC-GDELT", "SRC-WB", "SRC-USGS"]
+    assert [f["id"] for f in manifest["fuentes"]] == ["SRC-TVN", "SRC-TVN-SITEMAP", "SRC-GDELT", "SRC-WB", "SRC-USGS"]
 
 
 def test_procesamiento_es_determinista(tmp_path):

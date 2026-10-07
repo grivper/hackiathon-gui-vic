@@ -16,8 +16,11 @@ Build the news history from TVN's public monthly sitemaps (listed in robots.txt:
 - Politeness: 1 request per ~2 s, identifiable User-Agent, fetch each monthly sitemap at most once per run, skip months already downloaded unless `--refrescar`.
 
 ## Tasks
-- [ ] T1 Downloader: months in a configurable window (default 2025-10 .. current month) into raw/tvn_sitemap/
-- [ ] T2 Processing: parse into the news contract, dedupe with RSS/GDELT, manifest/catalog entry
-- [ ] T3 Tests with a small fixture (no network)
-- [ ] T4 Real run, check counts and date coverage
-- [ ] T5 README + commit
+- [x] T1 Downloader: months in a configurable window (default 2025-10 .. current month) into raw/tvn_sitemap/
+- [x] T2 Processing: parse into the news contract, dedupe with RSS/GDELT, manifest/catalog entry
+- [x] T3 Tests with a small fixture (no network)
+- [x] T4 Real run, check counts and date coverage
+- [x] T5 README + commit
+
+## Evidence
+- Real run: 13 monthly sitemaps (2025-10..2026-10), 30154 news after dedupe (29853 sitemap, 101 RSS+sitemap, 49 RSS, 151 GDELT), 0 without title. Tests: 28 passed.

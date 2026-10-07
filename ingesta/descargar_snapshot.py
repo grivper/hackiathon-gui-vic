@@ -33,8 +33,10 @@ import calendar
 import csv
 import hashlib
 import json
+import re
 import sys
 import time
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -51,6 +53,11 @@ PAUSA_EXTRA = True  # las pruebas lo desactivan
 
 COLUMNAS_NOTICIAS = ["id_noticia", "titulo", "url", "medio", "idioma", "fecha_publicacion",
                      "fecha_deteccion", "fecha_extraccion", "tema", "origen", "alcance_texto"]
+# Prioridad de origen al fusionar duplicados por URL: el valor mas bajo gana (titulo, idioma, medio).
+ORDEN_ORIGEN = {"tvn_rss": 0, "tvn_sitemap": 1, "gdelt": 2}
+NS_SITEMAP = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+NS_IMAGE = "{http://www.google.com/schemas/sitemap-image/1.1}"
+PATRON_SLUG_SUFIJO = re.compile(r"_\d+_\d+$")
 COLUMNAS_INDICADORES = ["id_evidencia", "pais_iso3", "indicador_id", "indicador_nombre", "anio",
                         "valor", "unidad", "observacion", "fuente_url", "fecha_extraccion",
                         "licencia"]
@@ -149,6 +156,50 @@ def fecha_iso_entrada(texto: str) -> datetime:
     return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
 
 
+def _prioridad_origen(origen: str) -> int:
+    """La prioridad del mejor origen presente (tvn_rss < tvn_sitemap < gdelt < otros)."""
+    return min((ORDEN_ORIGEN.get(o, len(ORDEN_ORIGEN)) for o in origen.split("|")),
+               default=len(ORDEN_ORIGEN))
+
+
+def _lastmod_iso(texto: str | None) -> str | None:
+    """Normaliza un lastmod de sitemap (con offset o 'Z') a ISO 8601 UTC."""
+    if not texto:
+        return None
+    try:
+        dt = datetime.fromisoformat(texto.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if not dt.tzinfo:
+        dt = dt.replace(tzinfo=UTC)
+    return iso(dt)
+
+
+def _titulo_desde_slug(url: str) -> str:
+    """Titulo legible a partir del slug de la URL cuando falta image:title."""
+    slug = urlsplit(url).path.rsplit("/", 1)[-1]
+    slug = re.sub(r"\.html?$", "", slug)
+    slug = PATRON_SLUG_SUFIJO.sub("", slug)
+    texto = slug.replace("-", " ").replace("_", " ").strip()
+    return texto[:1].upper() + texto[1:] if texto else texto
+
+
+def _meses_sitemap(desde: str, hasta: str | None, referencia: datetime) -> list[str]:
+    """Lista 'YYYY-MM' entre desde y hasta (hasta=None => mes de referencia), inclusive."""
+    anio_d, mes_d = (int(x) for x in desde.split("-"))
+    if hasta:
+        anio_h, mes_h = (int(x) for x in hasta.split("-"))
+    else:
+        anio_h, mes_h = referencia.year, referencia.month
+    meses, a, m = [], anio_d, mes_d
+    while (a, m) <= (anio_h, mes_h):
+        meses.append(f"{a:04d}-{m:02d}")
+        m += 1
+        if m > 12:
+            m, a = 1, a + 1
+    return meses
+
+
 # ---------------------------------------------------------------- fase 1: descarga
 
 def descargar_tvn(cfg: dict, raw: Path) -> None:
@@ -163,6 +214,33 @@ def descargar_tvn(cfg: dict, raw: Path) -> None:
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_bytes(r.content)
     log(f"  TVN: captura guardada en {destino.relative_to(raw.parent)}")
+
+
+def descargar_sitemaps_tvn(cfg: dict, raw: Path, refrescar: bool = False) -> None:
+    s = (cfg.get("tvn") or {}).get("sitemaps")
+    if not s:
+        log("  ! TVN sitemaps: falta tvn.sitemaps en ingesta/config.yaml. Se omite.")
+        return
+    t = ahora()
+    mes_actual = f"{t.year:04d}-{t.month:02d}"
+    base = s["indice"].rsplit("/", 1)[0]  # tvn-2.com redirige a www.tvn-2.com
+    destino_dir = raw / "tvn_sitemap"
+    destino_dir.mkdir(parents=True, exist_ok=True)
+    for mes in _meses_sitemap(s["desde"], s.get("hasta"), t):
+        anio, m = mes.split("-")
+        nombre = f"tvn_sitemap_contents_{anio}_{m}.xml"
+        destino = destino_dir / nombre
+        if destino.exists() and not refrescar and mes != mes_actual:
+            continue
+        if PAUSA_EXTRA:
+            time.sleep(s.get("pausa_segundos", 2))
+        r = obtener(f"{base}/{nombre}")
+        if r.status_code == 404:
+            log(f"  TVN sitemap {mes}: no existe (404), se omite")
+            continue
+        r.raise_for_status()
+        destino.write_bytes(r.content)
+        log(f"  TVN sitemap {mes}: guardado en {destino.relative_to(raw.parent)}")
 
 
 def _gdelt_ventana(g: dict, raw: Path, consulta: dict, ini: datetime, fin: datetime,
@@ -278,6 +356,40 @@ def leer_tvn(raw: Path) -> list[dict]:
     return candidatos
 
 
+def leer_sitemaps_tvn(raw: Path) -> list[dict]:
+    candidatos = []
+    carpeta = raw / "tvn_sitemap"
+    if not carpeta.exists():
+        return candidatos
+    for xml in sorted(carpeta.glob("tvn_sitemap_contents_*.xml")):
+        try:
+            root = ET.fromstring(xml.read_bytes())
+        except ET.ParseError as e:
+            log(f"  ! TVN sitemap {xml.name}: XML inv\u00e1lido ({e}), se omite")
+            continue
+        extraccion = iso(datetime.fromtimestamp(xml.stat().st_mtime, UTC))
+        for u in root.findall(f"{NS_SITEMAP}url"):
+            loc_el = u.find(f"{NS_SITEMAP}loc")
+            url = (loc_el.text or "").strip() if loc_el is not None and loc_el.text else ""
+            # Secciones (no articulos) no suelen terminar en .html: se descartan aqui
+            # (se compara la ruta, no la URL completa, para ignorar parametros de rastreo).
+            if url_valida(url) and not urlsplit(url).path.rstrip("/").endswith(".html"):
+                continue
+            titulo_el = u.find(f"{NS_IMAGE}image/{NS_IMAGE}title")
+            titulo = (titulo_el.text or "").strip() if titulo_el is not None and titulo_el.text else ""
+            if not titulo:
+                titulo = _titulo_desde_slug(url) if url else ""
+            lastmod_el = u.find(f"{NS_SITEMAP}lastmod")
+            lastmod = _lastmod_iso(lastmod_el.text if lastmod_el is not None else None)
+            candidatos.append({
+                "titulo": titulo, "url": url, "medio": "tvn-2.com", "idioma": "es",
+                "fecha_publicacion": None, "fecha_deteccion": lastmod,
+                "fecha_extraccion": extraccion, "tema": None, "origen": "tvn_sitemap",
+                "alcance_texto": "titular/metadatos", "_archivo": xml.name,
+            })
+    return candidatos
+
+
 def leer_gdelt(raw: Path) -> tuple[list[dict], list[dict]]:
     candidatos, consultas = [], []
     for arch in sorted((raw / "gdelt").glob("*.json")):
@@ -321,6 +433,7 @@ def consolidar_noticias(candidatos: list[dict], filtro: dict) -> tuple[list[dict
             continue
         ex = por_clave[clave]
         stats["duplicados_fusionados"] += 1
+        prioridad_actual = _prioridad_origen(ex["origen"])
         temas = set(filter(None, (ex["tema"] or "").split("|")))
         if c["tema"]:
             temas.add(c["tema"])
@@ -333,6 +446,13 @@ def consolidar_noticias(candidatos: list[dict], filtro: dict) -> tuple[list[dict
         if c["fecha_deteccion"] and (not ex["fecha_deteccion"]
                                      or c["fecha_deteccion"] < ex["fecha_deteccion"]):
             ex["fecha_deteccion"] = c["fecha_deteccion"]
+        # Si el nuevo candidato viene de un origen de mayor prioridad (tvn_rss > tvn_sitemap
+        # > gdelt), su titulo/idioma/medio/alcance_texto reemplazan a los ya guardados.
+        if _prioridad_origen(c["origen"]) < prioridad_actual:
+            ex["titulo"] = c["titulo"]
+            ex["idioma"] = c["idioma"] or ex["idioma"]
+            ex["medio"] = c["medio"] or ex["medio"]
+            ex["alcance_texto"] = c["alcance_texto"] or ex["alcance_texto"]
 
     noticias = []
     for n in por_clave.values():
@@ -459,7 +579,8 @@ Fechas en ISO 8601 UTC (sufijo Z). Celda vacía = valor nulo; nunca se rellena c
 - **fecha_deteccion**: `seendate` de GDELT (cuándo GDELT la detectó). No es la publicación.
 - **fecha_extraccion**: cuándo se descargó.
 - **tema**: tema de la CONSULTA que la encontró (varios separados por `|`). No es una etiqueta verificada.
-- **origen**: `tvn_rss`, `gdelt` o ambos separados por `|`.
+- **origen**: `tvn_rss`, `tvn_sitemap`, `gdelt` o varios separados por `|`. Si un duplicado existe
+  en varios orígenes, titulo/idioma/medio se quedan con el de mayor prioridad (tvn_rss > tvn_sitemap > gdelt).
 - **alcance_texto**: texto disponible. `titular/metadatos` = no se tiene el artículo.
 
 ## processed/indicadores.csv
@@ -484,8 +605,10 @@ def procesar(cfg: dict, data: Path) -> dict:
     corte = ahora()
 
     tvn = leer_tvn(raw)
+    sitemap = leer_sitemaps_tvn(raw)
     gdelt, consultas_gdelt = leer_gdelt(raw)
-    noticias, excluidos, stats = consolidar_noticias(tvn + gdelt, cfg.get("filtro_intervalo") or {})
+    noticias, excluidos, stats = consolidar_noticias(tvn + sitemap + gdelt,
+                                                      cfg.get("filtro_intervalo") or {})
     indicadores, consultas_wb = procesar_indicadores(cfg, raw)
     eventos, consultas_usgs = procesar_eventos(raw)
 
@@ -509,6 +632,7 @@ def procesar(cfg: dict, data: Path) -> dict:
         return f"{vals[0][:10]} a {vals[-1][:10]}" if vals else "sin fechas"
 
     de_tvn = [n for n in noticias if "tvn_rss" in n["origen"]]
+    de_sitemap = [n for n in noticias if "tvn_sitemap" in n["origen"]]
     de_gdelt = [n for n in noticias if "gdelt" in n["origen"]]
     validos = sum(1 for f in indicadores if f["valor"] is not None)
     sha_noticias = archivos["processed/noticias.csv"]["sha256"]
@@ -522,6 +646,16 @@ def procesar(cfg: dict, data: Path) -> dict:
          "campos": "titulo, url, fecha_publicacion",
          "licencia": "Solo metadatos; el RSS no implica licencia sobre artículos, videos o imágenes",
          "transformaciones": "Deduplicación por URL normalizada; fechas a UTC", "sha256": sha_noticias},
+        {"id": "SRC-TVN-SITEMAP", "fuente": "TVN · sitemaps mensuales",
+         "url": ((cfg.get("tvn") or {}).get("sitemaps") or {}).get("indice"),
+         "fecha_extraccion": ultima(de_sitemap), "registros": len(de_sitemap),
+         "cobertura": f"{len(de_sitemap)} noticias · lastmod {rango('fecha_deteccion', de_sitemap)} "
+                      f"· {len(list((raw / 'tvn_sitemap').glob('tvn_sitemap_contents_*.xml')))} meses",
+         "campos": "titulo, url, fecha_deteccion (lastmod)",
+         "licencia": "Solo metadatos (titular, URL, fecha); no se redistribuyen artículos ni imágenes",
+         "transformaciones": "fecha_deteccion = lastmod del sitemap, NO es la fecha de publicación; "
+                             "titulo cae al slug de la URL si falta image:title; deduplicación por URL",
+         "sha256": sha_noticias},
         {"id": "SRC-GDELT", "fuente": "GDELT DOC 2.0", "url": cfg["gdelt"]["url"],
          "fecha_extraccion": ultima(de_gdelt), "registros": len(de_gdelt),
          "cobertura": f"{len(de_gdelt)} noticias · detección {rango('fecha_deteccion', de_gdelt)}",
@@ -556,7 +690,9 @@ def procesar(cfg: dict, data: Path) -> dict:
         "nota": "Snapshot de desarrollo propio, no es el paquete oficial de la organización.",
         "fecha_corte_utc": iso(corte),
         "consultas": consultas_gdelt + consultas_wb + consultas_usgs
-                     + [{"fuente": "tvn_rss", "capturas": len(list((raw / "tvn").glob("rss_*.xml")))}],
+                     + [{"fuente": "tvn_rss", "capturas": len(list((raw / "tvn").glob("rss_*.xml")))},
+                        {"fuente": "tvn_sitemap",
+                         "capturas": len(list((raw / "tvn_sitemap").glob("tvn_sitemap_contents_*.xml")))}],
         "archivos": archivos,
         "estadisticas_noticias": stats,
         "filtro_intervalo": cfg.get("filtro_intervalo"),
@@ -578,12 +714,14 @@ def procesar(cfg: dict, data: Path) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="Descarga y procesa el snapshot de datos del reto.")
-    ap.add_argument("--solo", nargs="+", choices=["tvn", "gdelt", "wb", "usgs"],
+    ap.add_argument("--solo", nargs="+", choices=["tvn", "sitemaps", "gdelt", "wb", "usgs"],
                     help="descargar solo estas fuentes")
     ap.add_argument("--desde", help="inicio de la ventana de GDELT (YYYY-MM-DD)")
     ap.add_argument("--hasta", help="fin de la ventana de GDELT (YYYY-MM-DD)")
     ap.add_argument("--solo-procesar", action="store_true",
                     help="no descargar; regenerar processed/ desde raw/")
+    ap.add_argument("--refrescar", action="store_true",
+                    help="TVN sitemaps: re-descargar meses ya guardados (el mes actual siempre se refresca)")
     args = ap.parse_args()
 
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
@@ -591,12 +729,13 @@ def main() -> None:
     raw = data / "raw"
 
     if not args.solo_procesar:
-        fuentes = set(args.solo or ["tvn", "gdelt", "wb", "usgs"])
+        fuentes = set(args.solo or ["tvn", "sitemaps", "gdelt", "wb", "usgs"])
         hasta = fecha_iso_entrada(args.hasta) if args.hasta else ahora()
         desde = (fecha_iso_entrada(args.desde) if args.desde
                  else hasta - timedelta(days=cfg["gdelt"].get("dias_atras", 30)))
         log(f"Descargando {', '.join(sorted(fuentes))}…")
         pasos = [("tvn", lambda: descargar_tvn(cfg, raw)),
+                 ("sitemaps", lambda: descargar_sitemaps_tvn(cfg, raw, args.refrescar)),
                  ("wb", lambda: descargar_banco_mundial(cfg, raw)),
                  ("usgs", lambda: descargar_usgs(cfg, raw)),
                  ("gdelt", lambda: descargar_gdelt(cfg, raw, desde, hasta))]
