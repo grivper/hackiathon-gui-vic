@@ -1,4 +1,4 @@
-.PHONY: instalar datos procesar test sync db arrancar modelos clasificar agrupar puntuar motor muestra evaluar
+.PHONY: instalar datos procesar test sync db arrancar modelos clasificar agrupar puntuar generar motor muestra evaluar
 
 instalar:
 	pip install -r requirements.txt
@@ -31,6 +31,9 @@ agrupar:        ## agrupa titulares del mismo evento y cuenta procedencias en da
 
 puntuar:        ## calcula el puntaje de atencion y el estado de evidencia por grupo en data/motor.duckdb
 	python motor/puntuar.py
+
+generar:        ## fichas con borrador citado (necesita Ollama; GRUPOS="--top 5" por defecto; ver motor/generar.py)
+	python motor/generar.py $(or $(GRUPOS),--top 5 --min-noticias 2)
 
 muestra:        ## genera una muestra estratificada por mes para etiquetar a ciegas (data/etiquetas/)
 	python motor/muestra_etiquetado.py

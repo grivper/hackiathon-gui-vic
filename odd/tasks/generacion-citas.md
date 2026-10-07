@@ -24,7 +24,7 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
 - [x] G3 Abstention rules `motor/abstencion.py` (test-first: T06 unanswerable, null value, year out of range, titles-only scope text)
 - [x] G4 Prompt builder with injection defense (test-first: T07 canary in a synthetic headline)
 - [x] G5 LLM client with fake and Ollama backends; model and params recorded
-- [ ] G6 `motor/generar.py` pipeline + `fichas` table + jsonl export + `make generar`, end-to-end with the fake LLM
+- [x] G6 `motor/generar.py` pipeline + `fichas` table + jsonl export + `make generar`, end-to-end with the fake LLM
 - [ ] G7 Real run with Ollama when available, docs (interfaz-brief contract for `fichas`), bitacora TAR-009, commits
 
 ## Open decisions
@@ -46,3 +46,5 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
   | llama3.2:3b q4_K_M | 72.9 | 100.0 | 7.6 | 2/4 | 2/4 |
   | qwen2.5:7b q4_K_M | 113.4 | 158.9 | 3.7 | 4/4 | 2/4 |
   None meets the 15 s median on this CPU; none gives reliable citations with the current prompt. Next: improve the prompt/schema (G7) and consider pre-generating the final fichas offline.
+- G6: RED (module missing) then GREEN (11 tests in tests/test_generar.py with `ClienteFalso`); full suite 202 passed. `generar_ficha` = evidencia -> abstencion -> prompt -> LLM -> canary check -> validator; the draft (`borrador`) is assembled by code only from surviving claims (`- texto [id · campo]`, plus vacios/versiones and the code-decided scope). Abstention reasons: sin_evidencia, llm_error, inyeccion, esquema_invalido, sin_sustento, modelo_abstuvo (state `requiere evidencia`). `fichas` table is upserted per `id_caso` (non-regenerated fichas survive) and `fichas.jsonl` is exported from the table; fichas already in `en revisión` / `aprobado como borrador` / `descartado` are never regenerated without `--forzar`. `make generar` (default `--top 5 --min-noticias 2`, override with `GRUPOS=`).
+- G6 real run (qwen2.5:1.5b, 2 groups with >= 2 news, on a copy of motor.duckdb): pipeline completed, 38 s and 18 s per group, both ended in `modelo_abstuvo`, and the model filled `vacios` with field names instead of real gaps. The abstention path works as designed; draft quality is the G7 problem (prompt/schema tuning, 7B for the final fichas).
