@@ -25,3 +25,7 @@ Score every event group with the challenge formula `P = 30R + 25I + 20U + 15N + 
 ## Evidence
 - Commit 6316121 on feat/puntaje-atencion (code + 33 tests; full suite 105 passed). Real run 35 s: 25069 groups, 612 alto / 5035 medio / 19422 bajo; evidence 6 suficiente / 1816 parcial / 23247 insuficiente.
 - Open point: official-data link for E is thematic (any economia/servicios_publicos group gets it), which lifts single-source TVN groups to `parcial`. Pending user decision.
+
+## Follow-up (decided with the user)
+- Official data (Banco Mundial, USGS) is CONTEXT only (rules v0.2, worker running): theme-level links are not "sustained relations".
+- [ ] T5 Verifiable USGS link (rules v0.3): a group counts an official event only if (a) headline has a quake keyword, (b) headline states a magnitude within 0.2 of the event, (c) event time within [-12h, +48h] of the group's fecha_max, (d) a place token of the headline matches the USGS place string (accent-insensitive, generic words ignored), and (e) the match is unambiguous (exactly one event). Verified link counts as an official primary source for E and estado_evidencia and is explained in `motivos`; anything else stays context. Limits: only 208 events (2024-01..2026-09), headlines only, so few matches are expected.
