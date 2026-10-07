@@ -1,0 +1,22 @@
+id_noticia,titulo,tema_esperado
+N-001,Inflación en Panamá sube por aumento de impuestos al consumo,economia
+N-002,Desempleo juvenil preocupa a economistas panameños,economia
+N-003,MEF presenta presupuesto del Estado para el próximo año,economia
+N-004,Canal de Panamá bate récord de tránsito de buques este trimestre,logistica_canal
+N-005,Puerto de Balboa amplía capacidad de carga marítima,logistica_canal
+N-006,Autoridad del Canal de Panamá ajusta peajes a navieras,logistica_canal
+N-007,Turistas extranjeros llenan los hoteles de Bocas del Toro,turismo
+N-008,Nueva ruta de cruceros llegará a Colón esta temporada,turismo
+N-009,Autoridad de Turismo de Panamá lanza campaña de promoción,turismo
+N-010,Cortes de agua potable afectan a varios sectores de la ciudad,servicios_publicos
+N-011,IDAAN anuncia mantenimiento que dejará sin agua a tres distritos,servicios_publicos
+N-012,Metro de Panamá amplía horario de servicio los fines de semana,servicios_publicos
+N-013,Fuerte sismo se sintió en varias provincias del país,eventos_naturales
+N-014,Inundaciones dejan daños en comunidades cercanas al río,eventos_naturales
+N-015,Alerta por tormenta tropical que se aproxima al Caribe panameño,eventos_naturales
+N-016,Asamblea Nacional aprueba en primer debate nueva ley laboral,regulacion
+N-017,Corte Suprema de Justicia emite fallo sobre caso de corrupción,regulacion
+N-018,Gobierno firma decreto ejecutivo que regula el transporte de carga,regulacion
+N-019,Selección de Panamá golea en amistoso previo al Mundial,otros
+N-020,Cantante colombiano anuncia gira de conciertos en Panamá,otros
+N-021,Hallan tortuga marina desorientada en playa y la regresan al mar,otros

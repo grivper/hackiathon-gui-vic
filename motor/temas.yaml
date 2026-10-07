@@ -1,0 +1,131 @@
+# Temas del reto (TAR-007): clasificación zero-shot por similitud a estos prototipos.
+# Este archivo lo edita el compañero (producto): cada tema tiene una `descripcion` en
+# español (1-2 frases) y una lista de `semillas` (frases/palabras clave cortas en español).
+# El prototipo de cada tema = embedding/TF-IDF de "descripcion + semillas".
+# No hay un tema `otros` aquí: es el resultado implícito de la abstención (umbral_score /
+# umbral_margen en `parametros`), para los titulares que no encajan claramente en ninguno.
+
+parametros:
+  modelo: paraphrase-multilingual-MiniLM-L12-v2
+  # Umbrales elegidos tras correr motor/clasificar.py sobre los ~30k titulares reales y
+  # mirar la distribución de similitud coseno a los 6 prototipos (ver resumen impreso por
+  # el script). Con este modelo multilingüe la similitud máxima de un titular claramente
+  # relacionado suele caer en 0.38-0.60; el ruido general (deportes, espectáculos, sucesos)
+  # ronda 0.15-0.30. umbral_score=0.30 separa razonablemente ambos grupos sin abstener casi
+  # todo. umbral_margen=0.03 evita decidir entre dos temas casi empatados (p. ej. economía
+  # vs. logística_canal en noticias de comercio exterior), mandándolos a `otros` en vez de
+  # forzar una elección arbitraria. El baseline TF-IDF es más disperso (vocabulario exacto),
+  # así que usa sus propios umbrales, más bajos.
+  umbral_score: 0.30
+  umbral_margen: 0.03
+  umbral_score_tfidf: 0.12
+  umbral_margen_tfidf: 0.02
+
+temas:
+  economia:
+    descripcion: >
+      Noticias sobre la economía panameña: inflación, empleo y desempleo, salarios,
+      impuestos, comercio, inversión, bancos y el presupuesto del Estado.
+    semillas:
+      - inflación
+      - desempleo
+      - empleo formal
+      - salario mínimo
+      - impuestos
+      - presupuesto del Estado
+      - Ministerio de Economía y Finanzas
+      - inversión extranjera
+      - comercio exterior
+      - crecimiento económico
+      - deuda pública
+      - mercado laboral
+
+  logistica_canal:
+    descripcion: >
+      Noticias sobre el Canal de Panamá, puertos, tránsito de buques, logística
+      marítima, rutas comerciales y la competitividad del centro logístico del país.
+    semillas:
+      - Canal de Panamá
+      - tránsito de buques
+      - puertos
+      - carga marítima
+      - logística portuaria
+      - zona libre de Colón
+      - esclusas
+      - peajes del canal
+      - cadena de suministro
+      - comercio marítimo
+      - Autoridad del Canal de Panamá
+      - calado del canal
+
+  turismo:
+    descripcion: >
+      Noticias sobre turismo en Panamá: visitantes, hoteles, playas, cruceros,
+      aerolíneas, promoción turística y eventos que atraen viajeros.
+    semillas:
+      - turismo
+      - turistas
+      - hoteles
+      - playas
+      - cruceros
+      - aerolíneas
+      - Autoridad de Turismo de Panamá
+      - destino turístico
+      - ocupación hotelera
+      - visitantes extranjeros
+      - viajes
+      - temporada alta turística
+
+  servicios_publicos:
+    descripcion: >
+      Noticias sobre servicios públicos en Panamá: agua potable, energía eléctrica,
+      transporte público, salud pública, educación y recolección de basura.
+    semillas:
+      - agua potable
+      - cortes de energía eléctrica
+      - IDAAN
+      - transporte público
+      - Metro de Panamá
+      - salud pública
+      - hospitales
+      - educación pública
+      - recolección de basura
+      - apagones
+      - servicio eléctrico
+      - escuelas públicas
+
+  eventos_naturales:
+    descripcion: >
+      Noticias sobre eventos naturales en Panamá: sismos y terremotos, inundaciones,
+      sequía, tormentas, deslizamientos y otros fenómenos climáticos o geológicos.
+    semillas:
+      - terremoto
+      - sismo
+      - inundaciones
+      - sequía
+      - tormenta tropical
+      - deslizamiento de tierra
+      - fenómeno de El Niño
+      - lluvias intensas
+      - alerta meteorológica
+      - temporada de lluvias
+      - desastre natural
+      - crecida de río
+
+  regulacion:
+    descripcion: >
+      Noticias sobre leyes, decretos, regulaciones y decisiones de instituciones del
+      Estado panameño: Asamblea Nacional, nuevas leyes, reglamentos y fallos judiciales.
+    semillas:
+      - Asamblea Nacional
+      - proyecto de ley
+      - decreto ejecutivo
+      - reglamento
+      - Corte Suprema de Justicia
+      - fallo judicial
+      - nueva ley
+      - reforma legal
+      - normativa
+      - Gaceta Oficial
+      - Contraloría General
+      - marco regulatorio

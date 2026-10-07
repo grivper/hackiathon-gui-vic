@@ -14,3 +14,7 @@ data/raw/tvn_sitemap/
 data/raw/
 data/*.duckdb
 data/*.duckdb.tmp
+modelos/
+data/embeddings/
+data/motor.duckdb
+data/motor.duckdb.tmp
