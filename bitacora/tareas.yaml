@@ -292,3 +292,14 @@
     de bandeja, ficha, consulta y borrador. Depende del ensayo de carga por comando.'
   tipo: Tarea
   epica: EPI-004
+- id: TAR-031
+  tarea: 'Subir el recall de la clasificación: ajustar umbral_score y umbral_margen y re-evaluar con make
+    evaluar'
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-07T17:07-05:00
+  notas: 'Macro-F1 embeddings 0,258 y 90% de titulares en ''otros'' (data/evaluacion_clasificacion.md).
+    Medir cada cambio con make evaluar; coordinar con TAR-015 (Víctor, semillas en motor/temas.yaml) para
+    no pisar el mismo archivo. Muestra chica (93): no sobreajustar.'
+  tipo: Tarea
+  epica: EPI-003
