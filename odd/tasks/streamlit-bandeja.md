@@ -41,8 +41,8 @@ The data and grouping pipelines are available, but editors have no product surfa
 - Verification commands go through the delegated writer first; independent verification follows the native assessment plan.
 
 ## Tasks
-- [ ] **SIB-01 — Bootstrap a tested read-only inbox query.** Status: in progress; independent verification blocked. TAR-010 and TAR-017 are in progress; Streamlit, the app/query boundary, and focused tests are implemented. Checkpoint commit: `c61c28d` (pushed; task not closed).
-- [ ] **SIB-02 — Deliver the Bandeja screen.** Status: pending. Render topic/date controls and prioritized group cards, document startup on Windows without GNU Make, run focused and full checks, mark TAR-017 done while TAR-010 remains in progress, and commit the work unit. Commit evidence: pending.
+- [x] **SIB-01 — Bootstrap a tested read-only inbox query.** Status: done. TAR-010 and TAR-017 are in progress; Streamlit, the app/query boundary, and focused tests are implemented. Work-unit commit: `c61c28d` (pushed). Native review target `sha256:7417d65e460bae1752b558e90e8e1f7697b6095f0e1e18837dcdb86581ba3bf1` approved and acknowledged in lineage `review-aebb29f613a083d2`.
+- [ ] **SIB-02 — Deliver the Bandeja screen.** Status: in progress; awaiting delivery-shape decision because the reviewed branch already contains 359 changed lines. Render topic/date controls and prioritized group cards, invalidate cached inbox data when the DuckDB files change, document startup on Windows without GNU Make, run focused and full checks, mark TAR-017 done while TAR-010 remains in progress, and commit the work unit. Commit evidence: pending.
 
 ## Acceptance criteria
 - The app starts with `streamlit run app/app.py` from the activated Windows virtual environment.
@@ -61,6 +61,8 @@ The data and grouping pipelines are available, but editors have no product surfa
 - 2026-10-07: Parent spot check passed (`3 passed`), Streamlit started headlessly on port 8517, both DuckDB SHA-256 values stayed unchanged, and LSP diagnostics were clean for all three Python files.
 - 2026-10-07: Native reliability review lineage `review-e4cdfa14b87ef2b9` is blocked before verdict because the reviewer transport reported quota exhaustion (retry horizon approximately 72 hours). Native assessment therefore requires an independent verifier, but the configured `gentle-ai-verify` agent failed twice without executing tools. No review verdict or independent-verifier evidence exists; SIB-01 remains open.
 - 2026-10-07: Shared incomplete checkpoint `c61c28d` pushed to `origin/feat/streamlit-bandeja`; this preserves code and evidence for teammate continuation without claiming SIB-01 complete.
+- 2026-10-07: Local model profiles changed `review-reliability` and `gentle-ai-verify` to OpenAI-backed roles. Frozen lineage `review-aebb29f613a083d2` resumed, approved target `sha256:7417d65e460bae1752b558e90e8e1f7697b6095f0e1e18837dcdb86581ba3bf1`, and its exact acknowledgement burned the authority. Native assessment now reports `candidate.consumed: true`, medium risk, and no separate verifier required.
+- 2026-10-07: The approved reliability review reported one informational follow-up (`R3-stale-inbox-cache`, `app/app.py:16-20`): cached inbox results can outlive updated DuckDB files. This does not reopen SIB-01; SIB-02 will bind cache invalidation to database changes.
 
 ## Next step
-Resume frozen review lineage `review-e4cdfa14b87ef2b9` when reviewer capacity returns. Do not mark SIB-01 complete or start SIB-02 until the required independent verification or terminal native review is observed.
+Choose the delivery shape before SIB-02 implementation because the reviewed branch is already 359 changed lines and the next UI work unit will likely exceed the 400-line review heuristic.
