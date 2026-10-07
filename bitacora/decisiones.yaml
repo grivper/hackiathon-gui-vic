@@ -4,9 +4,8 @@
   estado: Vigente
   contexto: El teamspace oficial aún no está asignado y la documentación tiende a quedar para el final
   alternativas: Escribir directamente en Notion; documentar al cierre del evento
-  justificacion: >-
-    La bitácora vive en el repositorio con fecha de cada registro y se sincroniza en cada commit.
-    Migrar al teamspace consiste en cambiar el destino y volver a ejecutar la sincronización.
+  justificacion: La bitácora vive en el repositorio con fecha de cada registro y se sincroniza en cada
+    commit. Migrar al teamspace consiste en cambiar el destino y volver a ejecutar la sincronización.
   decidio: Guille
 - id: DEC-002
   decision: Modalidad editorial (TVN · principal)
@@ -22,7 +21,19 @@
   estado: Propuesta
   contexto: El documento no exige una base de datos específica y la demo debe funcionar sin internet (T10)
   alternativas: Notion como base de datos; SQLite; PostgreSQL
-  justificacion: >-
-    Un solo archivo, sin servidor y funciona offline. Notion requiere conexión, limita la API
-    a unas 3 solicitudes por segundo y no permite búsqueda semántica.
+  justificacion: Un solo archivo, sin servidor y funciona offline. Notion requiere conexión, limita la
+    API a unas 3 solicitudes por segundo y no permite búsqueda semántica.
+  decidio: Guille
+- id: DEC-004
+  decision: 'Período de datos: entrenar y probar con cualquier fecha y fuente; demo con datos recientes
+    (desde 2025-10-02, fin 2026-09-30 por confirmar)'
+  fecha: 2026-10-06T21:19-05:00
+  estado: Vigente
+  contexto: El PDF se contradice (30 días recientes vs rango [2024-01-01, 2025-10-01)). La organización
+    respondió que las fuentes del PDF son ejemplos, que el scraping es general y que las fechas viejas
+    valen para entrenar; la demo presencial exige datos recientes.
+  alternativas: Aplicar el rango de la sección 7 del PDF tal cual; usar solo los 30 días previos a la
+    extracción
+  justificacion: Es la respuesta oficial de la organización. GDELT DOC 2.0 solo indexa ~90 días y limita
+    a 1 consulta cada 5 s (con 6 s dio 429 desde esta IP, se usa pausa de 10 s).
   decidio: Guille

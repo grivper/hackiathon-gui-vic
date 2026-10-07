@@ -49,16 +49,16 @@
 - id: TAR-002
   tarea: Confirmar si la organización entrega el snapshot común y en qué fecha
   responsable: Guille
-  estado: Pendiente
-  fecha: '2026-10-06'
+  estado: Hecho
+  fecha: 2026-10-06T21:18-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-001
 - id: TAR-003
   tarea: Consultar la inconsistencia del intervalo de fechas (sección 6 vs. sección 7)
   responsable: Guille
-  estado: Pendiente
-  fecha: '2026-10-06'
+  estado: Hecho
+  fecha: 2026-10-06T21:18-05:00
   notas: Sección 7 excluye fuera de [2024-01-01, 2025-10-01); sección 6 pide los 30 días previos a la
     extracción
   tipo: Tarea

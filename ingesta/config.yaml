@@ -9,9 +9,10 @@ tvn:
 
 gdelt:
   url: https://api.gdeltproject.org/api/v2/doc/doc
-  dias_atras: 30        # ventana por defecto si no se pasa --desde/--hasta
+  # La API DOC solo indexa los últimos ~90 días (documentado por GDELT): no sirve para fechas más viejas.
+  dias_atras: 85        # ventana por defecto si no se pasa --desde/--hasta (máximo útil: 90)
   ventana_dias: 7       # cada consulta se divide en ventanas; si una llega a 250, se parte a la mitad
-  pausa_segundos: 6     # GDELT pide no más de una solicitud cada 5 segundos
+  pausa_segundos: 10    # GDELT pide 1 solicitud cada 5 s; con 6 s dio 429 desde esta IP, por eso 10
   # GDELT busca sobre texto traducido al inglés, por eso las palabras clave van en inglés.
   # Una consulta por fila; "tema" es el tema de BÚSQUEDA, no una etiqueta verificada.
   consultas:
@@ -39,16 +40,18 @@ banco_mundial:
 
 usgs:
   url: https://earthquake.usgs.gov/fdsnws/event/1/query
+  # Sirve para entrenar/probar (2024) y cubre el período reciente de la demo (desde 2025-10-02).
   desde: "2024-01-01T00:00:00"
-  hasta: "2024-12-31T23:59:59"
+  hasta: "2026-09-30T23:59:59"
   minlatitude: 5
   maxlatitude: 12
   minlongitude: -86
   maxlongitude: -76
   minmagnitude: 3
 
-# Regla de la sección 7: excluir registros fuera de [2024-01-01, 2025-10-01).
-# Desactivada hasta que la organización aclare el período (TAR-003). Si se activa, los
+# Regla de la sección 7 del PDF (conservar solo [2024-01-01, 2025-10-01)). La organización respondió que
+# ese rango queda excluido de la demo (válido desde 2025-10-02) y que para entrenar sirve cualquier fecha.
+# Por eso el filtro sigue desactivado en desarrollo (DEC-004). Si se activa, los
 # registros fuera del intervalo van a excluidos.csv con su motivo; no se borran.
 filtro_intervalo:
   activo: false
