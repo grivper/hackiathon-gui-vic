@@ -166,8 +166,8 @@
 - id: TAR-016
   tarea: Etiquetar a ciegas los 104 titulares de data/etiquetas/muestra_etiquetado.csv y correr make evaluar
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:10-05:00
+  estado: Hecho
+  fecha: 2026-10-07T16:11-05:00
   notas: Seguir data/etiquetas/LEEME_etiquetado.md. No mirar la salida del modelo. Con las etiquetas se
     reporta el macro-F1 que exige el reto.
   tipo: Tarea

@@ -36,3 +36,5 @@ Con el CSV ya etiquetado, correr `make evaluar` (o
 `python motor/evaluar.py --etiquetas data/etiquetas/muestra_etiquetado.csv`) para
 generar el reporte de macro-F1, precision/recall por tema, matriz de confusion y tasa
 de abstencion de cada metodo (embeddings y tfidf).
+
+Etiquetado por: Victor (AI) el 2026-10-07
