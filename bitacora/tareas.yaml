@@ -113,7 +113,7 @@
   epica: EPI-003
 - id: TAR-010
   tarea: Interfaz con bandeja, ficha, borrador y revisión
-  responsable: Guille
+  responsable: Víctor
   estado: Pendiente
   fecha: '2026-10-06'
   notas: ''
@@ -129,7 +129,7 @@
   epica: EPI-005
 - id: TAR-012
   tarea: Preparar y ensayar el pitch desde Notion con demo offline
-  responsable: Guille
+  responsable: Víctor
   estado: Pendiente
   fecha: '2026-10-06'
   notas: ''
@@ -172,3 +172,101 @@
     reporta el macro-F1 que exige el reto.
   tipo: Tarea
   epica: EPI-003
+- id: TAR-017
+  tarea: 'Interfaz: bandeja de temas y grupos priorizados con filtros por tema y fecha (CU-01)'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:18-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-004
+- id: TAR-018
+  tarea: 'Interfaz: ficha de evidencia del grupo con procedencias, corroboración y fecha original'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:18-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-004
+- id: TAR-019
+  tarea: 'Interfaz: panel de contexto oficial con indicadores del Banco Mundial y sismos USGS'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:18-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-004
+- id: TAR-020
+  tarea: 'Interfaz: caja de consulta con respuesta citada o abstención (CU-04)'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:18-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-004
+- id: TAR-021
+  tarea: 'Interfaz: borrador con citas y revisión humana con los 5 estados'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:19-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-004
+- id: TAR-022
+  tarea: Instalar Ollama en la máquina de la demo y medir la latencia de un modelo 7-8B (meta mediana
+    15 s)
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:19-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-023
+  tarea: Escribir las 40 consultas de desarrollo del benchmark
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:19-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-024
+  tarea: Preparar las 5 fichas finales, una con evidencia insuficiente
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:21-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-025
+  tarea: Medir tiempo manual frente a asistido en una tarea equivalente
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:21-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-026
+  tarea: Redactar las páginas de Notion Inicio, Riesgos y Presentación (bitacora/paginas)
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:21-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-027
+  tarea: Crear datos sintéticos para las pruebas T03, T05 y T07 y registrar los resultados con bitacora.py
+    prueba
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:21-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-028
+  tarea: 'Interfaz: conectar la interfaz a las tablas de data/motor.duckdb (contrato en documentacion/interfaz-brief.md)'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:21-05:00
+  notas: ''
+  tipo: Tarea
+  epica: EPI-004

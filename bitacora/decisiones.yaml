@@ -9,16 +9,16 @@
   decidio: Guille
 - id: DEC-002
   decision: Modalidad editorial (TVN · principal)
-  fecha: '2026-10-06'
-  estado: Propuesta
+  fecha: 2026-10-06T23:18-05:00
+  estado: Vigente
   contexto: El reto admite editorial o bancaria; la editorial es la recomendada
   alternativas: Modalidad bancaria; ambas modalidades
   justificacion: Es la recomendada, TVN es el patrocinador y el reto pide no dispersarse en dos productos
   decidio: Guille
 - id: DEC-003
   decision: Base de datos local (DuckDB); Notion solo como bitácora y presentación
-  fecha: '2026-10-06'
-  estado: Propuesta
+  fecha: 2026-10-06T23:18-05:00
+  estado: Vigente
   contexto: El documento no exige una base de datos específica y la demo debe funcionar sin internet (T10)
   alternativas: Notion como base de datos; SQLite; PostgreSQL
   justificacion: Un solo archivo, sin servidor y funciona offline. Notion requiere conexión, limita la
@@ -60,4 +60,14 @@
   justificacion: Zero-shot con embeddings corre en CPU sin red y sin etiquetas. Los grupos de contraste
     evitan falsos positivos (deportes, sucesos). El macro-F1 real se mide con la muestra ciega de 104
     titulares etiquetada por una persona.
+  decidio: Guille
+- id: DEC-007
+  decision: 'Roles: Guille en datos, motor e IA; Víctor en interfaz, Notion, pruebas de producto y pitch'
+  fecha: 2026-10-06T23:18-05:00
+  estado: Vigente
+  contexto: Dos personas y menos de 48 horas hasta la entrega. El reto evalúa utilidad para un editor
+    y trazabilidad en Notion.
+  alternativas: Un solo integrante con todo el código; reparto por pantallas
+  justificacion: El motor y la interfaz se conectan por las tablas de data/motor.duckdb, así que se pueden
+    construir en paralelo sin pisarse el código.
   decidio: Guille
