@@ -1,4 +1,4 @@
-.PHONY: instalar datos procesar test sync db arrancar modelos clasificar agrupar motor muestra evaluar
+.PHONY: instalar datos procesar test sync db arrancar modelos clasificar agrupar puntuar motor muestra evaluar
 
 instalar:
 	pip install -r requirements.txt
@@ -29,13 +29,17 @@ clasificar:     ## clasifica las noticias por tema (embeddings + baseline TF-IDF
 agrupar:        ## agrupa titulares del mismo evento y cuenta procedencias en data/motor.duckdb
 	python motor/agrupar.py
 
+puntuar:        ## calcula el puntaje de atencion y el estado de evidencia por grupo en data/motor.duckdb
+	python motor/puntuar.py
+
 muestra:        ## genera una muestra estratificada por mes para etiquetar a ciegas (data/etiquetas/)
 	python motor/muestra_etiquetado.py
 
 evaluar:        ## evalua embeddings/tfidf contra las etiquetas humanas (macro-F1, precision/recall, confusion)
 	python motor/evaluar.py
 
-motor:          ## modelo (si falta) + clasificación + agrupación; idempotente
+motor:          ## modelo (si falta) + clasificación + agrupación + puntaje; idempotente
 	@test -d modelos || $(MAKE) modelos
 	$(MAKE) clasificar
 	$(MAKE) agrupar
+	$(MAKE) puntuar

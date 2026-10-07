@@ -1,0 +1,122 @@
+# Reglas del puntaje de atención (TAR-008): P = 30R + 25I + 20U + 15N + 10E.
+# Cada componente se normaliza a 0-1 según los criterios de este archivo. Cambiar los
+# pesos, los tramos de urgencia o los rangos de prioridad es un cambio de reglas: se
+# debe subir `version` (motor/puntuar.py guarda la versión usada en cada fila de
+# `puntaje`, así una corrida vieja nunca se confunde con una nueva).
+version: v0.1
+
+# Pesos del componente (deben sumar 100; motor/puntuar.py.cargar_reglas lo valida).
+pesos:
+  R: 30
+  I: 25
+  U: 20
+  N: 15
+  E: 10
+
+# Rangos de prioridad sobre el puntaje 0-100, sin solapamiento (reto: bajo [0,40),
+# medio [40,70), alto [70,100]). `hi` es exclusivo salvo en el último rango.
+rangos:
+  bajo: {lo: 0, hi: 40}
+  medio: {lo: 40, hi: 70}
+  alto: {lo: 70, hi: 100}
+
+# Los 6 temas del reto (TAR-007, motor/temas.yaml). Cualquier otro valor de `tema`
+# (incluido `otros`, la abstención) vale R=0: no es uno de los temas que el reto pide
+# priorizar.
+temas_reto:
+  - economia
+  - logistica_canal
+  - turismo
+  - servicios_publicos
+  - eventos_naturales
+  - regulacion
+
+# R · Relevancia: medios panameños de alcance nacional (dominio tal cual se guarda en
+# `grupos.procedencias` / `grupo_noticias.procedencia`). Lista corta, a mano: son los
+# dominios realmente vistos en el dataset (ver `data/processed/fuentes.json`).
+medios_nacionales:
+  - tvn-2.com
+  - prensa.com
+  - panamaamerica.com.pa
+  - critica.com.pa
+  - diaadia.com.pa
+  - newsroompanama.com
+
+# E · Evidencia: qué procedencias cuentan como fuente primaria/oficial identificable
+# (no un medio de prensa secundario repitiendo a un tercero).
+fuentes_primarias:
+  sufijos_dominio:
+    - .gob.pa
+  dominios:
+    - mire.gob.pa
+
+# U · Urgencia: antigüedad de `fecha_max` del grupo respecto a `--fecha-ref`, en
+# tramos de horas. Se evalúan en orden; el primer tramo cuyo `horas_max` cubra la
+# antigüedad gana (`horas_max: null` = sin tope, cualquier antigüedad mayor).
+u_tramos:
+  - {horas_max: 24, score: 1.0}   # < 24h
+  - {horas_max: 72, score: 0.7}   # 1-3 dias
+  - {horas_max: 168, score: 0.4}  # 3-7 dias
+  - {horas_max: null, score: 0.1} # > 7 dias
+
+# I · Impacto potencial: alcance por palabras clave en el titular representativo del
+# grupo (coincidencia de subcadena, insensible a mayúsculas). Se evalúa en orden
+# nacional -> sectorial; si ninguna coincide, el alcance es local (score por defecto).
+impacto_alcance:
+  nacional:
+    score: 1.0
+    palabras_clave:
+      - panamá
+      - panama
+      - país
+      - nacional
+      - gobierno nacional
+      - todo el territorio
+      - asamblea nacional
+  sectorial:
+    score: 0.6
+    palabras_clave:
+      - sector
+      - gremio
+      - industria
+      - canal de panamá
+      - zona libre de colón
+      - comercio exterior
+      - turismo
+      - puertos
+  local:
+    score: 0.3
+
+# N · Novedad: un evento nuevo vale 1.0; una repetición (grupo marcado `es_repeticion`
+# por motor/agrupar.py) vale poco. La duplicación NUNCA sube el puntaje: no hay forma
+# de que `es_repeticion=true` devuelva más que `es_repeticion=false`.
+novedad:
+  nuevo: 1.0
+  repeticion: 0.2
+
+# E · Evidencia disponible: independiente del `estado_evidencia`. Se arma con (a)
+# procedencias independientes además de la primera (grupos.corroboracion, NUNCA
+# n_noticias: repetir no es corroborar), con un tope; (b) tener alguna procedencia
+# primaria/oficial; (c) tener un dato oficial vinculado (indicador del Banco Mundial
+# para el tema, o evento USGS en ventana de tiempo para eventos_naturales). Suma
+# capada en 1.0.
+evidencia:
+  peso_por_procedencia_adicional: 0.2
+  tope_procedencias: 0.4
+  peso_fuente_primaria: 0.4
+  peso_dato_oficial: 0.4
+  ventana_dias_evento_natural: 7
+  # Prefijos de `indicador_id` (Banco Mundial, tabla `indicadores` de
+  # data/senales.duckdb) que cuentan como dato oficial vinculado a cada tema. Temas sin
+  # entrada aquí (turismo, regulación) solo pueden obtener el dato oficial vía eventos
+  # USGS si aplica (eventos_naturales) o quedan sin esa vía (no se fuerza una relación
+  # sin sustento, ver etapa 3 del reto).
+  indicadores_por_tema:
+    economia:
+      - FP.CPI
+      - NY.GDP
+      - SL.UEM
+    logistica_canal:
+      - NE.EXP
+    servicios_publicos:
+      - IT.NET
