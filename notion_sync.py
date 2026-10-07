@@ -526,7 +526,7 @@ def main() -> None:
     ap.add_argument("--quiet", action="store_true", help="sin salida")
     args = ap.parse_args()
     SILENCIO = args.quiet
-    load_dotenv(RAIZ / ".env")
+    load_dotenv(RAIZ / ".env", override=True)
 
     datos = cargar_todo()
     errores = validar(datos)
