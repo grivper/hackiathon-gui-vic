@@ -109,3 +109,25 @@ def test_con_un_titular_se_puede_afirmar_lo_que_dice_y_se_abstiene_solo_sin_fuen
     s = prompt.construir_prompt(_paquete(), alcance="x")["sistema"].lower()
     assert "al menos un titular" in s
     assert "atribuy" in s  # lo afirmado se atribuye al medio, sin agregar detalles ajenos al titular
+
+
+def test_el_esquema_no_obliga_al_modelo_a_repetir_alcance_ni_vacios():
+    e = prompt.construir_prompt(_paquete(), alcance="x")["esquema"]
+    assert set(e["required"]) == {"tipo_respuesta", "afirmaciones"}  # el alcance lo fija el código, no el modelo
+    assert "alcance" not in e["properties"]
+
+
+def test_el_sistema_incluye_un_ejemplo_json_y_prohibe_nombres_de_campos_en_vacios():
+    s = prompt.construir_prompt(_paquete(), alcance="x")["sistema"]
+    assert "EJEMPLO" in s and '"tipo_respuesta": "respuesta"' in s
+    assert "nunca nombres de campos" in s.lower()
+
+
+def test_limita_la_cantidad_de_afirmaciones_para_no_truncar_el_json():
+    s = prompt.construir_prompt(_paquete(), alcance="x")["sistema"].lower()
+    assert "como máximo 4 afirmaciones" in s
+
+
+def test_el_ejemplo_no_trae_un_vacio_copiable():
+    s = prompt.construir_prompt(_paquete(), alcance="x")["sistema"]
+    assert '"vacios": []' in s and "Falta el dato oficial del mes" not in s

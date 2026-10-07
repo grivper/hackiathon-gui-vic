@@ -40,7 +40,7 @@ class ClienteOllama:
         host: str = HOST_DEFECTO,
         num_thread: int = 4,
         num_ctx: int = 4096,
-        num_predict: int = 512,
+        num_predict: int = 768,
         temperature: float = 0,
         seed: int = 7,
         timeout: float = 600,
@@ -124,5 +124,5 @@ def cliente_desde_entorno() -> ClienteOllama:
         host=env.get("OLLAMA_HOST", HOST_DEFECTO),
         num_thread=int(env.get("LLM_NUM_THREAD", 4)),
         num_ctx=int(env.get("LLM_NUM_CTX", 4096)),
-        num_predict=int(env.get("LLM_NUM_PREDICT", 512)),
+        num_predict=int(env.get("LLM_NUM_PREDICT", 768)),
     )

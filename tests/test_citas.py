@@ -115,3 +115,48 @@ def test_la_cita_no_puede_apuntar_a_otro_grupo_ni_a_ids_fuera_del_paquete():
     # un id plausible pero que no pertenece al paquete (p. ej. inyectado por una fuente)
     res = citas.validar_citas(_salida(_afirm("Algo.", "IND-PAN-SL.UEM.TOTL.ZS-2022", "valor")), PAQUETE)
     assert _motivos(res) == ["evidencia_inexistente"]
+
+
+# --------------------------------------------------------------------------- entidades inventadas
+
+PAQUETE_CLIMA = {
+    "grupo_id": "G-2", "tema": "eventos_naturales",
+    "items": [
+        {"id_evidencia": "N-c", "tipo": "noticia", "campos": {
+            "titulo": "Clima en Panamá: Martes con lluvias y tormentas eléctricas en varias regiones",
+            "medio": "tvn-2.com", "url": "http://c", "fecha_publicacion": None, "fecha_deteccion": "2026-07-14T10:00:00"}},
+        {"id_evidencia": "N-d", "tipo": "noticia", "campos": {
+            "titulo": "Veraguas se prepara para el tercer Simulacro Nacional de Evacuación",
+            "medio": "tvn-2.com", "url": "http://d", "fecha_publicacion": None, "fecha_deteccion": "2026-07-14T11:00:00"}},
+    ],
+}
+
+
+def _clima(texto, id_="N-c"):
+    return citas.validar_citas(_salida(_afirm(texto, id_, "titulo")), PAQUETE_CLIMA)
+
+
+def test_entidad_inventada_se_descarta():
+    res = _clima("El Instituto de Meteorología y Hidrología de Panamá pronosticó lluvias el martes.")
+    assert [d["motivo"] for d in res["descartadas"]] == ["entidad_no_sustentada"]
+
+
+def test_sigla_inventada_se_descarta():
+    res = _clima("Según el IMHPA, habrá tormentas eléctricas el martes.")
+    assert [d["motivo"] for d in res["descartadas"]] == ["entidad_no_sustentada"]
+
+
+@pytest.mark.parametrize("texto,id_", [
+    ("Según tvn-2.com, hay lluvias y tormentas eléctricas en varias regiones el martes.", "N-c"),
+    ("Clima en Panamá: se esperan lluvias el martes.", "N-c"),
+    ("Veraguas se prepara para el tercer Simulacro Nacional de Evacuación.", "N-d"),
+    ("La noticia indica que Veraguas se prepara. Según el medio, el simulacro es nacional.", "N-d"),
+])
+def test_entidades_presentes_en_la_evidencia_no_se_descartan(texto, id_):
+    res = _clima(texto, id_)
+    assert res["descartadas"] == [], res["descartadas"]
+
+
+def test_palabras_comunes_al_inicio_de_frase_no_cuentan_como_entidad():
+    res = _clima("Además, hay lluvias. Luego aparecen tormentas eléctricas el martes en varias regiones.")
+    assert res["descartadas"] == []

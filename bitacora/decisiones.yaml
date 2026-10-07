@@ -71,3 +71,16 @@
   justificacion: El motor y la interfaz se conectan por las tablas de data/motor.duckdb, así que se pueden
     construir en paralelo sin pisarse el código.
   decidio: Guille
+- id: DEC-008
+  decision: 'LLM local con Ollama: qwen2.5 7B para las fichas finales y 1.5B para pruebas rápidas'
+  fecha: 2026-10-07T17:27-05:00
+  estado: Vigente
+  contexto: En la CPU de desarrollo (i7-1165G7, 4 núcleos, sin GPU) la generación tarda 50-100 s por grupo
+    con el 7B y 12-54 s con el 1.5B; ningún modelo cumple la meta de mediana <= 15 s. El 3B de Qwen se
+    abstenía siempre y Llama 3.2 3B era lento y con JSON inválido.
+  alternativas: qwen2.5:3b, llama3.2:3b, llama3.1:8b (descartados por abstención sistemática, lentitud
+    o mala salida estructurada); API externa (no hay).
+  justificacion: El 7B da afirmaciones fieles con vacíos reales y cobertura de citas 100% en la muestra;
+    el 1.5B sirve para iterar rápido pero es más verboso. Las fichas finales se pregeneran offline y la
+    latencia real se reporta con mediana y p95 en lugar de ocultarla.
+  decidio: Guille

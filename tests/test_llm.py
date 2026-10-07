@@ -54,7 +54,7 @@ def test_ollama_envia_modelo_mensajes_esquema_y_opciones_deterministas(servidor)
     assert body["model"] == "qwen-test" and body["stream"] is False
     assert body["format"] == ESQUEMA
     assert body["messages"] == [{"role": "system", "content": "SISTEMA"}, {"role": "user", "content": "USUARIO"}]
-    assert body["options"] == {"num_thread": 4, "num_ctx": 4096, "num_predict": 512, "temperature": 0, "seed": 7}
+    assert body["options"] == {"num_thread": 4, "num_ctx": 4096, "num_predict": 768, "temperature": 0, "seed": 7}
     assert r.error is None and r.contenido == {"x": "hola"}
 
 
