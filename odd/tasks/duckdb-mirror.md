@@ -13,8 +13,11 @@ Load the processed snapshot into a local DuckDB and produce a quality report (T0
 - Agent automation: `AGENTS.md` session-start rule: after `git pull --rebase`, run `make arrancar`, announcing it first. Only one person regenerates the snapshot (`make datos`) and commits it.
 
 ## Tasks
-- [ ] T1 `motor/cargar_db.py` + `make db` / `make arrancar`: tables noticias, indicadores, eventos, excluidos, meta; invalid rows go to a rejects table, nulls kept
-- [ ] T2 Quality report (`data/reporte_calidad.md` and a table): counts, null rates, invalid dates, duplicate URLs/IDs, monthly coverage, World Bank grid completeness, manifest hash; non-zero exit only on fatal problems
-- [ ] T3 Tests (fixture with bad dates and nulls proving T01 behavior, idempotency by hash)
-- [ ] T4 .gitignore + commit the snapshot (processed, manifest, diccionario) and AGENTS.md session-start rule
-- [ ] T5 Real run, README, DEC-005, register T01 result in the bitacora, commit
+- [x] T1 `motor/cargar_db.py` + `make db` / `make arrancar`: tables noticias, indicadores, eventos, excluidos, meta; invalid rows go to a rejects table, nulls kept
+- [x] T2 Quality report (`data/reporte_calidad.md` and a table): counts, null rates, invalid dates, duplicate URLs/IDs, monthly coverage, World Bank grid completeness, manifest hash; non-zero exit only on fatal problems
+- [x] T3 Tests (fixture with bad dates and nulls proving T01 behavior, idempotency by hash)
+- [x] T4 .gitignore + commit the snapshot (processed, manifest, diccionario) and AGENTS.md session-start rule
+- [x] T5 Real run, README, DEC-005, register T01 result in the bitacora, commit
+
+## Evidence
+- Commits e185108, 4333923, ec65887 on feat/duckdb-mirror. Tests: 31 passed. Real run: 30154 noticias, 540 indicadores, 208 eventos, 0 rechazados, 34 s; second run skips by manifest hash.
