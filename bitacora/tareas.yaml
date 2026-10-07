@@ -270,3 +270,24 @@
   notas: ''
   tipo: Tarea
   epica: EPI-004
+- id: TAR-029
+  tarea: 'Ensayar la carga de un paquete de datos simulado: copiar a data/processed y data/manifest.json,
+    correr make db y make motor, y revisar data/reporte_calidad.md'
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-06T23:30-05:00
+  notas: Ensayo antes del jueves. El paquete oficial se carga por comando (el reto acepta carga por lote).
+    Verificar columnas y fechas del contrato (sección 7) y que las filas inválidas vayan a rechazados
+    sin frenar la carga. Si el formato difiere, ajustar motor/cargar_db.py.
+  tipo: Tarea
+  epica: EPI-002
+- id: TAR-030
+  tarea: 'Opcional, solo si sobra tiempo: pantalla ''Cargar paquete'' en la interfaz que dispare make
+    db y make motor'
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:30-05:00
+  notas: 'No es requisito del reto. Riesgo: si falla en la demo, falla frente al jurado. Hacerla después
+    de bandeja, ficha, consulta y borrador. Depende del ensayo de carga por comando.'
+  tipo: Tarea
+  epica: EPI-004
