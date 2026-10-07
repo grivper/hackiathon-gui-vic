@@ -486,3 +486,22 @@ def test_calcular_filas_vinculo_usgs_cuenta_como_fuente_primaria(reglas):
     assert con["estado_evidencia"] == "parcial"
     assert con["E"] == pytest.approx(sin["E"] + reglas["evidencia"]["peso_fuente_primaria"])
     assert "ev1" in con["motivos"]
+
+
+@pytest.mark.parametrize("titulo,esperado", [
+    ("Sismo de 5.9 en Costa Rica se sintió en Chiriquí", [5.9]),
+    ("Temblor de 4,3 sacude Colón", [4.3]),
+    ("Sismo de magnitud 4.6 cerca de San Miguel", [4.6]),
+    ("Sismo de 7,8 grados de magnitud en el mar", [7.8]),
+    ("Sismo de 2024 deja daños", []),  # un año no es una magnitud
+    ("Venezuela sufre sismos; 1.400 muertos", []),  # número sin contexto de magnitud
+])
+def test_magnitudes_del_titulo_lee_sismo_de_x(titulo, esperado):
+    assert sorted(set(puntuar._magnitudes_del_titulo(titulo))) == esperado
+
+
+def test_vinculo_usgs_con_titulo_sismo_de_x_punto_y(reglas):
+    ev = _evento("ev9", hora=datetime(2025, 10, 21, 22, 57), magnitud=5.9, lugar="21 km SSW of Quepos, Costa Rica")
+    titulo = "Sismo de 5.9 en Costa Rica se sintió en Chiriquí"
+    e = puntuar.evento_usgs_verificado(titulo, datetime(2025, 10, 22, 12, 0), [ev], reglas)
+    assert e is not None and e["id"] == "ev9"

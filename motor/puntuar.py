@@ -245,11 +245,13 @@ def _tokens_lugar(texto: str, genericos: set[str]) -> set[str]:
 
 
 def _magnitudes_del_titulo(titulo: str) -> list[float]:
-    """Magnitudes que el titular declara explícitamente: 'magnitud 4.6', 'de 4,3 grados'."""
+    """Magnitudes que el titular declara explícitamente: 'magnitud 4.6', 'de 4,3 grados', 'sismo de 5.9'."""
     texto = _sin_acentos(titulo)
     patrones = (
         r"magnitud(?:\s+de)?\s+(\d+(?:[.,]\d+)?)",
         r"(\d+(?:[.,]\d+)?)\s+(?:grados?|de\s+magnitud)",
+        # "sismo de 5.9": exige decimal para no confundir con años u otras cifras.
+        r"(?:sismos?|temblor(?:es)?|terremotos?)\s+de\s+(\d+[.,]\d+)",
     )
     valores = []
     for patron in patrones:
