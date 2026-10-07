@@ -26,6 +26,20 @@ fuentes y genera los archivos del contrato de la sección 7 en `data/`.
 El RSS solo trae noticias recientes: conviene ejecutar `python ingesta/descargar_snapshot.py --solo tvn`
 varias veces durante el reto; las capturas se acumulan y se deduplican.
 Para otro período de GDELT: `--solo gdelt --desde 2025-07-01 --hasta 2025-09-30`.
+### Historial de TVN por sitemaps
+
+El RSS solo trae ~150 ítems recientes y GDELT solo cubre ~90 días (y devuelve 429 con facilidad). Para el
+historial se usan los sitemaps mensuales de TVN (`tvn_sitemap_contents_AAAA_MM.xml`, declarados en su `robots.txt`):
+
+```
+python ingesta/descargar_snapshot.py --solo sitemaps            # de 2025-10 a hoy (config: tvn.sitemaps)
+python ingesta/descargar_snapshot.py --solo sitemaps --refrescar # vuelve a bajar todos los meses
+```
+
+Solo se guardan título, URL y fecha (no se descarga ningún artículo). **`fecha_deteccion` es el `lastmod` del
+sitemap, no la fecha de publicación**, por eso `fecha_publicacion` queda vacía. Al deduplicar por URL, el RSS
+gana sobre el sitemap y el sitemap sobre GDELT. Los XML crudos no se suben a git.
+
 El `manifest.json` alimenta automáticamente el Catálogo de datos en Notion.
 
 ### Período y fuentes (respuesta de la organización)

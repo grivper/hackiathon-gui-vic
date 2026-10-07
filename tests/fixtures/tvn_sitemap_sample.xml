@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://www.tvn-2.com/nacionales/canal-de-panama-anuncia-restriccion-de-calado_1_123456.html</loc>
+    <lastmod>2026-09-15T02:11:34-05:00</lastmod>
+    <image:image>
+      <image:loc>https://www.tvn-2.com/img/canal.jpg</image:loc>
+      <image:title>Canal de Panamá anuncia restricción de calado</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.tvn-2.com/economia/inflacion-sube-en-septiembre_2_654321.html</loc>
+    <lastmod>2026-09-20T10:00:00Z</lastmod>
+  </url>
+  <url>
+    <loc>no-es-una-url-valida</loc>
+    <lastmod>2026-09-21T10:00:00Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.tvn-2.com/opinion/</loc>
+    <lastmod>2026-09-22T10:00:00Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.tvn-2.com/nacionales/canal-de-panama-anuncia-restriccion-de-calado_1_123456.html?utm_source=sitemap</loc>
+    <lastmod>2026-09-23T08:00:00Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.tvn-2.com/deportes/seleccion-gana-partido-clave_3_999999.html</loc>
+    <lastmod>2026-09-25T15:30:00-05:00</lastmod>
+    <image:image>
+      <image:loc>https://www.tvn-2.com/img/futbol.jpg</image:loc>
+      <image:title>Selección gana partido clave</image:title>
+    </image:image>
+  </url>
+</urlset>
