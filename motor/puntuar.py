@@ -27,6 +27,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import re
+import unicodedata
 import sys
 import time
 from collections import Counter
@@ -36,7 +38,7 @@ from pathlib import Path
 import duckdb
 import yaml
 
-SCHEMA_VERSION = 2  # v0.2: nueva columna `contexto_oficial` en `puntaje` (TAR-008 ampliacion)
+SCHEMA_VERSION = 3  # v0.3: nueva columna `evento_usgs_id` en `puntaje` (vínculo USGS verificable, TAR-008)
 RUTA_REGLAS_DEFECTO = Path(__file__).resolve().parent / "reglas_puntaje.yaml"
 
 
@@ -233,18 +235,77 @@ def contexto_oficial_de(
     return ""
 
 
+def _sin_acentos(texto: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFKD", texto.lower()) if not unicodedata.combining(c))
+
+
+def _tokens_lugar(texto: str, genericos: set[str]) -> set[str]:
+    palabras = re.findall(r"[a-z]{4,}", _sin_acentos(texto))
+    return {p for p in palabras if p not in genericos}
+
+
+def _magnitudes_del_titulo(titulo: str) -> list[float]:
+    """Magnitudes que el titular declara explícitamente: 'magnitud 4.6', 'de 4,3 grados'."""
+    texto = _sin_acentos(titulo)
+    patrones = (
+        r"magnitud(?:\s+de)?\s+(\d+(?:[.,]\d+)?)",
+        r"(\d+(?:[.,]\d+)?)\s+(?:grados?|de\s+magnitud)",
+    )
+    valores = []
+    for patron in patrones:
+        valores += [float(m.replace(",", ".")) for m in re.findall(patron, texto)]
+    return valores
+
+
+def evento_usgs_verificado(titulo: str | None, fecha_max: datetime, eventos: list[dict], reglas: dict) -> dict | None:
+    """Vínculo verificable titular -> evento USGS (v0.3). Exige TODO: (a) palabra clave
+    de sismo en el titular, (b) magnitud declarada a <= `tolerancia_magnitud` del evento,
+    (c) `fecha_max - tiempo_evento` dentro de [-ventana_antes_horas, +ventana_despues_horas]
+    (la noticia no puede ser muy anterior al sismo ni más de 48 h posterior), (d) algún
+    token de lugar del titular presente en `place` (sin acentos, sin palabras genéricas) y
+    (e) un único evento cumple todo. Si falla algo, devuelve None: no se fuerza el vínculo."""
+    if not titulo:
+        return None
+    cfg = reglas["vinculo_usgs"]
+    texto = _sin_acentos(titulo)
+    if not any(_sin_acentos(k) in texto for k in cfg["palabras_clave_sismo"]):
+        return None
+    magnitudes = _magnitudes_del_titulo(titulo)
+    if not magnitudes:
+        return None
+    genericos = {_sin_acentos(g) for g in cfg["lugares_genericos"]}
+    tokens_titulo = _tokens_lugar(titulo, genericos)
+    antes = cfg["ventana_antes_horas"] * 3600
+    despues = cfg["ventana_despues_horas"] * 3600
+    candidatos = []
+    for e in eventos:
+        delta = (fecha_max - e["time"]).total_seconds()
+        if not (-antes <= delta <= despues):
+            continue
+        if not any(abs(m - e["magnitude"]) <= cfg["tolerancia_magnitud"] for m in magnitudes):
+            continue
+        if not (tokens_titulo & _tokens_lugar(e["place"] or "", genericos)):
+            continue
+        candidatos.append(e)
+    return candidatos[0] if len(candidatos) == 1 else None
+
+
 def ordenar_filas(filas: list[dict]) -> list[dict]:
     """Orden final: puntaje descendente; empate -> mayor U; empate -> grupo_id
     ascendente (para que el orden sea siempre el mismo, no dependa del orden de SQL)."""
     return sorted(filas, key=lambda f: (-f["puntaje"], -f["U"], f["grupo_id"]))
 
 
-def construir_motivos(tema: str, es_nacional: bool, alcance: str, R: float, I: float, U: float, N: float, E: float) -> str:
+def construir_motivos(
+    tema: str, es_nacional: bool, alcance: str, R: float, I: float, U: float, N: float, E: float,
+    evento_usgs_id: str | None = None,
+) -> str:
+    vinculo = f"; vínculo USGS verificado ({evento_usgs_id}) cuenta como fuente primaria" if evento_usgs_id else ""
     return (
         f"R={R} (tema={tema}, medio_nacional={es_nacional}); "
         f"I={I} (alcance={alcance}); U={U} (antigüedad vs fecha_ref); "
         f"N={N} (repetición={'sí' if N < 1.0 else 'no'}); E={E} (procedencias/fuente primaria; "
-        f"contexto oficial de nivel-tema no suma, ver contexto_oficial)"
+        f"contexto oficial de nivel-tema no suma, ver contexto_oficial){vinculo}"
     )
 
 
@@ -291,7 +352,7 @@ def cargar_grupos(out_path: Path) -> list[dict]:
     return grupos
 
 
-def cargar_contexto_oficial(db_path: Path) -> tuple[set[str], list[datetime]]:
+def cargar_contexto_oficial(db_path: Path) -> tuple[set[str], list[dict]]:
     """Indicadores del Banco Mundial para Panamá (set de `indicador_id`) y fechas de
     eventos sísmicos de USGS, ambos de solo lectura desde `--db`."""
     if not db_path.exists():
@@ -303,14 +364,21 @@ def cargar_contexto_oficial(db_path: Path) -> tuple[set[str], list[datetime]]:
                 "SELECT DISTINCT indicador_id FROM indicadores WHERE pais_iso3 = 'PAN'"
             ).fetchall()
         }
-        eventos = [fila[0] for fila in con.execute("SELECT time FROM eventos").fetchall()]
+        eventos = [
+            {"id": f[0], "time": f[1], "magnitude": f[2], "place": f[3]}
+            for f in con.execute("SELECT id, time, magnitude, place FROM eventos").fetchall()
+        ]
     finally:
         con.close()
     return indicadores, eventos
 
 
-def hash_entrada(grupos: list[dict], version_reglas: str, fecha_ref: datetime) -> str:
+def hash_entrada(
+    grupos: list[dict], version_reglas: str, fecha_ref: datetime, eventos: list[dict] | None = None
+) -> str:
     h = hashlib.sha256()
+    for e in sorted(eventos or [], key=lambda e: e["id"]):
+        h.update(f"{e['id']}|{e['time']}|{e['magnitude']}|{e['place']}".encode())
     h.update(version_reglas.encode())
     h.update(fecha_ref.isoformat().encode())
     for g in sorted(grupos, key=lambda g: g["grupo_id"]):
@@ -345,14 +413,17 @@ def calcular_filas(
     reglas: dict,
     fecha_ref: datetime,
     indicadores_disponibles: set[str],
-    fechas_eventos: list[datetime],
+    eventos: list[dict],
 ) -> list[dict]:
+    fechas_eventos = [e["time"] for e in eventos]
     filas = []
     for g in grupos:
         tema = g["tema"]
         es_nacional = es_medio_nacional(g["procedencias"], reglas)
         alcance = _alcance_de(g["titulo_representativo"], reglas)
-        primaria = es_fuente_primaria(g["procedencias"], reglas)
+        vinculo = evento_usgs_verificado(g["titulo_representativo"], g["fecha_max"], eventos, reglas)
+        evento_usgs_id = vinculo["id"] if vinculo else None
+        primaria = es_fuente_primaria(g["procedencias"], reglas) or vinculo is not None
         contexto_oficial = contexto_oficial_de(
             tema, g["fecha_max"], indicadores_disponibles, fechas_eventos, reglas
         )
@@ -369,8 +440,9 @@ def calcular_filas(
             "puntaje": puntaje, "prioridad": prioridad(puntaje, reglas["rangos"]),
             "estado_evidencia": estado_evidencia(g["corroboracion"], primaria),
             "version_reglas": reglas["version"],
-            "motivos": construir_motivos(tema, es_nacional, alcance, R, I, U, N, E),
+            "motivos": construir_motivos(tema, es_nacional, alcance, R, I, U, N, E, evento_usgs_id),
             "contexto_oficial": contexto_oficial,
+            "evento_usgs_id": evento_usgs_id,
         })
     return ordenar_filas(filas)
 
@@ -385,7 +457,7 @@ def escribir_resultados(out_path: Path, filas: list[dict], entrada_hash: str, fe
             CREATE TABLE puntaje (
                 grupo_id TEXT, tema TEXT, R DOUBLE, I DOUBLE, U DOUBLE, N DOUBLE, E DOUBLE,
                 puntaje DOUBLE, prioridad TEXT, estado_evidencia TEXT, version_reglas TEXT, motivos TEXT,
-                contexto_oficial TEXT
+                contexto_oficial TEXT, evento_usgs_id TEXT
             )
         """)
         con.execute("""
@@ -395,12 +467,12 @@ def escribir_resultados(out_path: Path, filas: list[dict], entrada_hash: str, fe
             )
         """)
         con.executemany(
-            "INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 (
                     f["grupo_id"], f["tema"], f["R"], f["I"], f["U"], f["N"], f["E"], f["puntaje"],
                     f["prioridad"], f["estado_evidencia"], f["version_reglas"], f["motivos"],
-                    f["contexto_oficial"],
+                    f["contexto_oficial"], f["evento_usgs_id"],
                 )
                 for f in filas
             ],
@@ -463,14 +535,14 @@ def main(argv: list[str] | None = None) -> int:
     else:
         fecha_ref = max(g["fecha_max"] for g in grupos)
 
-    entrada_hash = hash_entrada(grupos, reglas["version"], fecha_ref)
+    indicadores_disponibles, eventos = cargar_contexto_oficial(Path(args.db))
+    entrada_hash = hash_entrada(grupos, reglas["version"], fecha_ref, eventos)
     if not args.forzar and sin_cambios(out_path, entrada_hash):
         print(f"sin cambios: {out_path} ya refleja esta entrada ({entrada_hash[:12]}...)")
         return 0
 
     inicio = time.monotonic()
-    indicadores_disponibles, fechas_eventos = cargar_contexto_oficial(Path(args.db))
-    filas = calcular_filas(grupos, reglas, fecha_ref, indicadores_disponibles, fechas_eventos)
+    filas = calcular_filas(grupos, reglas, fecha_ref, indicadores_disponibles, eventos)
     escribir_resultados(out_path, filas, entrada_hash, fecha_ref)
     duracion = time.monotonic() - inicio
 

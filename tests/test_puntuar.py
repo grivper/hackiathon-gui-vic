@@ -34,7 +34,7 @@ def reglas() -> dict:
 # --------------------------------------------------------------------------- reglas_puntaje.yaml
 
 def test_reglas_puntaje_reales_cargan_y_los_pesos_suman_100(reglas):
-    assert reglas["version"] == "v0.2"
+    assert reglas["version"] == "v0.3"
     assert sum(reglas["pesos"].values()) == 100
 
 
@@ -318,9 +318,9 @@ def _crear_senales_db(ruta: Path) -> None:
         con.execute("CREATE TABLE indicadores (pais_iso3 TEXT, indicador_id TEXT)")
         for i in indicadores:
             con.execute("INSERT INTO indicadores VALUES (?, ?)", [i["pais_iso3"], i["indicador_id"]])
-        con.execute("CREATE TABLE eventos (time TIMESTAMP)")
-        for e in eventos:
-            con.execute("INSERT INTO eventos VALUES (?)", [e["time"]])
+        con.execute("CREATE TABLE eventos (id TEXT, time TIMESTAMP, magnitude DOUBLE, place TEXT)")
+        for i, e in enumerate(eventos):
+            con.execute("INSERT INTO eventos VALUES (?, ?, ?, ?)", [f"ev{i}", e["time"], 4.0, "lugar de prueba"])
     finally:
         con.close()
 
@@ -363,7 +363,7 @@ def test_pipeline_calcula_los_cuatro_grupos_del_fixture(dbs):
     assert eco["puntaje"] == 96.0
     assert eco["prioridad"] == "alto"
     assert eco["estado_evidencia"] == "suficiente"
-    assert eco["version_reglas"] == "v0.2"
+    assert eco["version_reglas"] == "v0.3"
     assert eco["motivos"]  # explicación no vacía
     assert eco["contexto_oficial"] == "FP.CPI.TOTL.ZG, NY.GDP.MKTP.KD.ZG"
 
@@ -423,3 +423,66 @@ def test_pipeline_es_reproducible_con_fecha_ref_fija(dbs):
     segunda = _filas_puntaje(out_path_2)["G-TUR1"]["puntaje"]
 
     assert primera == segunda == 41.0
+
+
+# --------------------------------------------------------------------------- vínculo USGS (v0.3)
+
+def _evento(id_="ev1", hora=datetime(2026, 8, 28, 20, 0), magnitud=4.6, lugar="10 km S of San Miguel, Panama"):
+    return {"id": id_, "time": hora, "magnitude": magnitud, "place": lugar}
+
+
+TITULO_OK = "Sismo de magnitud 4.6 se registró cerca de San Miguel"
+FECHA_OK = datetime(2026, 8, 29, 7, 0)  # 11 h después del evento
+
+
+def test_vinculo_usgs_verificado_con_todas_las_condiciones(reglas):
+    e = puntuar.evento_usgs_verificado(TITULO_OK, FECHA_OK, [_evento()], reglas)
+    assert e is not None and e["id"] == "ev1"
+
+
+def test_vinculo_usgs_acepta_coma_decimal_y_grados(reglas):
+    titulo = "Temblor de 4,5 grados sacude San Miguel"  # 4.5 vs 4.6: dentro de 0.2
+    assert puntuar.evento_usgs_verificado(titulo, FECHA_OK, [_evento()], reglas) is not None
+
+
+@pytest.mark.parametrize("titulo,fecha,evento", [
+    ("Gran desfile en San Miguel", FECHA_OK, _evento()),  # sin palabra clave
+    ("Sismo se registró cerca de San Miguel", FECHA_OK, _evento()),  # sin magnitud
+    ("Sismo de magnitud 5.0 cerca de San Miguel", FECHA_OK, _evento()),  # magnitud lejos
+    (TITULO_OK, datetime(2026, 9, 2, 7, 0), _evento()),  # más de 48 h después
+    (TITULO_OK, datetime(2026, 8, 28, 7, 0), _evento()),  # 13 h antes del evento
+    ("Sismo de magnitud 4.6 en Chiriquí", FECHA_OK, _evento()),  # lugar distinto
+    ("Sismo de magnitud 4.6 en Panamá", FECHA_OK, _evento()),  # solo lugar genérico
+])
+def test_vinculo_usgs_se_rechaza_si_falla_una_condicion(reglas, titulo, fecha, evento):
+    assert puntuar.evento_usgs_verificado(titulo, fecha, [evento], reglas) is None
+
+
+def test_vinculo_usgs_limites_de_ventana(reglas):
+    ev = _evento(hora=datetime(2026, 8, 28, 20, 0))
+    assert puntuar.evento_usgs_verificado(TITULO_OK, datetime(2026, 8, 28, 8, 0), [ev], reglas) is not None  # -12 h
+    assert puntuar.evento_usgs_verificado(TITULO_OK, datetime(2026, 8, 30, 20, 0), [ev], reglas) is not None  # +48 h
+
+
+def test_vinculo_usgs_ambiguo_no_se_fuerza(reglas):
+    eventos = [_evento("ev1"), _evento("ev2", hora=datetime(2026, 8, 28, 22, 0), magnitud=4.7)]
+    assert puntuar.evento_usgs_verificado(TITULO_OK, FECHA_OK, eventos, reglas) is None
+
+
+def test_vinculo_usgs_ignora_acentos(reglas):
+    ev = _evento(lugar="5 km N of Pedasí, Panama")
+    assert puntuar.evento_usgs_verificado("Sismo de magnitud 4.6 sacude Pedasi", FECHA_OK, [ev], reglas) is not None
+
+
+def test_calcular_filas_vinculo_usgs_cuenta_como_fuente_primaria(reglas):
+    g = {
+        "grupo_id": "G-SIS", "tema": "eventos_naturales", "corroboracion": 1, "es_repeticion": False,
+        "procedencias": "tvn-pa.com", "fecha_max": FECHA_OK, "titulo_representativo": TITULO_OK,
+    }
+    sin = puntuar.calcular_filas([g], reglas, FECHA_OK, set(), [])[0]
+    con = puntuar.calcular_filas([g], reglas, FECHA_OK, set(), [_evento()])[0]
+    assert sin["evento_usgs_id"] is None and sin["estado_evidencia"] == "insuficiente"
+    assert con["evento_usgs_id"] == "ev1"
+    assert con["estado_evidencia"] == "parcial"
+    assert con["E"] == pytest.approx(sin["E"] + reglas["evidencia"]["peso_fuente_primaria"])
+    assert "ev1" in con["motivos"]

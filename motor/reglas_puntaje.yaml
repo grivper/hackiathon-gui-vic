@@ -12,7 +12,14 @@
 # `contexto_oficial` de la tabla `puntaje` (texto plano, sin afirmar una relación
 # verificada). Alcance de `contexto_por_tema` reducido a economía (se retiran
 # servicios_publicos y logistica_canal, que no tenían sustento temático claro).
-version: v0.2
+#
+# v0.3: vínculo USGS verificable. Un grupo cuenta un evento oficial solo si el titular
+# trae palabra clave de sismo, una magnitud a menos de `tolerancia_magnitud` del evento,
+# un lugar compartido con `place` y el tiempo cuadra, y además solo UN evento cumple todo
+# (ver `vinculo_usgs`). Ese vínculo cuenta como fuente primaria para E y para
+# `estado_evidencia`, y queda explicado en `motivos` y en `puntaje.evento_usgs_id`.
+# Todo lo demás sigue siendo contexto.
+version: v0.3
 
 # Pesos del componente (deben sumar 100; motor/puntuar.py.cargar_reglas lo valida).
 pesos:
@@ -135,3 +142,37 @@ contexto_oficial:
       - NY.GDP
       - SL.UEM
       - NE.EXP
+
+# Vínculo verificable titular -> evento USGS (v0.3). `fecha_max - hora_del_evento` debe
+# estar en [-ventana_antes_horas, +ventana_despues_horas]: la noticia puede quedar hasta
+# 12 h "antes" del evento (desfase de fecha de detección) y hasta 48 h después.
+vinculo_usgs:
+  palabras_clave_sismo:
+    - sismo
+    - temblor
+    - terremoto
+    - telúrico
+    - réplica
+  tolerancia_magnitud: 0.2
+  ventana_antes_horas: 12
+  ventana_despues_horas: 48
+  # Palabras que se ignoran al comparar lugares (sin acentos, minúsculas): direcciones,
+  # palabras de USGS y el propio país, que no distinguen un evento de otro.
+  lugares_genericos:
+    - panama
+    - sismo
+    - sismos
+    - temblor
+    - region
+    - zona
+    - cerca
+    - sureste
+    - suroeste
+    - noreste
+    - noroeste
+    - south
+    - north
+    - east
+    - west
+    - near
+    - region

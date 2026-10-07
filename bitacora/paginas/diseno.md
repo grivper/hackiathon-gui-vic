@@ -12,7 +12,7 @@ DuckDB local. Ver DEC-003.
 ## Modelos y versiones
 - Embeddings: pendiente
 - LLM: pendiente
-- Reglas de puntaje: v0.1
+- Reglas de puntaje: v0.3
 ## Límites del sistema
 - Las noticias solo incluyen titular y metadatos
 - No etiqueta noticias como verdaderas o falsas
