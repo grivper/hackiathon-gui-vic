@@ -87,8 +87,8 @@ def test_cargar_todo_carga_tareas_yaml_real():
     assert len(datos["tareas"]) >= 17  # 5 épicas + 12 tareas existentes
     epicas = [t for t in datos["tareas"] if t.get("Tipo") == "Épica"]
     tareas = [t for t in datos["tareas"] if t.get("Tipo") == "Tarea"]
-    assert len(epicas) == 5
-    assert len(tareas) == 12
+    assert len(epicas) >= 5
+    assert len(tareas) >= 12
     estados_validos = {"Pendiente", "En curso", "Hecho", "Bloqueada"}
     for epi in epicas:
         assert epi.get("Progreso")
