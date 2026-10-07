@@ -114,8 +114,8 @@
 - id: TAR-010
   tarea: Interfaz con bandeja, ficha, borrador y revisión
   responsable: Víctor
-  estado: Pendiente
-  fecha: '2026-10-06'
+  estado: En curso
+  fecha: 2026-10-07T08:57-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004
@@ -175,8 +175,8 @@
 - id: TAR-017
   tarea: 'Interfaz: bandeja de temas y grupos priorizados con filtros por tema y fecha (CU-01)'
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:18-05:00
+  estado: En curso
+  fecha: 2026-10-07T08:57-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004
