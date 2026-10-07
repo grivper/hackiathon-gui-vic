@@ -11,3 +11,6 @@ __pycache__/
 data/raw/tvn/
 data/raw/tvn_sitemap/
 .env.oficial
+data/raw/
+data/*.duckdb
+data/*.duckdb.tmp

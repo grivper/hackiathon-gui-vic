@@ -3,3 +3,4 @@ PyYAML==6.0.3
 python-dotenv==1.2.4
 feedparser==6.0.14
 pytest==9.1.1
+duckdb==1.5.6
