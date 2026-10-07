@@ -1,0 +1,5 @@
+grupo_id,n_noticias,n_procedencias,procedencias,fecha_min,fecha_max,titulo_representativo,corroboracion,es_repeticion
+G-ECO1,2,2,tvn-2.com; mire.gob.pa,2026-01-10T08:00:00,2026-01-10T08:00:00,Gobierno nacional anuncia nuevo impuesto a la inversión,2,false
+G-TUR1,3,1,otromedio.com,2026-01-05T08:00:00,2026-01-05T08:00:00,El turismo del sector crece en la provincia,1,true
+G-OTR1,1,1,tvn-2.com,2026-01-10T07:00:00,2026-01-10T07:00:00,Resultado del partido de anoche,1,false
+G-NAT1,1,1,tvn-2.com,2026-01-09T12:00:00,2026-01-09T12:00:00,Temblor se siente en la capital,1,false
