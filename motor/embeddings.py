@@ -8,6 +8,7 @@ ejecución solo tenga que calcular los titulares nuevos (idempotente e increment
 """
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 
@@ -15,6 +16,29 @@ import numpy as np
 
 MODELOS_DIR = Path(__file__).resolve().parent.parent / "modelos"
 EMBEDDINGS_DIR = Path(__file__).resolve().parent.parent / "data" / "embeddings"
+
+
+def _modelos_dir_tiene_cache(modelos_dir: Path) -> bool:
+    """True si `modelos_dir` ya tiene algo descargado (no solo el directorio vacio)."""
+    return modelos_dir.exists() and any(modelos_dir.iterdir())
+
+
+def activar_modo_offline_si_hay_cache(modelos_dir: Path = MODELOS_DIR) -> bool:
+    """Si `modelos_dir` ya tiene el modelo cacheado, fuerza HF_HUB_OFFLINE=1 y
+    TRANSFORMERS_OFFLINE=1 (via setdefault, sin pisar un valor que el entorno ya haya
+    puesto) para que sentence-transformers / huggingface_hub nunca llamen a la red en
+    inferencia. Debe llamarse ANTES de importar sentence_transformers. Devuelve True si
+    activo el modo offline (o si ya estaba activo por el entorno)."""
+    if _modelos_dir_tiene_cache(modelos_dir):
+        os.environ.setdefault("HF_HUB_OFFLINE", "1")
+        os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+        return True
+    return False
+
+
+# Se evalua al importar el modulo (antes de que `cargar_modelo` importe
+# sentence_transformers) para que la cache local, si existe, nunca toque la red.
+activar_modo_offline_si_hay_cache()
 
 
 def _nombre_archivo_seguro(modelo: str) -> str:
@@ -28,10 +52,16 @@ def _rutas_cache(modelo: str, cache_dir: Path) -> tuple[Path, Path]:
 
 
 def cargar_modelo(modelo: str, modelos_dir: Path = MODELOS_DIR):
-    """Carga un SentenceTransformer desde la caché local si existe; si no, desde el hub."""
+    """Carga un SentenceTransformer desde la caché local si existe; si no, desde el hub.
+
+    Si `modelos_dir` ya tiene el modelo cacheado, activa el modo offline de
+    huggingface_hub/transformers antes de importar sentence_transformers, para que la
+    inferencia no intente red (ni siquiera una verificación de versión).
+    """
+    activar_modo_offline_si_hay_cache(modelos_dir)
     from sentence_transformers import SentenceTransformer
 
-    if modelos_dir.exists() and any(modelos_dir.iterdir()):
+    if _modelos_dir_tiene_cache(modelos_dir):
         return SentenceTransformer(modelo, cache_folder=str(modelos_dir))
     return SentenceTransformer(modelo)
 

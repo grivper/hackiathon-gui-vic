@@ -32,28 +32,37 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from motor import embeddings as emb_mod  # noqa: E402
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2  # v2: agrega la columna `contraste` y los prototipos de contraste.
 RUTA_TEMAS_DEFECTO = Path(__file__).resolve().parent / "temas.yaml"
 
 
 # --------------------------------------------------------------------------- temas.yaml
 
-def cargar_temas(ruta: Path) -> tuple[dict, list[dict]]:
-    """Lee motor/temas.yaml. Devuelve (parametros, lista de temas con su `texto` prototipo)."""
-    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
-    parametros = datos.get("parametros", {})
-    temas = []
-    for nombre, info in datos.get("temas", {}).items():
+def _grupos_desde(datos: dict, clave: str) -> list[dict]:
+    grupos = []
+    for nombre, info in (datos.get(clave) or {}).items():
         descripcion = (info.get("descripcion") or "").strip()
         semillas = info.get("semillas") or []
         texto = descripcion + ". " + ". ".join(semillas)
-        temas.append({
+        grupos.append({
             "nombre": nombre,
             "descripcion": descripcion,
             "semillas": semillas,
             "texto": texto,
         })
-    return parametros, temas
+    return grupos
+
+
+def cargar_temas(ruta: Path) -> tuple[dict, list[dict], list[dict]]:
+    """Lee motor/temas.yaml. Devuelve (parametros, temas, grupos_contraste), cada uno con
+    su `texto` prototipo. `grupos_contraste` son los bloques de ruido (deportes, sucesos,
+    etc.) usados solo para que el vecino mas cercano tenga donde caer cuando el titular
+    no es ninguno de los 6 temas; nunca son un resultado valido de `tema`."""
+    datos = yaml.safe_load(ruta.read_text(encoding="utf-8"))
+    parametros = datos.get("parametros", {})
+    temas = _grupos_desde(datos, "temas")
+    grupos_contraste = _grupos_desde(datos, "contraste")
+    return parametros, temas, grupos_contraste
 
 
 def hash_archivo(ruta: Path) -> str:
@@ -62,45 +71,63 @@ def hash_archivo(ruta: Path) -> str:
 
 # --------------------------------------------------------------------------- clasificación genérica
 
-def _top2(fila_scores: np.ndarray, nombres_temas: list[str]) -> tuple[str, float, str | None, float]:
-    """Dado un vector de scores (uno por tema), devuelve (mejor_tema, score, segundo_tema, margen)."""
+def _top2(fila_scores: np.ndarray, nombres_combinados: list[str]) -> tuple[str, float, str | None, float]:
+    """Dado un vector de scores (uno por prototipo, temas + contraste), devuelve
+    (mejor_nombre, score, segundo_nombre, margen). El margen es siempre contra el mejor
+    competidor de cualquier tipo (tema o contraste)."""
     orden = np.argsort(fila_scores)[::-1]
     mejor_idx = orden[0]
-    mejor_tema = nombres_temas[mejor_idx]
+    mejor_nombre = nombres_combinados[mejor_idx]
     mejor_score = float(fila_scores[mejor_idx])
     if len(orden) > 1:
         segundo_idx = orden[1]
-        segundo_tema = nombres_temas[segundo_idx]
+        segundo_nombre = nombres_combinados[segundo_idx]
         segundo_score = float(fila_scores[segundo_idx])
     else:
-        segundo_tema = None
+        segundo_nombre = None
         segundo_score = 0.0
     margen = mejor_score - segundo_score
-    return mejor_tema, mejor_score, segundo_tema, margen
+    return mejor_nombre, mejor_score, segundo_nombre, margen
 
 
 def clasificar_matriz(
     matriz_similitud: np.ndarray,
-    nombres_temas: list[str],
+    nombres_combinados: list[str],
+    nombres_temas: list[str] | set[str],
     umbral_score: float,
     umbral_margen: float,
-) -> list[tuple[str, float, str | None, float]]:
-    """matriz_similitud: (n_titulares, n_temas). Devuelve una lista de
-    (tema, score, segundo_tema, margen) por titular; `tema` es `otros` si abstiene."""
+) -> list[tuple[str, float, str | None, float, str | None]]:
+    """matriz_similitud: (n_titulares, n_prototipos), columnas en el orden de
+    `nombres_combinados` (temas del reto + grupos de contraste). `nombres_temas` son los
+    nombres validos de tema (sin contraste). Devuelve una lista de
+    (tema, score, segundo, margen, contraste) por titular:
+      - si el prototipo mas cercano es un grupo de contraste: tema=`otros`,
+        contraste=<nombre del grupo que gano>.
+      - si el prototipo mas cercano es un tema: aplica las reglas de umbral_score /
+        umbral_margen de siempre (margen contra el mejor competidor, sea tema o
+        contraste); si abstiene, tema=`otros` y contraste=None (no hay un grupo de
+        contraste culpable, es simplemente ambiguo entre temas).
+    `segundo` es el segundo prototipo mas cercano de cualquier tipo (diagnostico).
+    """
+    nombres_temas = set(nombres_temas)
     resultados = []
     for fila in matriz_similitud:
-        tema, score, segundo_tema, margen = _top2(fila, nombres_temas)
+        mejor_nombre, score, segundo, margen = _top2(fila, nombres_combinados)
+        if mejor_nombre not in nombres_temas:
+            resultados.append(("otros", score, segundo, margen, mejor_nombre))
+            continue
         if score < umbral_score or margen < umbral_margen:
-            tema = "otros"
-        resultados.append((tema, score, segundo_tema, margen))
+            resultados.append(("otros", score, segundo, margen, None))
+        else:
+            resultados.append((mejor_nombre, score, segundo, margen, None))
     return resultados
 
 
 # --------------------------------------------------------------------------- método embeddings
 
-def construir_prototipos_embeddings(encoder, temas: list[dict]) -> np.ndarray:
-    """(n_temas, dim) normalizado L2, mismo orden que `temas`."""
-    textos = [t["texto"] for t in temas]
+def construir_prototipos_embeddings(encoder, grupos: list[dict]) -> np.ndarray:
+    """(n_grupos, dim) normalizado L2, mismo orden que `grupos` (temas o contraste)."""
+    textos = [g["texto"] for g in grupos]
     return emb_mod.codificar(encoder, textos)
 
 
@@ -108,24 +135,27 @@ def clasificar_embeddings(
     encoder,
     modelo: str,
     temas: list[dict],
+    contraste: list[dict],
     ids: list[str],
     titulos: list[str],
     umbral_score: float,
     umbral_margen: float,
     cache_dir: Path | None = None,
-) -> list[tuple[str, float, str | None, float]]:
+) -> list[tuple[str, float, str | None, float, str | None]]:
     # Resuelto en llamada (no como default fijo) para que un monkeypatch de
     # emb_mod.EMBEDDINGS_DIR (tests) surta efecto.
     if cache_dir is None:
         cache_dir = emb_mod.EMBEDDINGS_DIR
     nombres_temas = [t["nombre"] for t in temas]
-    prototipos = construir_prototipos_embeddings(encoder, temas)
+    grupos = temas + contraste
+    nombres_combinados = [g["nombre"] for g in grupos]
+    prototipos = construir_prototipos_embeddings(encoder, grupos)
 
     vectores_por_id = emb_mod.embeddings_incrementales(encoder, modelo, ids, titulos, cache_dir)
     matriz = np.vstack([vectores_por_id[id_] for id_ in ids])
 
     matriz_similitud = matriz @ prototipos.T
-    return clasificar_matriz(matriz_similitud, nombres_temas, umbral_score, umbral_margen)
+    return clasificar_matriz(matriz_similitud, nombres_combinados, nombres_temas, umbral_score, umbral_margen)
 
 
 # --------------------------------------------------------------------------- método tfidf
@@ -141,17 +171,20 @@ def construir_vectorizador_tfidf(titulos: list[str]):
 def clasificar_tfidf(
     vectorizador,
     temas: list[dict],
+    contraste: list[dict],
     titulos: list[str],
     umbral_score: float,
     umbral_margen: float,
-) -> list[tuple[str, float, str | None, float]]:
+) -> list[tuple[str, float, str | None, float, str | None]]:
     from sklearn.metrics.pairwise import cosine_similarity
 
     nombres_temas = [t["nombre"] for t in temas]
+    grupos = temas + contraste
+    nombres_combinados = [g["nombre"] for g in grupos]
     matriz_titulos = vectorizador.transform(titulos)
-    matriz_temas = vectorizador.transform([t["texto"] for t in temas])
-    matriz_similitud = cosine_similarity(matriz_titulos, matriz_temas)
-    return clasificar_matriz(matriz_similitud, nombres_temas, umbral_score, umbral_margen)
+    matriz_grupos = vectorizador.transform([g["texto"] for g in grupos])
+    matriz_similitud = cosine_similarity(matriz_titulos, matriz_grupos)
+    return clasificar_matriz(matriz_similitud, nombres_combinados, nombres_temas, umbral_score, umbral_margen)
 
 
 # --------------------------------------------------------------------------- IO
@@ -234,7 +267,7 @@ def escribir_resultados(
         con.execute("""
             CREATE TABLE clasificacion (
                 id_noticia TEXT, metodo TEXT, tema TEXT, score DOUBLE,
-                segundo_tema TEXT, margen DOUBLE, modelo TEXT
+                segundo_tema TEXT, margen DOUBLE, modelo TEXT, contraste TEXT
             )
         """)
         con.execute("""
@@ -244,7 +277,7 @@ def escribir_resultados(
             )
         """)
         con.executemany(
-            "INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?)", filas_clasificacion
+            "INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?, ?)", filas_clasificacion
         )
         con.execute(
             "INSERT INTO meta_clasificacion VALUES (?, ?, ?, ?, ?, ?)",
@@ -267,6 +300,7 @@ def imprimir_resumen(
     resultado_embeddings: list[tuple],
     resultado_tfidf: list[tuple],
     nombres_temas: list[str],
+    nombres_contraste: list[str],
 ) -> None:
     from collections import Counter
 
@@ -274,12 +308,18 @@ def imprimir_resumen(
     print(f"\nTitulares clasificados: {n}")
     for nombre_metodo, resultado in (("embeddings", resultado_embeddings), ("tfidf", resultado_tfidf)):
         conteo = Counter(tema for tema, *_ in resultado)
+        conteo_contraste = Counter(c for *_, c in resultado if c)
         otros = conteo.get("otros", 0)
         print(f"\n[{nombre_metodo}] conteo por tema:")
         for tema in nombres_temas + ["otros"]:
             if conteo.get(tema):
                 print(f"  - {tema}: {conteo[tema]}")
         print(f"  -> otros: {otros} ({100 * otros / n:.1f}%)" if n else "  -> otros: 0")
+        if conteo_contraste:
+            print(f"  -> de esos otros, ganados por un grupo de contraste ({sum(conteo_contraste.values())}):")
+            for grupo in nombres_contraste:
+                if conteo_contraste.get(grupo):
+                    print(f"     - {grupo}: {conteo_contraste[grupo]}")
 
     coincidencias = sum(
         1 for a, b in zip(resultado_embeddings, resultado_tfidf) if a[0] == b[0]
@@ -309,9 +349,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Error fatal: no existe {ruta_temas}", file=sys.stderr)
         return 1
 
-    parametros, temas = cargar_temas(ruta_temas)
+    parametros, temas, contraste = cargar_temas(ruta_temas)
     temas_sha256 = hash_archivo(ruta_temas)
     nombres_temas = [t["nombre"] for t in temas]
+    nombres_contraste = [c["nombre"] for c in contraste]
     modelo = parametros.get("modelo", "paraphrase-multilingual-MiniLM-L12-v2")
 
     filas_noticias = cargar_noticias(db_path, args.desde)
@@ -337,25 +378,25 @@ def main(argv: list[str] | None = None) -> int:
 
     encoder = emb_mod.cargar_modelo(modelo)
     resultado_embeddings = clasificar_embeddings(
-        encoder, modelo, temas, ids, titulos, umbral_score, umbral_margen
+        encoder, modelo, temas, contraste, ids, titulos, umbral_score, umbral_margen
     )
 
     vectorizador = construir_vectorizador_tfidf(titulos)
     resultado_tfidf = clasificar_tfidf(
-        vectorizador, temas, titulos, umbral_score_tfidf, umbral_margen_tfidf
+        vectorizador, temas, contraste, titulos, umbral_score_tfidf, umbral_margen_tfidf
     )
 
     filas_clasificacion = []
-    for id_, (tema, score, segundo, margen) in zip(ids, resultado_embeddings):
-        filas_clasificacion.append((id_, "embeddings", tema, score, segundo, margen, modelo))
-    for id_, (tema, score, segundo, margen) in zip(ids, resultado_tfidf):
-        filas_clasificacion.append((id_, "tfidf", tema, score, segundo, margen, "tfidf"))
+    for id_, (tema, score, segundo, margen, grupo_contraste) in zip(ids, resultado_embeddings):
+        filas_clasificacion.append((id_, "embeddings", tema, score, segundo, margen, modelo, grupo_contraste))
+    for id_, (tema, score, segundo, margen, grupo_contraste) in zip(ids, resultado_tfidf):
+        filas_clasificacion.append((id_, "tfidf", tema, score, segundo, margen, "tfidf", grupo_contraste))
 
     escribir_resultados(out_path, filas_clasificacion, modelo, parametros, temas_sha256, entrada_hash)
 
     duracion = time.monotonic() - inicio
     print(f"Clasificación completa en {duracion:.2f}s -> {out_path}")
-    imprimir_resumen(ids, resultado_embeddings, resultado_tfidf, nombres_temas)
+    imprimir_resumen(ids, resultado_embeddings, resultado_tfidf, nombres_temas, nombres_contraste)
     return 0
 
 

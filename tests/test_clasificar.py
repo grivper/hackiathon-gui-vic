@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import os
 from pathlib import Path
 
 import duckdb
@@ -47,7 +48,7 @@ class FakeEncoder:
 # --------------------------------------------------------------------------- temas.yaml
 
 def test_cargar_temas_lee_los_6_temas_y_parametros():
-    parametros, temas = clasificar.cargar_temas(RUTA_TEMAS)
+    parametros, temas, contraste = clasificar.cargar_temas(RUTA_TEMAS)
     nombres = {t["nombre"] for t in temas}
     assert nombres == {
         "economia", "logistica_canal", "turismo",
@@ -62,30 +63,75 @@ def test_cargar_temas_lee_los_6_temas_y_parametros():
         assert tema["descripcion"] in tema["texto"]
 
 
+def test_cargar_temas_lee_grupos_de_contraste():
+    _, _, contraste = clasificar.cargar_temas(RUTA_TEMAS)
+    nombres = {c["nombre"] for c in contraste}
+    assert {"deportes", "sucesos_policiales", "politica_general", "salud", "educacion"} <= nombres
+    for grupo in contraste:
+        assert grupo["descripcion"]
+        assert len(grupo["semillas"]) >= 8
+        assert grupo["descripcion"] in grupo["texto"]
+
+
 # --------------------------------------------------------------------------- abstención
 
 def test_clasificar_matriz_abstiene_por_score_bajo():
-    nombres_temas = ["a", "b"]
+    nombres_combinados = ["a", "b"]
     matriz = np.array([[0.05, 0.02]])  # ambos scores bajos
-    resultado = clasificar.clasificar_matriz(matriz, nombres_temas, umbral_score=0.3, umbral_margen=0.03)
+    resultado = clasificar.clasificar_matriz(
+        matriz, nombres_combinados, nombres_temas=["a", "b"], umbral_score=0.3, umbral_margen=0.03
+    )
     assert resultado[0][0] == "otros"
+    assert resultado[0][4] is None  # no gan\u00f3 ning\u00fan grupo de contraste, es ambig\u00fcedad entre temas
 
 
 def test_clasificar_matriz_abstiene_por_margen_bajo():
-    nombres_temas = ["a", "b"]
+    nombres_combinados = ["a", "b"]
     matriz = np.array([[0.50, 0.49]])  # score alto pero casi empatado
-    resultado = clasificar.clasificar_matriz(matriz, nombres_temas, umbral_score=0.3, umbral_margen=0.05)
+    resultado = clasificar.clasificar_matriz(
+        matriz, nombres_combinados, nombres_temas=["a", "b"], umbral_score=0.3, umbral_margen=0.05
+    )
     assert resultado[0][0] == "otros"
+    assert resultado[0][4] is None
 
 
 def test_clasificar_matriz_asigna_tema_claro():
-    nombres_temas = ["a", "b"]
+    nombres_combinados = ["a", "b"]
     matriz = np.array([[0.80, 0.10]])
-    resultado = clasificar.clasificar_matriz(matriz, nombres_temas, umbral_score=0.3, umbral_margen=0.03)
-    tema, score, segundo, margen = resultado[0]
+    resultado = clasificar.clasificar_matriz(
+        matriz, nombres_combinados, nombres_temas=["a", "b"], umbral_score=0.3, umbral_margen=0.03
+    )
+    tema, score, segundo, margen, contraste = resultado[0]
     assert tema == "a"
     assert segundo == "b"
     assert margen == pytest.approx(0.70)
+    assert contraste is None
+
+
+def test_clasificar_matriz_otros_por_grupo_de_contraste_guarda_el_nombre():
+    # "a" es un tema valido, "ruido" es un grupo de contraste: gana "ruido" -> otros,
+    # y se guarda cual grupo gano para poder explicarlo.
+    nombres_combinados = ["a", "ruido"]
+    matriz = np.array([[0.20, 0.70]])
+    resultado = clasificar.clasificar_matriz(
+        matriz, nombres_combinados, nombres_temas=["a"], umbral_score=0.3, umbral_margen=0.03
+    )
+    tema, score, segundo, margen, contraste = resultado[0]
+    assert tema == "otros"
+    assert contraste == "ruido"
+    assert segundo == "a"
+
+
+def test_clasificar_matriz_tema_claro_aunque_haya_contraste_de_fondo():
+    nombres_combinados = ["a", "ruido"]
+    matriz = np.array([[0.70, 0.10]])
+    resultado = clasificar.clasificar_matriz(
+        matriz, nombres_combinados, nombres_temas=["a"], umbral_score=0.3, umbral_margen=0.03
+    )
+    tema, score, segundo, margen, contraste = resultado[0]
+    assert tema == "a"
+    assert contraste is None
+    assert segundo == "ruido"
 
 
 # --------------------------------------------------------------------------- cache de embeddings incremental
@@ -122,6 +168,43 @@ def test_codificar_normaliza_l2():
     np.testing.assert_allclose(normas, 1.0, atol=1e-5)
 
 
+# --------------------------------------------------------------------------- modo offline
+
+def test_activa_offline_si_hay_cache_local(tmp_path, monkeypatch):
+    modelos_dir = tmp_path / "modelos"
+    modelos_dir.mkdir()
+    (modelos_dir / "algo.bin").write_bytes(b"x")  # simula que ya hay algo descargado
+    monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
+    monkeypatch.delenv("TRANSFORMERS_OFFLINE", raising=False)
+
+    activo = emb_mod.activar_modo_offline_si_hay_cache(modelos_dir)
+
+    assert activo is True
+    assert os.environ["HF_HUB_OFFLINE"] == "1"
+    assert os.environ["TRANSFORMERS_OFFLINE"] == "1"
+
+
+def test_no_activa_offline_si_no_hay_cache_local(tmp_path, monkeypatch):
+    modelos_dir = tmp_path / "modelos_vacio"  # ni siquiera existe
+    monkeypatch.delenv("HF_HUB_OFFLINE", raising=False)
+    monkeypatch.delenv("TRANSFORMERS_OFFLINE", raising=False)
+
+    activo = emb_mod.activar_modo_offline_si_hay_cache(modelos_dir)
+
+    assert activo is False
+    assert "HF_HUB_OFFLINE" not in os.environ
+    assert "TRANSFORMERS_OFFLINE" not in os.environ
+
+
+def test_no_pisa_un_valor_offline_ya_puesto_por_el_entorno(tmp_path, monkeypatch):
+    modelos_dir = tmp_path / "modelos_vacio"
+    monkeypatch.setenv("HF_HUB_OFFLINE", "0")  # el entorno ya decidio algo: no pisarlo
+
+    emb_mod.activar_modo_offline_si_hay_cache(modelos_dir)
+
+    assert os.environ["HF_HUB_OFFLINE"] == "0"
+
+
 # --------------------------------------------------------------------------- baseline TF-IDF (real, sin red)
 
 def test_tfidf_clasifica_fixture_razonablemente_bien():
@@ -129,10 +212,10 @@ def test_tfidf_clasifica_fixture_razonablemente_bien():
     titulos = [f["titulo"] for f in filas]
     esperados = [f["tema_esperado"] for f in filas]
 
-    _, temas = clasificar.cargar_temas(RUTA_TEMAS)
+    _, temas, contraste = clasificar.cargar_temas(RUTA_TEMAS)
     vectorizador = clasificar.construir_vectorizador_tfidf(titulos)
     resultado = clasificar.clasificar_tfidf(
-        vectorizador, temas, titulos, umbral_score=0.05, umbral_margen=0.0
+        vectorizador, temas, contraste, titulos, umbral_score=0.05, umbral_margen=0.0
     )
     predichos = [r[0] for r in resultado]
 
@@ -148,11 +231,11 @@ def test_tfidf_abstiene_en_titulares_no_relacionados():
     titulos = [f["titulo"] for f in filas]
     esperados = [f["tema_esperado"] for f in filas]
 
-    _, temas = clasificar.cargar_temas(RUTA_TEMAS)
+    _, temas, contraste = clasificar.cargar_temas(RUTA_TEMAS)
     vectorizador = clasificar.construir_vectorizador_tfidf(titulos)
     # Umbral de score alto para forzar abstención en los titulares ambiguos ("otros").
     resultado = clasificar.clasificar_tfidf(
-        vectorizador, temas, titulos, umbral_score=0.15, umbral_margen=0.02
+        vectorizador, temas, contraste, titulos, umbral_score=0.15, umbral_margen=0.02
     )
     predichos = {f["id_noticia"]: r[0] for f, r in zip(filas, resultado)}
     otros_ids = [f["id_noticia"] for f in filas if f["tema_esperado"] == "otros"]
@@ -236,10 +319,10 @@ def test_embeddings_reales_clasifican_fixture_razonablemente_bien():
     titulos = [f["titulo"] for f in filas]
     esperados = [f["tema_esperado"] for f in filas]
 
-    parametros, temas = clasificar.cargar_temas(RUTA_TEMAS)
+    parametros, temas, contraste = clasificar.cargar_temas(RUTA_TEMAS)
     encoder = emb_mod.cargar_modelo(parametros["modelo"])
     resultado = clasificar.clasificar_embeddings(
-        encoder, parametros["modelo"], temas,
+        encoder, parametros["modelo"], temas, contraste,
         [f["id_noticia"] for f in filas], titulos,
         umbral_score=parametros["umbral_score"], umbral_margen=parametros["umbral_margen"],
         cache_dir=Path("data/embeddings"),
@@ -247,3 +330,37 @@ def test_embeddings_reales_clasifican_fixture_razonablemente_bien():
     predichos = [r[0] for r in resultado]
     aciertos = sum(1 for pred, esp in zip(predichos, esperados) if pred == esp)
     assert aciertos / len(esperados) >= 0.6
+
+
+# ------------------------------------------------- set de regresi\u00f3n (etiquetas_mini.csv)
+
+ETIQUETAS_MINI_CSV = Path(__file__).parent / "fixtures" / "etiquetas_mini.csv"
+
+
+def leer_etiquetas_mini() -> list[dict]:
+    with ETIQUETAS_MINI_CSV.open(encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+@pytest.mark.skipif(not _modelo_cacheado(), reason="modelo no cacheado: correr 'make modelos' primero")
+def test_embeddings_reales_acuerdan_80pct_con_etiquetas_dev_mini():
+    """Set de regresi\u00f3n chico (24 titulares) escrito a ojo por el desarrollador, NO son
+    las etiquetas humanas ciegas de evaluaci\u00f3n (esas las produce muestra_etiquetado.py /
+    evaluar.py). Sirve para detectar regresiones obvias al tocar temas.yaml/umbrales."""
+    filas = leer_etiquetas_mini()
+    titulos = [f["titulo"] for f in filas]
+    esperados = [f["tema_humano"] for f in filas]
+
+    parametros, temas, contraste = clasificar.cargar_temas(RUTA_TEMAS)
+    encoder = emb_mod.cargar_modelo(parametros["modelo"])
+    resultado = clasificar.clasificar_embeddings(
+        encoder, parametros["modelo"], temas, contraste,
+        [f["id_noticia"] for f in filas], titulos,
+        umbral_score=parametros["umbral_score"], umbral_margen=parametros["umbral_margen"],
+        cache_dir=Path("data/embeddings"),
+    )
+    predichos = [r[0] for r in resultado]
+    aciertos = sum(1 for pred, esp in zip(predichos, esperados) if pred == esp)
+    acuerdo = aciertos / len(esperados)
+    print(f"\nAcuerdo con etiquetas_mini.csv (desarrollador, no evaluaci\u00f3n): {aciertos}/{len(esperados)} ({100*acuerdo:.1f}%)")
+    assert acuerdo >= 0.8
