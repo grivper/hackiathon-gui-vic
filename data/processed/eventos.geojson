@@ -1,0 +1,5003 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "fuente": "USGS",
+    "consulta": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01T00%3A00%3A00&endtime=2026-09-30T23%3A59%3A59&minlatitude=5&maxlatitude=12&minlongitude=-86&maxlongitude=-76&minmagnitude=3&orderby=time-asc",
+    "fecha_extraccion": "2026-10-07T02:23:17Z",
+    "aviso": "La caja geográfica no equivale al territorio de Panamá. Usar solo para hechos sísmicos."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "us6000m2a6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4658,
+          5.0822,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000m2a6",
+        "magnitude": 4.6,
+        "time": "2024-01-07T01:02:08Z",
+        "updated": "2024-03-09T21:39:51Z",
+        "longitude": -82.4658,
+        "latitude": 5.0822,
+        "depth": 10,
+        "place": "south of Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000m2a6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000m385",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.8273,
+          10.5395,
+          51.564
+        ]
+      },
+      "properties": {
+        "id": "us6000m385",
+        "magnitude": 4.3,
+        "time": "2024-01-12T01:44:05Z",
+        "updated": "2024-03-31T13:22:07Z",
+        "longitude": -85.8273,
+        "latitude": 10.5395,
+        "depth": 51.564,
+        "place": "19 km W of Sardinal, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000m385"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000m3yi",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -79.7804,
+          7.1797,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000m3yi",
+        "magnitude": 4.4,
+        "time": "2024-01-16T10:35:22Z",
+        "updated": "2024-04-23T15:09:29Z",
+        "longitude": -79.7804,
+        "latitude": 7.1797,
+        "depth": 10,
+        "place": "47 km SE of Pedasí, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000m3yi"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000m501",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1682,
+          9.3835,
+          47.467
+        ]
+      },
+      "properties": {
+        "id": "us6000m501",
+        "magnitude": 4.1,
+        "time": "2024-01-20T14:38:54Z",
+        "updated": "2024-03-29T17:37:55Z",
+        "longitude": -84.1682,
+        "latitude": 9.3835,
+        "depth": 47.467,
+        "place": "5 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000m501"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000ltuw",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.7184,
+          9.5312,
+          55.183
+        ]
+      },
+      "properties": {
+        "id": "us7000ltuw",
+        "magnitude": 4.4,
+        "time": "2024-01-25T23:50:40Z",
+        "updated": "2024-03-30T22:33:39Z",
+        "longitude": -83.7184,
+        "latitude": 9.5312,
+        "depth": 55.183,
+        "place": "18 km N of San Isidro, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000ltuw"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000lwas",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.752,
+          5.7787,
+          17.402
+        ]
+      },
+      "properties": {
+        "id": "us7000lwas",
+        "magnitude": 4.4,
+        "time": "2024-01-28T06:10:38Z",
+        "updated": "2024-03-30T22:35:24Z",
+        "longitude": -77.752,
+        "latitude": 5.7787,
+        "depth": 17.402,
+        "place": "53 km W of Nuquí, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000lwas"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000luhv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5807,
+          6.2056,
+          21.804
+        ]
+      },
+      "properties": {
+        "id": "us7000luhv",
+        "magnitude": 4.5,
+        "time": "2024-01-28T08:17:55Z",
+        "updated": "2024-03-30T22:34:42Z",
+        "longitude": -77.5807,
+        "latitude": 6.2056,
+        "depth": 21.804,
+        "place": "19 km W of Bahía Solano, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000luhv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000lxb1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.5906,
+          7.328,
+          16.804
+        ]
+      },
+      "properties": {
+        "id": "us7000lxb1",
+        "magnitude": 4.8,
+        "time": "2024-02-06T13:37:32Z",
+        "updated": "2024-04-20T19:33:26Z",
+        "longitude": -80.5906,
+        "latitude": 7.328,
+        "depth": 16.804,
+        "place": "11 km S of La Tronosa, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000lxb1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000ly8f",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9428,
+          8.2673,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000ly8f",
+        "magnitude": 4.4,
+        "time": "2024-02-10T07:28:20Z",
+        "updated": "2024-04-20T19:35:04Z",
+        "longitude": -82.9428,
+        "latitude": 8.2673,
+        "depth": 10,
+        "place": "8 km W of Puerto Armuelles, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000ly8f"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000lzgv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0477,
+          7.0504,
+          38.654
+        ]
+      },
+      "properties": {
+        "id": "us7000lzgv",
+        "magnitude": 4.7,
+        "time": "2024-02-15T18:27:12Z",
+        "updated": "2024-04-24T14:42:03Z",
+        "longitude": -77.0477,
+        "latitude": 7.0504,
+        "depth": 38.654,
+        "place": "26 km WNW of Murindó, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000lzgv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000lzsx",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.7243,
+          9.3855,
+          12.424
+        ]
+      },
+      "properties": {
+        "id": "us7000lzsx",
+        "magnitude": 4.2,
+        "time": "2024-02-17T02:29:26Z",
+        "updated": "2024-04-24T14:42:04Z",
+        "longitude": -83.7243,
+        "latitude": 9.3855,
+        "depth": 12.424,
+        "place": "3 km NW of San Isidro, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000lzsx"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000m01m",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0365,
+          8.3606,
+          50.379
+        ]
+      },
+      "properties": {
+        "id": "us7000m01m",
+        "magnitude": 4.4,
+        "time": "2024-02-18T17:42:23Z",
+        "updated": "2024-04-24T14:42:05Z",
+        "longitude": -77.0365,
+        "latitude": 8.3606,
+        "depth": 50.379,
+        "place": "28 km WSW of Necoclí, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000m01m"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000m1gm",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.2307,
+          6.8709,
+          49.262
+        ]
+      },
+      "properties": {
+        "id": "us7000m1gm",
+        "magnitude": 4.5,
+        "time": "2024-02-25T07:51:09Z",
+        "updated": "2024-05-02T15:50:14Z",
+        "longitude": -76.2307,
+        "latitude": 6.8709,
+        "depth": 49.262,
+        "place": "7 km WSW of Uramita, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000m1gm"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000mfie",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.7456,
+          6.3284,
+          51.878
+        ]
+      },
+      "properties": {
+        "id": "us6000mfie",
+        "magnitude": 4.5,
+        "time": "2024-02-27T22:41:52Z",
+        "updated": "2024-05-10T21:25:54Z",
+        "longitude": -76.7456,
+        "latitude": 6.3284,
+        "depth": 51.878,
+        "place": "29 km SSE of Bellavista, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000mfie"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000m46g",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.2688,
+          6.7417,
+          37.524
+        ]
+      },
+      "properties": {
+        "id": "us7000m46g",
+        "magnitude": 4.4,
+        "time": "2024-03-04T22:25:56Z",
+        "updated": "2024-05-15T17:35:06Z",
+        "longitude": -76.2688,
+        "latitude": 6.7417,
+        "depth": 37.524,
+        "place": "15 km WSW of Frontino, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000m46g"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000mjk7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1576,
+          8.4554,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000mjk7",
+        "magnitude": 4.5,
+        "time": "2024-03-18T10:08:54Z",
+        "updated": "2024-05-27T14:19:18Z",
+        "longitude": -84.1576,
+        "latitude": 8.4554,
+        "depth": 10,
+        "place": "89 km SW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000mjk7"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000m8pn",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1372,
+          5.4232,
+          41.556
+        ]
+      },
+      "properties": {
+        "id": "us7000m8pn",
+        "magnitude": 4.4,
+        "time": "2024-03-29T04:38:41Z",
+        "updated": "2024-06-01T21:55:48Z",
+        "longitude": -77.1372,
+        "latitude": 5.4232,
+        "depth": 41.556,
+        "place": "20 km WSW of Pie de Pató, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000m8pn"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mam6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.8935,
+          10.2007,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mam6",
+        "magnitude": 4.3,
+        "time": "2024-04-06T17:25:40Z",
+        "updated": "2024-06-12T21:51:56Z",
+        "longitude": -83.8935,
+        "latitude": 10.2007,
+        "depth": 10,
+        "place": "12 km W of Guápiles, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mam6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mam4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3932,
+          5.8994,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mam4",
+        "magnitude": 4.3,
+        "time": "2024-04-07T13:45:27Z",
+        "updated": "2024-06-12T21:51:56Z",
+        "longitude": -82.3932,
+        "latitude": 5.8994,
+        "depth": 10,
+        "place": "232 km SSW of Río Grande, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mam4"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000manz",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.61,
+          11.327,
+          193.447
+        ]
+      },
+      "properties": {
+        "id": "us7000manz",
+        "magnitude": 4.3,
+        "time": "2024-04-07T21:28:41Z",
+        "updated": "2024-06-12T21:51:56Z",
+        "longitude": -85.61,
+        "latitude": 11.327,
+        "depth": 193.447,
+        "place": "18 km NW of Cárdenas, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000manz"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mcrs",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.3325,
+          11.1271,
+          154
+        ]
+      },
+      "properties": {
+        "id": "us7000mcrs",
+        "magnitude": 5.5,
+        "time": "2024-04-17T21:21:54Z",
+        "updated": "2024-06-25T21:02:56Z",
+        "longitude": -85.3325,
+        "latitude": 11.1271,
+        "depth": 154,
+        "place": "20 km ESE of Cárdenas, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mcrs"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mdd4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.055,
+          8.9686,
+          15.199
+        ]
+      },
+      "properties": {
+        "id": "us7000mdd4",
+        "magnitude": 4.3,
+        "time": "2024-04-20T00:59:49Z",
+        "updated": "2024-06-25T21:03:11Z",
+        "longitude": -84.055,
+        "latitude": 8.9686,
+        "depth": 15.199,
+        "place": "52 km SSE of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mdd4"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000mtc6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.372,
+          7.5347,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000mtc6",
+        "magnitude": 5.4,
+        "time": "2024-04-24T01:20:42Z",
+        "updated": "2024-07-08T12:20:34Z",
+        "longitude": -82.372,
+        "latitude": 7.5347,
+        "depth": 10,
+        "place": "77 km SSW of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000mtc6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000mvsh",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6111,
+          7.8482,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000mvsh",
+        "magnitude": 4,
+        "time": "2024-04-24T01:35:29Z",
+        "updated": "2024-07-02T22:12:56Z",
+        "longitude": -82.6111,
+        "latitude": 7.8482,
+        "depth": 10,
+        "place": "35 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000mvsh"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000mvsk",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5491,
+          7.7773,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000mvsk",
+        "magnitude": 4,
+        "time": "2024-04-24T02:10:28Z",
+        "updated": "2024-07-02T22:12:56Z",
+        "longitude": -82.5491,
+        "latitude": 7.7773,
+        "depth": 10,
+        "place": "45 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000mvsk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000muin",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4869,
+          7.5103,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000muin",
+        "magnitude": 4.2,
+        "time": "2024-04-28T02:07:28Z",
+        "updated": "2024-07-02T22:12:48Z",
+        "longitude": -82.4869,
+        "latitude": 7.5103,
+        "depth": 10,
+        "place": "71 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000muin"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000muue",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3909,
+          7.6981,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000muue",
+        "magnitude": 4.5,
+        "time": "2024-04-29T09:00:03Z",
+        "updated": "2024-07-15T03:58:58Z",
+        "longitude": -82.3909,
+        "latitude": 7.6981,
+        "depth": 10,
+        "place": "60 km SSW of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000muue"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000n00i",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.5066,
+          6.8392,
+          48.925
+        ]
+      },
+      "properties": {
+        "id": "us6000n00i",
+        "magnitude": 4.3,
+        "time": "2024-05-21T09:58:18Z",
+        "updated": "2024-08-06T02:09:50Z",
+        "longitude": -76.5066,
+        "latitude": 6.8392,
+        "depth": 48.925,
+        "place": "31 km SW of Dabeiba, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000n00i"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000n0mu",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5111,
+          6.2666,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000n0mu",
+        "magnitude": 5.1,
+        "time": "2024-05-24T05:13:49Z",
+        "updated": "2024-08-06T02:10:13Z",
+        "longitude": -82.5111,
+        "latitude": 6.2666,
+        "depth": 10,
+        "place": "199 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000n0mu"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000n0zu",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9421,
+          8.4841,
+          8.724
+        ]
+      },
+      "properties": {
+        "id": "us6000n0zu",
+        "magnitude": 4.8,
+        "time": "2024-05-25T20:11:37Z",
+        "updated": "2024-08-06T02:10:23Z",
+        "longitude": -82.9421,
+        "latitude": 8.4841,
+        "depth": 8.724,
+        "place": "12 km WNW of Progreso, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000n0zu"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000n11l",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9655,
+          8.4976,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000n11l",
+        "magnitude": 4.6,
+        "time": "2024-05-26T04:37:10Z",
+        "updated": "2024-08-06T02:10:15Z",
+        "longitude": -82.9655,
+        "latitude": 8.4976,
+        "depth": 10,
+        "place": "14 km WSW of Canoas, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000n11l"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mnxc",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.743,
+          5.2718,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mnxc",
+        "magnitude": 4.3,
+        "time": "2024-05-30T07:10:46Z",
+        "updated": "2024-08-06T20:32:48Z",
+        "longitude": -82.743,
+        "latitude": 5.2718,
+        "depth": 10,
+        "place": "south of Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mnxc"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mpi9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1168,
+          9.5901,
+          56.621
+        ]
+      },
+      "properties": {
+        "id": "us7000mpi9",
+        "magnitude": 4.1,
+        "time": "2024-06-01T20:32:52Z",
+        "updated": "2024-08-06T20:32:49Z",
+        "longitude": -84.1168,
+        "latitude": 9.5901,
+        "depth": 56.621,
+        "place": "13 km SW of San Marcos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mpi9"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mqxx",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3251,
+          7.7136,
+          9.366
+        ]
+      },
+      "properties": {
+        "id": "us7000mqxx",
+        "magnitude": 4.6,
+        "time": "2024-06-07T13:49:22Z",
+        "updated": "2024-08-16T21:59:24Z",
+        "longitude": -82.3251,
+        "latitude": 7.7136,
+        "depth": 9.366,
+        "place": "57 km SSW of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mqxx"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mu61",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.342,
+          7.5184,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mu61",
+        "magnitude": 4.6,
+        "time": "2024-06-23T20:28:04Z",
+        "updated": "2024-08-30T18:17:05Z",
+        "longitude": -82.342,
+        "latitude": 7.5184,
+        "depth": 10,
+        "place": "78 km S of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mu61"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000n84y",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0329,
+          6.848,
+          41.197
+        ]
+      },
+      "properties": {
+        "id": "us6000n84y",
+        "magnitude": 4.6,
+        "time": "2024-06-25T19:03:26Z",
+        "updated": "2024-09-04T21:57:40Z",
+        "longitude": -77.0329,
+        "latitude": 6.848,
+        "depth": 41.197,
+        "place": "27 km WSW of Murindó, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000n84y"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000n91g",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6481,
+          5.9482,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000n91g",
+        "magnitude": 4.8,
+        "time": "2024-06-28T22:01:56Z",
+        "updated": "2024-09-04T21:57:43Z",
+        "longitude": -82.6481,
+        "latitude": 5.9482,
+        "depth": 10,
+        "place": "231 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000n91g"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mxr8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.676,
+          8.4598,
+          26.677
+        ]
+      },
+      "properties": {
+        "id": "us7000mxr8",
+        "magnitude": 5.3,
+        "time": "2024-07-08T09:54:53Z",
+        "updated": "2025-07-06T07:18:09Z",
+        "longitude": -82.676,
+        "latitude": 8.4598,
+        "depth": 26.677,
+        "place": "2 km SSW of Sioguí Abajo, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mxr8"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mxrn",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.686,
+          8.5352,
+          7.272
+        ]
+      },
+      "properties": {
+        "id": "us7000mxrn",
+        "magnitude": 4.3,
+        "time": "2024-07-08T12:31:29Z",
+        "updated": "2024-09-20T16:00:52Z",
+        "longitude": -82.686,
+        "latitude": 8.5352,
+        "depth": 7.272,
+        "place": "0 km SSW of Sioguí Arriba, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mxrn"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000myjw",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9086,
+          11.5502,
+          190.558
+        ]
+      },
+      "properties": {
+        "id": "us7000myjw",
+        "magnitude": 4.6,
+        "time": "2024-07-11T12:04:09Z",
+        "updated": "2024-09-20T16:00:54Z",
+        "longitude": -85.9086,
+        "latitude": 11.5502,
+        "depth": 190.558,
+        "place": "5 km NNW of Belén, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000myjw"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mz45",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7179,
+          8.1564,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mz45",
+        "magnitude": 5.4,
+        "time": "2024-07-13T21:34:00Z",
+        "updated": "2024-10-08T18:22:48Z",
+        "longitude": -82.7179,
+        "latitude": 8.1564,
+        "depth": 10,
+        "place": "17 km ENE of Limones, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mz45"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mz5u",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8119,
+          8.2877,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mz5u",
+        "magnitude": 4.4,
+        "time": "2024-07-14T05:53:05Z",
+        "updated": "2024-09-20T16:00:56Z",
+        "longitude": -82.8119,
+        "latitude": 8.2877,
+        "depth": 10,
+        "place": "4 km S of Manaca Civil, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mz5u"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mz83",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8776,
+          8.2214,
+          22.913
+        ]
+      },
+      "properties": {
+        "id": "us7000mz83",
+        "magnitude": 4.3,
+        "time": "2024-07-14T16:48:59Z",
+        "updated": "2024-09-20T16:00:56Z",
+        "longitude": -82.8776,
+        "latitude": 8.2214,
+        "depth": 22.913,
+        "place": "6 km SSW of Puerto Armuelles, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mz83"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mzah",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7987,
+          8.2717,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mzah",
+        "magnitude": 4.4,
+        "time": "2024-07-15T05:49:01Z",
+        "updated": "2024-09-28T22:41:46Z",
+        "longitude": -82.7987,
+        "latitude": 8.2717,
+        "depth": 10,
+        "place": "6 km SSE of Manaca Civil, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mzah"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mzaj",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.86,
+          8.2318,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mzaj",
+        "magnitude": 4.2,
+        "time": "2024-07-15T05:59:36Z",
+        "updated": "2024-09-28T22:41:46Z",
+        "longitude": -82.86,
+        "latitude": 8.2318,
+        "depth": 10,
+        "place": "5 km S of Puerto Armuelles, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mzaj"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000mzyv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6026,
+          5.0943,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000mzyv",
+        "magnitude": 4.4,
+        "time": "2024-07-18T08:52:44Z",
+        "updated": "2024-09-28T22:42:17Z",
+        "longitude": -82.6026,
+        "latitude": 5.0943,
+        "depth": 10,
+        "place": "south of Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000mzyv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nejp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8075,
+          8.22,
+          7
+        ]
+      },
+      "properties": {
+        "id": "us6000nejp",
+        "magnitude": 5.7,
+        "time": "2024-07-22T19:19:35Z",
+        "updated": "2025-03-21T15:10:29Z",
+        "longitude": -82.8075,
+        "latitude": 8.22,
+        "depth": 7,
+        "place": "8 km SE of Puerto Armuelles, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nejp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nejs",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7985,
+          8.3169,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nejs",
+        "magnitude": 4.4,
+        "time": "2024-07-22T19:28:09Z",
+        "updated": "2024-10-08T21:49:10Z",
+        "longitude": -82.7985,
+        "latitude": 8.3169,
+        "depth": 10,
+        "place": "2 km ESE of Manaca Civil, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nejs"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000ni7v",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.672,
+          8.183,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000ni7v",
+        "magnitude": 4.5,
+        "time": "2024-07-22T19:30:00Z",
+        "updated": "2024-10-08T21:49:14Z",
+        "longitude": -82.672,
+        "latitude": 8.183,
+        "depth": 10,
+        "place": "22 km SE of Manaca Civil, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ni7v"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nekb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7686,
+          8.2256,
+          7
+        ]
+      },
+      "properties": {
+        "id": "us6000nekb",
+        "magnitude": 5.6,
+        "time": "2024-07-22T20:17:54Z",
+        "updated": "2024-10-08T21:49:10Z",
+        "longitude": -82.7686,
+        "latitude": 8.2256,
+        "depth": 7,
+        "place": "11 km ESE of Puerto Armuelles, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nekb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nekl",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8309,
+          8.1415,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nekl",
+        "magnitude": 4.9,
+        "time": "2024-07-22T20:51:26Z",
+        "updated": "2024-10-08T21:49:10Z",
+        "longitude": -82.8309,
+        "latitude": 8.1415,
+        "depth": 10,
+        "place": "5 km NE of Limones, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nekl"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000ngni",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.0467,
+          8.0051,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000ngni",
+        "magnitude": 4.6,
+        "time": "2024-07-29T13:24:23Z",
+        "updated": "2024-10-11T19:39:06Z",
+        "longitude": -83.0467,
+        "latitude": 8.0051,
+        "depth": 10,
+        "place": "19 km W of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ngni"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nhsy",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7776,
+          8.3764,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nhsy",
+        "magnitude": 4.2,
+        "time": "2024-08-03T04:09:08Z",
+        "updated": "2024-10-11T19:39:09Z",
+        "longitude": -82.7776,
+        "latitude": 8.3764,
+        "depth": 10,
+        "place": "3 km SSE of La Esperanza, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nhsy"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000npnk",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1434,
+          9.0007,
+          28.729
+        ]
+      },
+      "properties": {
+        "id": "us6000npnk",
+        "magnitude": 4.1,
+        "time": "2024-08-12T01:58:45Z",
+        "updated": "2024-10-26T15:48:00Z",
+        "longitude": -84.1434,
+        "latitude": 9.0007,
+        "depth": 28.729,
+        "place": "47 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000npnk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000n75q",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.9366,
+          10.0189,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000n75q",
+        "magnitude": 3.2,
+        "time": "2024-08-15T06:20:30Z",
+        "updated": "2024-10-26T15:48:44Z",
+        "longitude": -83.9366,
+        "latitude": 10.0189,
+        "depth": 10,
+        "place": "10 km ENE of Ipís, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000n75q"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000n9fn",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.2687,
+          7.4653,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000n9fn",
+        "magnitude": 5.8,
+        "time": "2024-08-26T05:08:44Z",
+        "updated": "2024-11-09T21:19:13Z",
+        "longitude": -82.2687,
+        "latitude": 7.4653,
+        "depth": 10,
+        "place": "83 km S of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000n9fn"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nnrw",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5537,
+          5.3837,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nnrw",
+        "magnitude": 5.1,
+        "time": "2024-08-30T21:25:34Z",
+        "updated": "2024-11-09T21:18:50Z",
+        "longitude": -82.5537,
+        "latitude": 5.3837,
+        "depth": 10,
+        "place": "288 km SW of Arenas, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nnrw"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nppn",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5712,
+          5.2462,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nppn",
+        "magnitude": 4.8,
+        "time": "2024-09-04T16:39:25Z",
+        "updated": "2024-11-15T16:19:54Z",
+        "longitude": -82.5712,
+        "latitude": 5.2462,
+        "depth": 10,
+        "place": "south of Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nppn"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000npq3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5432,
+          5.2666,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000npq3",
+        "magnitude": 4.8,
+        "time": "2024-09-04T17:30:45Z",
+        "updated": "2024-11-15T16:19:54Z",
+        "longitude": -82.5432,
+        "latitude": 5.2666,
+        "depth": 10,
+        "place": "298 km SW of Arenas, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000npq3"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000ndd6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9199,
+          11.6268,
+          163.008
+        ]
+      },
+      "properties": {
+        "id": "us7000ndd6",
+        "magnitude": 4.3,
+        "time": "2024-09-12T21:07:06Z",
+        "updated": "2024-11-21T22:58:56Z",
+        "longitude": -85.9199,
+        "latitude": 11.6268,
+        "depth": 163.008,
+        "place": "14 km NNW of Belén, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000ndd6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nsuw",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.659,
+          5.1719,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nsuw",
+        "magnitude": 5,
+        "time": "2024-09-18T07:52:28Z",
+        "updated": "2024-11-23T23:25:51Z",
+        "longitude": -82.659,
+        "latitude": 5.1719,
+        "depth": 10,
+        "place": "south of Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nsuw"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nxsq",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5629,
+          5.7512,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nxsq",
+        "magnitude": 4.5,
+        "time": "2024-10-10T08:02:58Z",
+        "updated": "2024-12-23T15:46:32Z",
+        "longitude": -82.5629,
+        "latitude": 5.7512,
+        "depth": 10,
+        "place": "254 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nxsq"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000ny8a",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.3375,
+          9.3926,
+          11.644
+        ]
+      },
+      "properties": {
+        "id": "us6000ny8a",
+        "magnitude": 4.3,
+        "time": "2024-10-12T02:24:43Z",
+        "updated": "2024-12-23T15:47:01Z",
+        "longitude": -84.3375,
+        "latitude": 9.3926,
+        "depth": 11.644,
+        "place": "14 km S of Parrita, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ny8a"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nyb6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9454,
+          10.5949,
+          64.679
+        ]
+      },
+      "properties": {
+        "id": "us6000nyb6",
+        "magnitude": 4.9,
+        "time": "2024-10-12T18:17:51Z",
+        "updated": "2024-12-23T15:47:10Z",
+        "longitude": -85.9454,
+        "latitude": 10.5949,
+        "depth": 64.679,
+        "place": "33 km WNW of Sardinal, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nyb6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nz32",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.0775,
+          10.5508,
+          65.437
+        ]
+      },
+      "properties": {
+        "id": "us6000nz32",
+        "magnitude": 4.3,
+        "time": "2024-10-16T14:29:36Z",
+        "updated": "2024-12-26T23:03:42Z",
+        "longitude": -85.0775,
+        "latitude": 10.5508,
+        "depth": 65.437,
+        "place": "13 km N of Cañas, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nz32"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nqel",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9504,
+          10.2375,
+          31.131
+        ]
+      },
+      "properties": {
+        "id": "us7000nqel",
+        "magnitude": 4.3,
+        "time": "2024-10-18T05:09:15Z",
+        "updated": "2024-12-26T23:03:51Z",
+        "longitude": -85.9504,
+        "latitude": 10.2375,
+        "depth": 31.131,
+        "place": "13 km WSW of Tamarindo, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nqel"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000nzql",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6346,
+          5.4996,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000nzql",
+        "magnitude": 4.6,
+        "time": "2024-10-19T12:01:57Z",
+        "updated": "2024-12-26T23:04:06Z",
+        "longitude": -82.6346,
+        "latitude": 5.4996,
+        "depth": 10,
+        "place": "281 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000nzql"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nmzv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.3798,
+          5.4511,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nmzv",
+        "magnitude": 4.6,
+        "time": "2024-10-24T20:31:59Z",
+        "updated": "2025-01-04T23:07:59Z",
+        "longitude": -78.3798,
+        "latitude": 5.4511,
+        "depth": 10,
+        "place": "125 km WNW of Pizarro, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nmzv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nn8v",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3132,
+          7.5445,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nn8v",
+        "magnitude": 4.6,
+        "time": "2024-10-25T21:55:33Z",
+        "updated": "2025-01-04T23:08:12Z",
+        "longitude": -82.3132,
+        "latitude": 7.5445,
+        "depth": 10,
+        "place": "75 km S of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nn8v"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nnia",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.7881,
+          7.6611,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nnia",
+        "magnitude": 4.4,
+        "time": "2024-10-27T18:44:57Z",
+        "updated": "2025-01-04T23:08:30Z",
+        "longitude": -84.7881,
+        "latitude": 7.6611,
+        "depth": 10,
+        "place": "200 km SW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nnia"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nnla",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.8664,
+          7.0174,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nnla",
+        "magnitude": 4.6,
+        "time": "2024-10-28T07:08:37Z",
+        "updated": "2025-01-16T18:44:11Z",
+        "longitude": -76.8664,
+        "latitude": 7.0174,
+        "depth": 10,
+        "place": "6 km NW of Murindó, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nnla"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000npzi",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.462,
+          5.3197,
+          31.25
+        ]
+      },
+      "properties": {
+        "id": "us7000npzi",
+        "magnitude": 5,
+        "time": "2024-11-05T03:14:06Z",
+        "updated": "2025-01-24T19:51:14Z",
+        "longitude": -77.462,
+        "latitude": 5.3197,
+        "depth": 31.25,
+        "place": "41 km NNW of Pizarro, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000npzi"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nqv1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3993,
+          7.4901,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nqv1",
+        "magnitude": 5.6,
+        "time": "2024-11-09T10:03:40Z",
+        "updated": "2025-01-24T19:51:27Z",
+        "longitude": -82.3993,
+        "latitude": 7.4901,
+        "depth": 10,
+        "place": "79 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nqv1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nqvb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4935,
+          7.5987,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nqvb",
+        "magnitude": 4.5,
+        "time": "2024-11-09T11:04:02Z",
+        "updated": "2025-01-24T19:51:27Z",
+        "longitude": -82.4935,
+        "latitude": 7.5987,
+        "depth": 10,
+        "place": "63 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nqvb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nqwx",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3895,
+          7.5218,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nqwx",
+        "magnitude": 5.8,
+        "time": "2024-11-09T19:30:18Z",
+        "updated": "2025-01-24T19:51:28Z",
+        "longitude": -82.3895,
+        "latitude": 7.5218,
+        "depth": 10,
+        "place": "77 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nqwx"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nrwt",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3689,
+          6.6353,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nrwt",
+        "magnitude": 4.9,
+        "time": "2024-11-15T03:46:47Z",
+        "updated": "2025-01-26T16:29:57Z",
+        "longitude": -82.3689,
+        "latitude": 6.6353,
+        "depth": 10,
+        "place": "164 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nrwt"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000p6p4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8917,
+          8.0131,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000p6p4",
+        "magnitude": 4.8,
+        "time": "2024-11-21T02:23:43Z",
+        "updated": "2025-01-30T17:00:31Z",
+        "longitude": -82.8917,
+        "latitude": 8.0131,
+        "depth": 10,
+        "place": "3 km SW of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000p6p4"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nyii",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.3941,
+          8.2092,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nyii",
+        "magnitude": 4.4,
+        "time": "2024-12-02T15:47:30Z",
+        "updated": "2025-02-15T18:31:14Z",
+        "longitude": -83.3941,
+        "latitude": 8.2092,
+        "depth": 10,
+        "place": "53 km SW of Golfito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nyii"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000ph6u",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9302,
+          8.1818,
+          35
+        ]
+      },
+      "properties": {
+        "id": "us6000ph6u",
+        "magnitude": 4.5,
+        "time": "2024-12-14T18:19:50Z",
+        "updated": "2025-02-18T20:02:59Z",
+        "longitude": -82.9302,
+        "latitude": 8.1818,
+        "depth": 35,
+        "place": "11 km NW of Limones, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ph6u"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000nznx",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5032,
+          7.3463,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000nznx",
+        "magnitude": 4.3,
+        "time": "2024-12-17T23:23:32Z",
+        "updated": "2025-02-27T17:30:52Z",
+        "longitude": -82.5032,
+        "latitude": 7.3463,
+        "depth": 10,
+        "place": "86 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000nznx"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pfl4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.7826,
+          11.1725,
+          90.305
+        ]
+      },
+      "properties": {
+        "id": "us6000pfl4",
+        "magnitude": 4.5,
+        "time": "2024-12-25T17:47:53Z",
+        "updated": "2025-03-08T22:39:10Z",
+        "longitude": -85.7826,
+        "latitude": 11.1725,
+        "depth": 90.305,
+        "place": "13 km SE of San Juan del Sur, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pfl4"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pgcx",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9299,
+          11.3207,
+          100.943
+        ]
+      },
+      "properties": {
+        "id": "us6000pgcx",
+        "magnitude": 4,
+        "time": "2024-12-29T23:00:10Z",
+        "updated": "2025-03-08T22:39:12Z",
+        "longitude": -85.9299,
+        "latitude": 11.3207,
+        "depth": 100.943,
+        "place": "9 km NW of San Juan del Sur, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pgcx"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pj4s",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.4683,
+          5.9461,
+          18
+        ]
+      },
+      "properties": {
+        "id": "us6000pj4s",
+        "magnitude": 5.6,
+        "time": "2025-01-10T08:14:32Z",
+        "updated": "2025-03-20T20:54:59Z",
+        "longitude": -77.4683,
+        "latitude": 5.9461,
+        "depth": 18,
+        "place": "31 km SSW of Bahía Solano, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pj4s"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pjeu",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9563,
+          8.5783,
+          8.518
+        ]
+      },
+      "properties": {
+        "id": "us6000pjeu",
+        "magnitude": 4.3,
+        "time": "2025-01-11T10:32:23Z",
+        "updated": "2025-03-20T20:55:07Z",
+        "longitude": -82.9563,
+        "latitude": 8.5783,
+        "depth": 8.518,
+        "place": "6 km S of Corredor, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pjeu"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pk45",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7797,
+          8.503,
+          47.602
+        ]
+      },
+      "properties": {
+        "id": "us6000pk45",
+        "magnitude": 4.3,
+        "time": "2025-01-15T08:11:23Z",
+        "updated": "2025-03-29T22:12:40Z",
+        "longitude": -82.7797,
+        "latitude": 8.503,
+        "depth": 47.602,
+        "place": "2 km NNE of Aserrío de Gariché, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pk45"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pcjt",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.8248,
+          11.6428,
+          11.494
+        ]
+      },
+      "properties": {
+        "id": "us7000pcjt",
+        "magnitude": 4.1,
+        "time": "2025-02-09T23:56:10Z",
+        "updated": "2025-04-26T14:47:06Z",
+        "longitude": -85.8248,
+        "latitude": 11.6428,
+        "depth": 11.494,
+        "place": "16 km NNE of Potosí, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pcjt"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pdiz",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.4607,
+          6.661,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pdiz",
+        "magnitude": 4.5,
+        "time": "2025-02-14T00:18:12Z",
+        "updated": "2025-05-02T16:26:17Z",
+        "longitude": -84.4607,
+        "latitude": 6.661,
+        "depth": 10,
+        "place": "232 km SW of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pdiz"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pel7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.6806,
+          10.2469,
+          32.248
+        ]
+      },
+      "properties": {
+        "id": "us7000pel7",
+        "magnitude": 4.3,
+        "time": "2025-02-18T20:40:41Z",
+        "updated": "2025-05-02T16:26:22Z",
+        "longitude": -85.6806,
+        "latitude": 10.2469,
+        "depth": 32.248,
+        "place": "10 km W of Santa Cruz, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pel7"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pwri",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.4163,
+          8.699,
+          14.066
+        ]
+      },
+      "properties": {
+        "id": "us6000pwri",
+        "magnitude": 4.4,
+        "time": "2025-03-04T07:29:51Z",
+        "updated": "2025-05-08T19:24:46Z",
+        "longitude": -83.4163,
+        "latitude": 8.699,
+        "depth": 14.066,
+        "place": "31 km SSE of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pwri"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000pwz1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.2118,
+          9.2536,
+          85.383
+        ]
+      },
+      "properties": {
+        "id": "us6000pwz1",
+        "magnitude": 4.3,
+        "time": "2025-03-05T04:53:57Z",
+        "updated": "2025-05-16T17:30:01Z",
+        "longitude": -78.2118,
+        "latitude": 9.2536,
+        "depth": 85.383,
+        "place": "6 km SSE of Playón Chico, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000pwz1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000py3p",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.6185,
+          11.4145,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000py3p",
+        "magnitude": 5.4,
+        "time": "2025-03-11T08:32:13Z",
+        "updated": "2025-05-16T17:30:05Z",
+        "longitude": -81.6185,
+        "latitude": 11.4145,
+        "depth": 10,
+        "place": "Western Caribbean Sea",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000py3p"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000ple0",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7554,
+          7.0073,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000ple0",
+        "magnitude": 4.8,
+        "time": "2025-03-20T18:14:47Z",
+        "updated": "2025-05-29T17:36:27Z",
+        "longitude": -82.7554,
+        "latitude": 7.0073,
+        "depth": 10,
+        "place": "114 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000ple0"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pllt",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4666,
+          6.9863,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pllt",
+        "magnitude": 6.2,
+        "time": "2025-03-21T14:50:51Z",
+        "updated": "2025-05-29T17:36:28Z",
+        "longitude": -82.4666,
+        "latitude": 6.9863,
+        "depth": 10,
+        "place": "124 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pllt"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pm52",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5083,
+          6.266,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pm52",
+        "magnitude": 4.9,
+        "time": "2025-03-24T03:16:13Z",
+        "updated": "2025-05-29T17:36:30Z",
+        "longitude": -82.5083,
+        "latitude": 6.266,
+        "depth": 10,
+        "place": "199 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pm52"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pm64",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5564,
+          6.2383,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pm64",
+        "magnitude": 4.5,
+        "time": "2025-03-24T05:46:50Z",
+        "updated": "2025-05-29T17:36:30Z",
+        "longitude": -82.5564,
+        "latitude": 6.2383,
+        "depth": 10,
+        "place": "201 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pm64"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000q7a1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.902,
+          10.7334,
+          54.588
+        ]
+      },
+      "properties": {
+        "id": "us6000q7a1",
+        "magnitude": 4.4,
+        "time": "2025-04-19T23:04:22Z",
+        "updated": "2025-06-27T00:34:36Z",
+        "longitude": -85.902,
+        "latitude": 10.7334,
+        "depth": 54.588,
+        "place": "36 km NW of Sardinal, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000q7a1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pu14",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7744,
+          5.4198,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pu14",
+        "magnitude": 4.4,
+        "time": "2025-04-21T16:36:57Z",
+        "updated": "2025-06-27T00:34:44Z",
+        "longitude": -82.7744,
+        "latitude": 5.4198,
+        "depth": 10,
+        "place": "289 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pu14"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pvq9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9983,
+          8.0514,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pvq9",
+        "magnitude": 4.4,
+        "time": "2025-04-29T03:19:58Z",
+        "updated": "2025-07-11T15:46:23Z",
+        "longitude": -82.9983,
+        "latitude": 8.0514,
+        "depth": 10,
+        "place": "14 km W of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pvq9"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000px4d",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1646,
+          7.3789,
+          41.437
+        ]
+      },
+      "properties": {
+        "id": "us7000px4d",
+        "magnitude": 4.5,
+        "time": "2025-05-04T17:52:54Z",
+        "updated": "2025-07-12T16:30:45Z",
+        "longitude": -77.1646,
+        "latitude": 7.3789,
+        "depth": 41.437,
+        "place": "8 km SW of Riosucio, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000px4d"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000q0up",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9493,
+          10.7351,
+          46.643
+        ]
+      },
+      "properties": {
+        "id": "us7000q0up",
+        "magnitude": 4.2,
+        "time": "2025-05-07T11:01:30Z",
+        "updated": "2025-07-24T21:30:17Z",
+        "longitude": -85.9493,
+        "latitude": 10.7351,
+        "depth": 46.643,
+        "place": "40 km NW of Sardinal, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000q0up"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000pzx6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.4596,
+          9.0645,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000pzx6",
+        "magnitude": 4.5,
+        "time": "2025-05-18T00:10:30Z",
+        "updated": "2025-07-25T17:06:18Z",
+        "longitude": -81.4596,
+        "latitude": 9.0645,
+        "depth": 10,
+        "place": "38 km N of Loma Yuca, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000pzx6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000qi0w",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6724,
+          5.3502,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000qi0w",
+        "magnitude": 5.6,
+        "time": "2025-06-05T00:09:18Z",
+        "updated": "2025-08-20T16:08:55Z",
+        "longitude": -82.6724,
+        "latitude": 5.3502,
+        "depth": 10,
+        "place": "297 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000qi0w"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000qim8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.2685,
+          8.6957,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000qim8",
+        "magnitude": 4.7,
+        "time": "2025-06-07T04:06:32Z",
+        "updated": "2025-08-20T16:08:57Z",
+        "longitude": -83.2685,
+        "latitude": 8.6957,
+        "depth": 10,
+        "place": "19 km WNW of Golfito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000qim8"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qag8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.35,
+          7.2367,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qag8",
+        "magnitude": 4.1,
+        "time": "2025-06-20T04:56:10Z",
+        "updated": "2025-09-02T21:23:45Z",
+        "longitude": -82.35,
+        "latitude": 7.2367,
+        "depth": 10,
+        "place": "105 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qag8"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000qlxq",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1241,
+          7.484,
+          45.11
+        ]
+      },
+      "properties": {
+        "id": "us6000qlxq",
+        "magnitude": 4.4,
+        "time": "2025-06-23T11:04:17Z",
+        "updated": "2025-09-02T21:23:41Z",
+        "longitude": -77.1241,
+        "latitude": 7.484,
+        "depth": 45.11,
+        "place": "4 km N of Riosucio, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000qlxq"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000q9ic",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.6205,
+          11.2303,
+          184.702
+        ]
+      },
+      "properties": {
+        "id": "us7000q9ic",
+        "magnitude": 4.5,
+        "time": "2025-06-29T11:37:42Z",
+        "updated": "2025-09-04T20:40:02Z",
+        "longitude": -85.6205,
+        "latitude": 11.2303,
+        "depth": 184.702,
+        "place": "12 km WNW of Cárdenas, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000q9ic"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qayy",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.0964,
+          8.7329,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qayy",
+        "magnitude": 4.3,
+        "time": "2025-07-06T06:54:44Z",
+        "updated": "2025-09-12T16:23:09Z",
+        "longitude": -82.0964,
+        "latitude": 8.7329,
+        "depth": 10,
+        "place": "16 km SW of Quebrada Tula, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qayy"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qb1x",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.2519,
+          9.6741,
+          43.795
+        ]
+      },
+      "properties": {
+        "id": "us7000qb1x",
+        "magnitude": 4.7,
+        "time": "2025-07-06T19:59:59Z",
+        "updated": "2025-09-12T16:23:10Z",
+        "longitude": -84.2519,
+        "latitude": 9.6741,
+        "depth": 43.795,
+        "place": "7 km SSW of Tejar, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qb1x"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qclp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7372,
+          6.1706,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qclp",
+        "magnitude": 6.2,
+        "time": "2025-07-14T17:16:49Z",
+        "updated": "2025-11-28T21:14:11Z",
+        "longitude": -82.7372,
+        "latitude": 6.1706,
+        "depth": 10,
+        "place": "206 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qclp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qcpd",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5237,
+          6.1721,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qcpd",
+        "magnitude": 4.3,
+        "time": "2025-07-14T22:51:08Z",
+        "updated": "2025-11-28T21:16:15Z",
+        "longitude": -82.5237,
+        "latitude": 6.1721,
+        "depth": 10,
+        "place": "209 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qcpd"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qde5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.2616,
+          9.4795,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qde5",
+        "magnitude": 4,
+        "time": "2025-07-18T10:34:44Z",
+        "updated": "2025-10-03T18:42:34Z",
+        "longitude": -84.2616,
+        "latitude": 9.4795,
+        "depth": 10,
+        "place": "8 km SE of Parrita, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qde5"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000qvfm",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.2721,
+          10.6993,
+          16.868
+        ]
+      },
+      "properties": {
+        "id": "us6000qvfm",
+        "magnitude": 4.3,
+        "time": "2025-07-26T17:39:43Z",
+        "updated": "2025-10-11T20:57:21Z",
+        "longitude": -85.2721,
+        "latitude": 10.6993,
+        "depth": 16.868,
+        "place": "8 km WNW of La Fortuna, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000qvfm"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000qxhc",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.4112,
+          10.3608,
+          117.228
+        ]
+      },
+      "properties": {
+        "id": "us6000qxhc",
+        "magnitude": 4.8,
+        "time": "2025-08-01T19:33:11Z",
+        "updated": "2025-10-17T22:51:42Z",
+        "longitude": -84.4112,
+        "latitude": 10.3608,
+        "depth": 117.228,
+        "place": "4 km NNE of Quesada, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000qxhc"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000r301",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1008,
+          9.9539,
+          10.242
+        ]
+      },
+      "properties": {
+        "id": "us6000r301",
+        "magnitude": 3.8,
+        "time": "2025-08-22T06:45:37Z",
+        "updated": "2025-11-12T16:25:37Z",
+        "longitude": -84.1008,
+        "latitude": 9.9539,
+        "depth": 10.242,
+        "place": "2 km W of Colima, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000r301"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rcab",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.8684,
+          5.6861,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rcab",
+        "magnitude": 4.2,
+        "time": "2025-08-28T01:23:39Z",
+        "updated": "2025-11-19T21:59:34Z",
+        "longitude": -77.8684,
+        "latitude": 5.6861,
+        "depth": 10,
+        "place": "66 km W of Nuquí, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rcab"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qri3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.1321,
+          7.0369,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qri3",
+        "magnitude": 4.5,
+        "time": "2025-08-28T07:03:09Z",
+        "updated": "2025-11-19T21:59:42Z",
+        "longitude": -82.1321,
+        "latitude": 7.0369,
+        "depth": 10,
+        "place": "115 km SW of Río Grande, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qri3"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000quax",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.8245,
+          11.6148,
+          195.012
+        ]
+      },
+      "properties": {
+        "id": "us7000quax",
+        "magnitude": 4.5,
+        "time": "2025-09-05T21:48:28Z",
+        "updated": "2025-11-30T23:40:11Z",
+        "longitude": -85.8245,
+        "latitude": 11.6148,
+        "depth": 195.012,
+        "place": "13 km NNE of Potosí, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000quax"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000quwh",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4704,
+          6.2494,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000quwh",
+        "magnitude": 4.9,
+        "time": "2025-09-09T02:09:32Z",
+        "updated": "2025-11-30T23:40:54Z",
+        "longitude": -82.4704,
+        "latitude": 6.2494,
+        "depth": 10,
+        "place": "202 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000quwh"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qw4k",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.1391,
+          6.8248,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qw4k",
+        "magnitude": 5.4,
+        "time": "2025-09-14T07:12:12Z",
+        "updated": "2025-12-03T03:58:29Z",
+        "longitude": -76.1391,
+        "latitude": 6.8248,
+        "depth": 10,
+        "place": "5 km N of Frontino, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qw4k"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000qxqs",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.2637,
+          6.5236,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000qxqs",
+        "magnitude": 4.9,
+        "time": "2025-09-21T20:17:56Z",
+        "updated": "2025-12-06T16:00:27Z",
+        "longitude": -76.2637,
+        "latitude": 6.5236,
+        "depth": 10,
+        "place": "25 km WSW of Abriaquí, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000qxqs"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rdjb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.049,
+          9.0498,
+          26.424
+        ]
+      },
+      "properties": {
+        "id": "us6000rdjb",
+        "magnitude": 4.5,
+        "time": "2025-09-29T05:42:36Z",
+        "updated": "2025-12-11T21:40:46Z",
+        "longitude": -84.049,
+        "latitude": 9.0498,
+        "depth": 26.424,
+        "place": "43 km SSE of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rdjb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rerc",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7069,
+          6.2706,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rerc",
+        "magnitude": 4.5,
+        "time": "2025-10-04T07:31:11Z",
+        "updated": "2025-12-19T22:49:55Z",
+        "longitude": -82.7069,
+        "latitude": 6.2706,
+        "depth": 10,
+        "place": "195 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rerc"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000reun",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.9311,
+          10.5436,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000reun",
+        "magnitude": 4.7,
+        "time": "2025-10-04T21:08:45Z",
+        "updated": "2025-12-19T22:50:00Z",
+        "longitude": -84.9311,
+        "latitude": 10.5436,
+        "depth": 10,
+        "place": "9 km NNE of Tilarán, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000reun"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rev6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.0484,
+          7.3775,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rev6",
+        "magnitude": 4.5,
+        "time": "2025-10-04T23:42:15Z",
+        "updated": "2025-12-19T22:50:00Z",
+        "longitude": -78.0484,
+        "latitude": 7.3775,
+        "depth": 10,
+        "place": "20 km SE of Jaqué, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rev6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rlw5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.8977,
+          7.9186,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rlw5",
+        "magnitude": 4,
+        "time": "2025-10-16T04:17:55Z",
+        "updated": "2026-01-09T15:38:45Z",
+        "longitude": -78.8977,
+        "latitude": 7.9186,
+        "depth": 10,
+        "place": "38 km S of La Esmeralda, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rlw5"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000ril5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.2408,
+          9.2522,
+          20
+        ]
+      },
+      "properties": {
+        "id": "us6000ril5",
+        "magnitude": 5.9,
+        "time": "2025-10-22T03:57:05Z",
+        "updated": "2026-06-10T03:17:03Z",
+        "longitude": -84.2408,
+        "latitude": 9.2522,
+        "depth": 20,
+        "place": "21 km SSW of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ril5"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rit2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.7868,
+          9.1369,
+          50.232
+        ]
+      },
+      "properties": {
+        "id": "us6000rit2",
+        "magnitude": 4.3,
+        "time": "2025-10-23T03:43:03Z",
+        "updated": "2026-01-15T22:46:48Z",
+        "longitude": -83.7868,
+        "latitude": 9.1369,
+        "depth": 50.232,
+        "place": "25 km SSW of Daniel Flores, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rit2"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rjhp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9689,
+          8.898,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rjhp",
+        "magnitude": 4.3,
+        "time": "2025-10-25T23:45:13Z",
+        "updated": "2026-01-15T22:46:53Z",
+        "longitude": -82.9689,
+        "latitude": 8.898,
+        "depth": 10,
+        "place": "8 km N of San Vito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rjhp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rkhp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.8018,
+          9.8844,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rkhp",
+        "magnitude": 4.4,
+        "time": "2025-10-31T00:58:20Z",
+        "updated": "2026-01-27T17:59:02Z",
+        "longitude": -77.8018,
+        "latitude": 9.8844,
+        "depth": 10,
+        "place": "75 km NNE of San Ignacio de Tupile, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rkhp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rkke",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.283,
+          7.1025,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rkke",
+        "magnitude": 4.8,
+        "time": "2025-10-31T13:04:26Z",
+        "updated": "2026-01-27T17:59:03Z",
+        "longitude": -82.283,
+        "latitude": 7.1025,
+        "depth": 10,
+        "place": "121 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rkke"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rm84",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.2567,
+          7.6856,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rm84",
+        "magnitude": 4.6,
+        "time": "2025-11-08T04:31:33Z",
+        "updated": "2026-01-29T22:05:27Z",
+        "longitude": -82.2567,
+        "latitude": 7.6856,
+        "depth": 10,
+        "place": "59 km S of Boca Chica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rm84"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rn37",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7848,
+          8.3505,
+          13.425
+        ]
+      },
+      "properties": {
+        "id": "us6000rn37",
+        "magnitude": 4.5,
+        "time": "2025-11-13T08:33:18Z",
+        "updated": "2026-02-10T15:55:08Z",
+        "longitude": -82.7848,
+        "latitude": 8.3505,
+        "depth": 13.425,
+        "place": "2 km ENE of Manaca Norte, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rn37"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rnks",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.1982,
+          8.9516,
+          62.114
+        ]
+      },
+      "properties": {
+        "id": "us6000rnks",
+        "magnitude": 4.5,
+        "time": "2025-11-16T11:51:59Z",
+        "updated": "2026-02-10T15:55:11Z",
+        "longitude": -83.1982,
+        "latitude": 8.9516,
+        "depth": 62.114,
+        "place": "28 km SSE of Buenos Aires, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rnks"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rntr",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.9276,
+          9.0054,
+          25.007
+        ]
+      },
+      "properties": {
+        "id": "us6000rntr",
+        "magnitude": 4.7,
+        "time": "2025-11-17T18:30:23Z",
+        "updated": "2026-02-10T15:55:12Z",
+        "longitude": -83.9276,
+        "latitude": 9.0054,
+        "depth": 25.007,
+        "place": "44 km W of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rntr"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rp1a",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0117,
+          8.8279,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rp1a",
+        "magnitude": 5.5,
+        "time": "2025-11-18T22:36:33Z",
+        "updated": "2026-02-10T15:55:14Z",
+        "longitude": -84.0117,
+        "latitude": 8.8279,
+        "depth": 10,
+        "place": "55 km WSW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rp1a"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rpa1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9581,
+          8.9149,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rpa1",
+        "magnitude": 4.4,
+        "time": "2025-11-20T03:49:11Z",
+        "updated": "2026-02-20T16:07:31Z",
+        "longitude": -82.9581,
+        "latitude": 8.9149,
+        "depth": 10,
+        "place": "10 km N of San Vito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rpa1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rph1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0748,
+          8.8913,
+          10.148
+        ]
+      },
+      "properties": {
+        "id": "us6000rph1",
+        "magnitude": 4.4,
+        "time": "2025-11-20T23:48:21Z",
+        "updated": "2026-02-20T16:07:32Z",
+        "longitude": -84.0748,
+        "latitude": 8.8913,
+        "depth": 10.148,
+        "place": "60 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rph1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rppd",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1423,
+          9.2728,
+          45.043
+        ]
+      },
+      "properties": {
+        "id": "us6000rppd",
+        "magnitude": 4.5,
+        "time": "2025-11-21T19:47:06Z",
+        "updated": "2026-02-20T16:07:33Z",
+        "longitude": -84.1423,
+        "latitude": 9.2728,
+        "depth": 45.043,
+        "place": "17 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rppd"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rptb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.1706,
+          11.0286,
+          218.702
+        ]
+      },
+      "properties": {
+        "id": "us6000rptb",
+        "magnitude": 4.5,
+        "time": "2025-11-22T10:29:01Z",
+        "updated": "2026-02-20T16:07:33Z",
+        "longitude": -85.1706,
+        "latitude": 11.0286,
+        "depth": 218.702,
+        "place": "9 km NNW of San José, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rptb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rpvb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0883,
+          8.8416,
+          10.998
+        ]
+      },
+      "properties": {
+        "id": "us6000rpvb",
+        "magnitude": 5.1,
+        "time": "2025-11-22T18:41:20Z",
+        "updated": "2026-02-20T16:07:34Z",
+        "longitude": -84.0883,
+        "latitude": 8.8416,
+        "depth": 10.998,
+        "place": "63 km WSW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rpvb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000rdlf",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0746,
+          8.8225,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000rdlf",
+        "magnitude": 4.3,
+        "time": "2025-11-25T02:48:57Z",
+        "updated": "2026-02-20T16:07:41Z",
+        "longitude": -84.0746,
+        "latitude": 8.8225,
+        "depth": 10,
+        "place": "62 km WSW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000rdlf"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rvpv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.569,
+          5.9851,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rvpv",
+        "magnitude": 4.3,
+        "time": "2025-12-01T04:05:54Z",
+        "updated": "2026-02-25T16:18:40Z",
+        "longitude": -77.569,
+        "latitude": 5.9851,
+        "depth": 10,
+        "place": "32 km SW of Bahía Solano, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rvpv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rs4v",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3157,
+          7.2306,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rs4v",
+        "magnitude": 4.3,
+        "time": "2025-12-03T04:44:52Z",
+        "updated": "2026-03-04T18:41:45Z",
+        "longitude": -82.3157,
+        "latitude": 7.2306,
+        "depth": 10,
+        "place": "107 km SE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rs4v"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rt5m",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.937,
+          8.8276,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rt5m",
+        "magnitude": 4.4,
+        "time": "2025-12-07T14:20:43Z",
+        "updated": "2026-03-04T18:42:54Z",
+        "longitude": -83.937,
+        "latitude": 8.8276,
+        "depth": 10,
+        "place": "47 km WSW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rt5m"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000rvkl",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5956,
+          6.7182,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000rvkl",
+        "magnitude": 5.6,
+        "time": "2025-12-17T23:07:46Z",
+        "updated": "2026-03-19T13:56:01Z",
+        "longitude": -82.5956,
+        "latitude": 6.7182,
+        "depth": 10,
+        "place": "148 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000rvkl"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000rpmb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.5964,
+          8.7445,
+          36.54
+        ]
+      },
+      "properties": {
+        "id": "us7000rpmb",
+        "magnitude": 4.1,
+        "time": "2025-12-20T12:43:51Z",
+        "updated": "2026-03-19T13:56:07Z",
+        "longitude": -83.5964,
+        "latitude": 8.7445,
+        "depth": 36.54,
+        "place": "25 km SSW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000rpmb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000rp5t",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0943,
+          8.8834,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000rp5t",
+        "magnitude": 4.5,
+        "time": "2026-01-12T12:31:25Z",
+        "updated": "2026-04-10T15:20:46Z",
+        "longitude": -84.0943,
+        "latitude": 8.8834,
+        "depth": 10,
+        "place": "60 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000rp5t"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000rqtv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1028,
+          9.9502,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000rqtv",
+        "magnitude": 4,
+        "time": "2026-01-19T23:06:55Z",
+        "updated": "2026-04-18T14:47:30Z",
+        "longitude": -84.1028,
+        "latitude": 9.9502,
+        "depth": 10,
+        "place": "2 km WSW of Colima, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000rqtv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000s9zf",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.3963,
+          8.9167,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000s9zf",
+        "magnitude": 4.5,
+        "time": "2026-02-02T01:01:15Z",
+        "updated": "2026-04-23T20:43:25Z",
+        "longitude": -83.3963,
+        "latitude": 8.9167,
+        "depth": 10,
+        "place": "14 km ESE of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000s9zf"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sahe",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.1196,
+          10.1175,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sahe",
+        "magnitude": 4.2,
+        "time": "2026-02-07T15:01:17Z",
+        "updated": "2026-05-01T14:35:53Z",
+        "longitude": -83.1196,
+        "latitude": 10.1175,
+        "depth": 10,
+        "place": "16 km NNW of Limón, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sahe"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000s78x",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1245,
+          8.9429,
+          21.657
+        ]
+      },
+      "properties": {
+        "id": "us6000s78x",
+        "magnitude": 3.7,
+        "time": "2026-02-08T08:27:14Z",
+        "updated": "2026-05-01T14:35:45Z",
+        "longitude": -84.1245,
+        "latitude": 8.9429,
+        "depth": 21.657,
+        "place": "54 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000s78x"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000s7a5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3014,
+          6.2648,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000s7a5",
+        "magnitude": 4.6,
+        "time": "2026-02-08T15:41:04Z",
+        "updated": "2026-05-01T14:35:46Z",
+        "longitude": -82.3014,
+        "latitude": 6.2648,
+        "depth": 10,
+        "place": "193 km SSW of Río Grande, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000s7a5"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000s9y5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7634,
+          9.6512,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000s9y5",
+        "magnitude": 4.6,
+        "time": "2026-02-18T09:06:35Z",
+        "updated": "2026-05-06T17:54:01Z",
+        "longitude": -82.7634,
+        "latitude": 9.6512,
+        "depth": 10,
+        "place": "13 km NNW of Barranco Adentro, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000s9y5"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000s021",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8039,
+          8.4231,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000s021",
+        "magnitude": 4.8,
+        "time": "2026-02-24T20:38:28Z",
+        "updated": "2026-05-12T17:28:17Z",
+        "longitude": -82.8039,
+        "latitude": 8.4231,
+        "depth": 10,
+        "place": "2 km NW of La Esperanza, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000s021"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000s132",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -81.832,
+          9.4775,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000s132",
+        "magnitude": 5,
+        "time": "2026-02-28T17:11:55Z",
+        "updated": "2026-05-15T22:02:33Z",
+        "longitude": -81.832,
+        "latitude": 9.4775,
+        "depth": 10,
+        "place": "33 km N of Kusapín, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000s132"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000s268",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3532,
+          7.13,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000s268",
+        "magnitude": 5.2,
+        "time": "2026-03-05T05:21:53Z",
+        "updated": "2026-05-22T21:58:35Z",
+        "longitude": -82.3532,
+        "latitude": 7.13,
+        "depth": 10,
+        "place": "115 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000s268"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000s2rp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.966,
+          10.3245,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000s2rp",
+        "magnitude": 4.5,
+        "time": "2026-03-07T11:10:23Z",
+        "updated": "2026-05-22T21:58:38Z",
+        "longitude": -85.966,
+        "latitude": 10.3245,
+        "depth": 10,
+        "place": "13 km WNW of Tamarindo, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000s2rp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000s3n2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.7055,
+          11.5036,
+          200.394
+        ]
+      },
+      "properties": {
+        "id": "us7000s3n2",
+        "magnitude": 4.8,
+        "time": "2026-03-11T16:37:17Z",
+        "updated": "2026-05-22T21:58:46Z",
+        "longitude": -85.7055,
+        "latitude": 11.5036,
+        "depth": 200.394,
+        "place": "4 km SSW of Moyogalpa, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000s3n2"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sh19",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.103,
+          8.4189,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sh19",
+        "magnitude": 4.7,
+        "time": "2026-03-17T20:25:26Z",
+        "updated": "2026-05-26T19:17:03Z",
+        "longitude": -83.103,
+        "latitude": 8.4189,
+        "depth": 10,
+        "place": "20 km S of Golfito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sh19"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000shdm",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.6186,
+          5.1837,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000shdm",
+        "magnitude": 5.4,
+        "time": "2026-03-19T11:36:46Z",
+        "updated": "2026-06-04T18:37:51Z",
+        "longitude": -82.6186,
+        "latitude": 5.1837,
+        "depth": 10,
+        "place": "south of Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000shdm"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000s9eh",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.285,
+          5.4203,
+          104.871
+        ]
+      },
+      "properties": {
+        "id": "us7000s9eh",
+        "magnitude": 4.2,
+        "time": "2026-03-22T15:15:11Z",
+        "updated": "2026-06-04T18:38:11Z",
+        "longitude": -76.285,
+        "latitude": 5.4203,
+        "depth": 104.871,
+        "place": "14 km E of Bagadó, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000s9eh"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sm5q",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.0022,
+          8.0971,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sm5q",
+        "magnitude": 4.4,
+        "time": "2026-04-02T17:11:25Z",
+        "updated": "2026-06-20T17:05:09Z",
+        "longitude": -83.0022,
+        "latitude": 8.0971,
+        "depth": 10,
+        "place": "15 km W of Limones, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sm5q"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sph9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.6809,
+          5.9384,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sph9",
+        "magnitude": 4.8,
+        "time": "2026-04-12T11:50:18Z",
+        "updated": "2026-06-24T16:34:33Z",
+        "longitude": -78.6809,
+        "latitude": 5.9384,
+        "depth": 10,
+        "place": "144 km WSW of Bahía Solano, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sph9"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sq97",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0885,
+          9.5588,
+          49.345
+        ]
+      },
+      "properties": {
+        "id": "us6000sq97",
+        "magnitude": 3.8,
+        "time": "2026-04-15T15:55:01Z",
+        "updated": "2026-06-24T16:34:39Z",
+        "longitude": -84.0885,
+        "latitude": 9.5588,
+        "depth": 49.345,
+        "place": "13 km SW of San Marcos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sq97"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sqnn",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.0293,
+          8.1782,
+          8.202
+        ]
+      },
+      "properties": {
+        "id": "us6000sqnn",
+        "magnitude": 4,
+        "time": "2026-04-16T23:17:29Z",
+        "updated": "2026-07-03T01:37:57Z",
+        "longitude": -83.0293,
+        "latitude": 8.1782,
+        "depth": 8.202,
+        "place": "19 km WNW of Limones, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sqnn"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000sgh1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1509,
+          10.1195,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000sgh1",
+        "magnitude": 4.4,
+        "time": "2026-04-18T10:42:34Z",
+        "updated": "2026-07-03T01:39:04Z",
+        "longitude": -77.1509,
+        "latitude": 10.1195,
+        "depth": 10,
+        "place": "137 km NE of Achutupo, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000sgh1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sra9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.1698,
+          8.0655,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sra9",
+        "magnitude": 4.4,
+        "time": "2026-04-19T08:55:44Z",
+        "updated": "2026-07-03T01:38:16Z",
+        "longitude": -83.1698,
+        "latitude": 8.0655,
+        "depth": 10,
+        "place": "33 km W of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sra9"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000sglc",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1985,
+          9.8635,
+          70.8
+        ]
+      },
+      "properties": {
+        "id": "us7000sglc",
+        "magnitude": 5,
+        "time": "2026-04-28T03:49:47Z",
+        "updated": "2026-07-11T19:59:06Z",
+        "longitude": -84.1985,
+        "latitude": 9.8635,
+        "depth": 70.8,
+        "place": "2 km NNE of Palmichal, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000sglc"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000swxr",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.2871,
+          5.2447,
+          104.42
+        ]
+      },
+      "properties": {
+        "id": "us6000swxr",
+        "magnitude": 4.5,
+        "time": "2026-05-02T13:37:23Z",
+        "updated": "2026-07-15T15:25:46Z",
+        "longitude": -76.2871,
+        "latitude": 5.2447,
+        "depth": 104.42,
+        "place": "23 km SE of Bagadó, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000swxr"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000svip",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.3477,
+          9.2957,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000svip",
+        "magnitude": 4.1,
+        "time": "2026-05-05T20:54:43Z",
+        "updated": "2026-07-15T15:25:55Z",
+        "longitude": -84.3477,
+        "latitude": 9.2957,
+        "depth": 10,
+        "place": "25 km S of Parrita, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000svip"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sw44",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.3611,
+          6.6202,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sw44",
+        "magnitude": 4.8,
+        "time": "2026-05-08T03:39:30Z",
+        "updated": "2026-07-18T18:23:16Z",
+        "longitude": -82.3611,
+        "latitude": 6.6202,
+        "depth": 10,
+        "place": "166 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sw44"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000swhx",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5942,
+          8.8156,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000swhx",
+        "magnitude": 4.5,
+        "time": "2026-05-09T20:26:10Z",
+        "updated": "2026-07-18T18:23:18Z",
+        "longitude": -82.5942,
+        "latitude": 8.8156,
+        "depth": 10,
+        "place": "4 km SSW of Cerro Punta, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000swhx"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sxh5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.4935,
+          9.6751,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sxh5",
+        "magnitude": 5,
+        "time": "2026-05-13T16:22:30Z",
+        "updated": "2026-08-24T08:04:27Z",
+        "longitude": -84.4935,
+        "latitude": 9.6751,
+        "depth": 10,
+        "place": "16 km ENE of Jacó, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sxh5"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sxne",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.5982,
+          9.5901,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sxne",
+        "magnitude": 4.4,
+        "time": "2026-05-14T03:36:57Z",
+        "updated": "2026-07-25T22:12:47Z",
+        "longitude": -84.5982,
+        "latitude": 9.5901,
+        "depth": 10,
+        "place": "4 km SE of Jacó, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sxne"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sxlv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.6545,
+          9.5253,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sxlv",
+        "magnitude": 3.2,
+        "time": "2026-05-14T04:44:51Z",
+        "updated": "2026-07-25T22:12:47Z",
+        "longitude": -84.6545,
+        "latitude": 9.5253,
+        "depth": 10,
+        "place": "10 km SSW of Jacó, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sxlv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000sy6z",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.6055,
+          9.5822,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000sy6z",
+        "magnitude": 3.2,
+        "time": "2026-05-16T10:47:56Z",
+        "updated": "2026-07-25T22:12:49Z",
+        "longitude": -84.6055,
+        "latitude": 9.5822,
+        "depth": 10,
+        "place": "4 km SE of Jacó, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000sy6z"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000t076",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9156,
+          9.0311,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000t076",
+        "magnitude": 4.5,
+        "time": "2026-05-19T02:23:33Z",
+        "updated": "2026-07-25T22:12:58Z",
+        "longitude": -82.9156,
+        "latitude": 9.0311,
+        "depth": 10,
+        "place": "24 km NNE of San Vito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000t076"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000szg7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.54,
+          8.7137,
+          15.126
+        ]
+      },
+      "properties": {
+        "id": "us6000szg7",
+        "magnitude": 4.5,
+        "time": "2026-05-22T09:19:59Z",
+        "updated": "2026-08-05T15:58:48Z",
+        "longitude": -83.54,
+        "latitude": 8.7137,
+        "depth": 15.126,
+        "place": "27 km S of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000szg7"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000sql0",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9086,
+          11.6168,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000sql0",
+        "magnitude": 4.3,
+        "time": "2026-05-29T15:39:13Z",
+        "updated": "2026-08-11T13:34:08Z",
+        "longitude": -85.9086,
+        "latitude": 11.6168,
+        "depth": 10,
+        "place": "12 km N of Belén, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000sql0"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000sq6f",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.677,
+          7.5249,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000sq6f",
+        "magnitude": 4.8,
+        "time": "2026-06-03T00:41:41Z",
+        "updated": "2026-08-11T13:34:06Z",
+        "longitude": -80.677,
+        "latitude": 7.5249,
+        "depth": 10,
+        "place": "11 km NNW of El Cortezo, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000sq6f"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000sqgj",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.7153,
+          8.3919,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000sqgj",
+        "magnitude": 4.7,
+        "time": "2026-06-04T01:55:12Z",
+        "updated": "2026-08-15T17:26:59Z",
+        "longitude": -83.7153,
+        "latitude": 8.3919,
+        "depth": 10,
+        "place": "66 km SSW of Puerto Cortés, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000sqgj"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000stz6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.5964,
+          11.1965,
+          164.08
+        ]
+      },
+      "properties": {
+        "id": "us7000stz6",
+        "magnitude": 4.1,
+        "time": "2026-06-09T16:06:30Z",
+        "updated": "2026-08-15T17:27:15Z",
+        "longitude": -85.5964,
+        "latitude": 11.1965,
+        "depth": 164.08,
+        "place": "9 km W of Cárdenas, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000stz6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000sry7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.7014,
+          10.5726,
+          67.747
+        ]
+      },
+      "properties": {
+        "id": "us7000sry7",
+        "magnitude": 4.9,
+        "time": "2026-06-10T03:01:35Z",
+        "updated": "2026-08-15T17:27:10Z",
+        "longitude": -85.7014,
+        "latitude": 10.5726,
+        "depth": 67.747,
+        "place": "8 km NW of Sardinal, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000sry7"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000t8sr",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76.2727,
+          5.1217,
+          96.893
+        ]
+      },
+      "properties": {
+        "id": "us6000t8sr",
+        "magnitude": 4.4,
+        "time": "2026-06-28T08:39:25Z",
+        "updated": "2026-09-15T23:40:59Z",
+        "longitude": -76.2727,
+        "latitude": 5.1217,
+        "depth": 96.893,
+        "place": "25 km N of San José del Palmar, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000t8sr"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000t9f9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.2596,
+          8.7365,
+          27.196
+        ]
+      },
+      "properties": {
+        "id": "us6000t9f9",
+        "magnitude": 4.4,
+        "time": "2026-07-01T13:41:16Z",
+        "updated": "2026-09-15T23:41:36Z",
+        "longitude": -83.2596,
+        "latitude": 8.7365,
+        "depth": 27.196,
+        "place": "21 km NW of Golfito, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000t9f9"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000t9sq",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.2802,
+          9.7869,
+          61.605
+        ]
+      },
+      "properties": {
+        "id": "us6000t9sq",
+        "magnitude": 4.1,
+        "time": "2026-07-03T04:18:06Z",
+        "updated": "2026-09-19T21:50:25Z",
+        "longitude": -84.2802,
+        "latitude": 9.7869,
+        "depth": 61.605,
+        "place": "4 km SSE of San Rafael Abajo, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000t9sq"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000tarc",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.7291,
+          9.7551,
+          35
+        ]
+      },
+      "properties": {
+        "id": "us6000tarc",
+        "magnitude": 5.2,
+        "time": "2026-07-07T18:11:30Z",
+        "updated": "2026-09-19T21:50:30Z",
+        "longitude": -84.7291,
+        "latitude": 9.7551,
+        "depth": 35,
+        "place": "18 km NW of Jacó, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tarc"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000t0xy",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.7325,
+          8.6521,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000t0xy",
+        "magnitude": 4.5,
+        "time": "2026-07-16T10:33:30Z",
+        "updated": "2026-08-31T12:20:17Z",
+        "longitude": -82.7325,
+        "latitude": 8.6521,
+        "depth": 10,
+        "place": "3 km ENE of Santa Cruz, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000t0xy"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000t3kq",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4279,
+          6.2315,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000t3kq",
+        "magnitude": 4.3,
+        "time": "2026-07-27T02:20:41Z",
+        "updated": "2026-08-14T02:55:45Z",
+        "longitude": -82.4279,
+        "latitude": 6.2315,
+        "depth": 10,
+        "place": "204 km SW of Río Grande, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000t3kq"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000tgxl",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5166,
+          6.3585,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000tgxl",
+        "magnitude": 4.5,
+        "time": "2026-07-27T16:50:06Z",
+        "updated": "2026-08-09T21:21:18Z",
+        "longitude": -82.5166,
+        "latitude": 6.3585,
+        "depth": 10,
+        "place": "189 km SSE of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tgxl"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000thdg",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.8518,
+          9.7421,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000thdg",
+        "magnitude": 4.3,
+        "time": "2026-08-01T02:16:27Z",
+        "updated": "2026-09-03T21:17:38Z",
+        "longitude": -83.8518,
+        "latitude": 9.7421,
+        "depth": 10,
+        "place": "5 km S of Orosi, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000thdg"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000thkb",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80.7275,
+          7.5961,
+          12.485
+        ]
+      },
+      "properties": {
+        "id": "us6000thkb",
+        "magnitude": 4.3,
+        "time": "2026-08-02T04:30:03Z",
+        "updated": "2026-10-06T22:38:07Z",
+        "longitude": -80.7275,
+        "latitude": 7.5961,
+        "depth": 12.485,
+        "place": "8 km SW of Pitaloza Arriba, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000thkb"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000thmh",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.9413,
+          11.549,
+          135.313
+        ]
+      },
+      "properties": {
+        "id": "us6000thmh",
+        "magnitude": 4.6,
+        "time": "2026-08-02T16:09:30Z",
+        "updated": "2026-08-22T16:39:20Z",
+        "longitude": -85.9413,
+        "latitude": 11.549,
+        "depth": 135.313,
+        "place": "7 km NW of Belén, Nicaragua",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000thmh"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000thmv",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.1911,
+          7.6498,
+          34.424
+        ]
+      },
+      "properties": {
+        "id": "us6000thmv",
+        "magnitude": 4.4,
+        "time": "2026-08-02T17:12:35Z",
+        "updated": "2026-08-13T15:20:29Z",
+        "longitude": -77.1911,
+        "latitude": 7.6498,
+        "depth": 34.424,
+        "place": "24 km NNW of Riosucio, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000thmv"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000ti6z",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.5326,
+          5.8844,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000ti6z",
+        "magnitude": 5.1,
+        "time": "2026-08-05T04:19:21Z",
+        "updated": "2026-08-22T01:29:50Z",
+        "longitude": -82.5326,
+        "latitude": 5.8844,
+        "depth": 10,
+        "place": "240 km S of Burica, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ti6z"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000tjsr",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -85.5543,
+          8.4074,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000tjsr",
+        "magnitude": 4.9,
+        "time": "2026-08-10T20:54:58Z",
+        "updated": "2026-08-20T19:14:48Z",
+        "longitude": -85.5543,
+        "latitude": 8.4074,
+        "depth": 10,
+        "place": "163 km S of Sámara, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tjsr"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000tluk",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.5719,
+          5.8735,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000tluk",
+        "magnitude": 4.3,
+        "time": "2026-08-19T10:07:16Z",
+        "updated": "2026-09-09T17:12:47Z",
+        "longitude": -77.5719,
+        "latitude": 5.8735,
+        "depth": 10,
+        "place": "37 km WNW of Nuquí, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tluk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us6000tn2j",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.9998,
+          10.1662,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us6000tn2j",
+        "magnitude": 4.9,
+        "time": "2026-08-24T07:37:16Z",
+        "updated": "2026-09-28T14:48:23Z",
+        "longitude": -83.9998,
+        "latitude": 10.1662,
+        "depth": 10,
+        "place": "19 km NNE of San Rafael, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tn2j"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tcmy",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.9122,
+          10.1032,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000tcmy",
+        "magnitude": 4.2,
+        "time": "2026-08-24T07:39:39Z",
+        "updated": "2026-09-17T19:47:03Z",
+        "longitude": -83.9122,
+        "latitude": 10.1032,
+        "depth": 10,
+        "place": "18 km SW of Guápiles, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tcmy"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tci6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -78.4009,
+          10.0063,
+          35
+        ]
+      },
+      "properties": {
+        "id": "us7000tci6",
+        "magnitude": 4.3,
+        "time": "2026-08-28T06:46:33Z",
+        "updated": "2026-09-24T05:36:41Z",
+        "longitude": -78.4009,
+        "latitude": 10.0063,
+        "depth": 35,
+        "place": "65 km NNE of Narganá, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tci6"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tdbz",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.4204,
+          8.6353,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000tdbz",
+        "magnitude": 3.6,
+        "time": "2026-09-01T04:50:45Z",
+        "updated": "2026-09-01T20:23:31Z",
+        "longitude": -82.4204,
+        "latitude": 8.6353,
+        "depth": 10,
+        "place": "4 km WSW of Caldera, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tdbz"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tgdp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -83.9351,
+          10.147,
+          93.926
+        ]
+      },
+      "properties": {
+        "id": "us7000tgdp",
+        "magnitude": 4.2,
+        "time": "2026-09-04T21:41:07Z",
+        "updated": "2026-09-21T22:18:51Z",
+        "longitude": -83.9351,
+        "latitude": 10.147,
+        "depth": 93.926,
+        "place": "18 km WSW of Guápiles, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tgdp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tg98",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.0167,
+          9.057,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000tg98",
+        "magnitude": 5,
+        "time": "2026-09-10T08:26:53Z",
+        "updated": "2026-09-20T06:44:04Z",
+        "longitude": -84.0167,
+        "latitude": 9.057,
+        "depth": 10,
+        "place": "44 km SSE of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tg98"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tget",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -84.1473,
+          9.1718,
+          35
+        ]
+      },
+      "properties": {
+        "id": "us7000tget",
+        "magnitude": 4.6,
+        "time": "2026-09-10T18:04:04Z",
+        "updated": "2026-09-23T21:51:50Z",
+        "longitude": -84.1473,
+        "latitude": 9.1718,
+        "depth": 35,
+        "place": "28 km S of Quepos, Costa Rica",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tget"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tgw1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.8155,
+          8.329,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000tgw1",
+        "magnitude": 4.7,
+        "time": "2026-09-12T01:59:50Z",
+        "updated": "2026-10-01T23:04:41Z",
+        "longitude": -82.8155,
+        "latitude": 8.329,
+        "depth": 10,
+        "place": "0 km NE of Manaca Civil, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tgw1"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000thsp",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.8115,
+          6.0969,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000thsp",
+        "magnitude": 4.8,
+        "time": "2026-09-16T07:02:13Z",
+        "updated": "2026-09-16T07:28:25Z",
+        "longitude": -77.8115,
+        "latitude": 6.0969,
+        "depth": 10,
+        "place": "47 km WSW of Bahía Solano, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000thsp"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000ti8q",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.7982,
+          7.0509,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000ti8q",
+        "magnitude": 4.4,
+        "time": "2026-09-18T08:45:21Z",
+        "updated": "2026-09-30T11:48:48Z",
+        "longitude": -77.7982,
+        "latitude": 7.0509,
+        "depth": 10,
+        "place": "7 km SW of Juradó, Colombia",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000ti8q"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000tij9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -82.9935,
+          8.7413,
+          10
+        ]
+      },
+      "properties": {
+        "id": "us7000tij9",
+        "magnitude": 3.9,
+        "time": "2026-09-18T22:09:36Z",
+        "updated": "2026-09-22T14:13:37Z",
+        "longitude": -82.9935,
+        "latitude": 8.7413,
+        "depth": 10,
+        "place": "8 km W of Cañas Gordas, Panama",
+        "status": "reviewed",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000tij9"
+      }
+    }
+  ]
+}

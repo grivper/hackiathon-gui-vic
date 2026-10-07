@@ -1,4 +1,4 @@
-.PHONY: instalar datos procesar test sync
+.PHONY: instalar datos procesar test sync db arrancar
 
 instalar:
 	pip install -r requirements.txt
@@ -14,3 +14,9 @@ test:
 
 sync:           ## sincroniza la bitácora con Notion
 	python notion_sync.py
+
+db:             ## carga data/processed/* en DuckDB y genera el reporte de calidad
+	python motor/cargar_db.py
+
+arrancar: instalar db  ## instala dependencias y carga la base DuckDB (setup en un comando)
+

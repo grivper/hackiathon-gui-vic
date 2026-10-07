@@ -1,0 +1,6 @@
+id_noticia,titulo,url,medio,idioma,fecha_publicacion,fecha_deteccion,fecha_extraccion,tema,origen,alcance_texto
+N-001,Noticia válida,https://ejemplo.com/a,ejemplo.com,es,2026-01-05T10:00:00Z,2026-01-05T10:05:00Z,2026-01-05T10:06:00Z,economia,tvn_rss,titular/metadatos
+N-002,Fecha inválida,https://ejemplo.com/b,ejemplo.com,es,no-es-una-fecha,2026-01-06T10:05:00Z,2026-01-06T10:06:00Z,economia,tvn_rss,titular/metadatos
+N-003,,https://ejemplo.com/c,,,,,2026-01-07T10:06:00Z,,gdelt,titular/metadatos
+N-004,Sin url,,ejemplo.com,es,2026-01-08T10:00:00Z,2026-01-08T10:05:00Z,2026-01-08T10:06:00Z,economia,tvn_rss,titular/metadatos
+N-001,Id duplicado,https://ejemplo.com/a,ejemplo.com,es,2026-01-09T10:00:00Z,2026-01-09T10:05:00Z,2026-01-09T10:06:00Z,economia,tvn_rss,titular/metadatos

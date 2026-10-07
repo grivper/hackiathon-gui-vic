@@ -37,3 +37,14 @@
   justificacion: Es la respuesta oficial de la organización. GDELT DOC 2.0 solo indexa ~90 días y limita
     a 1 consulta cada 5 s (con 6 s dio 429 desde esta IP, se usa pausa de 10 s).
   decidio: Guille
+- id: DEC-005
+  decision: Snapshot de datos en git y base DuckDB derivada (make db), idempotente por hash del manifest
+  fecha: 2026-10-06T22:12-05:00
+  estado: Vigente
+  contexto: Los dos integrantes necesitan exactamente los mismos datos sin repetir descargas ni subir
+    binarios a git.
+  alternativas: Subir el archivo .duckdb a git; que cada uno ejecute make datos y dependa de capturas
+    distintas del RSS
+  justificacion: El snapshot (CSV, manifest con hash) es pequeño y reproducible; el .duckdb se reconstruye
+    igual desde él. Mismo hash de manifest implica mismos datos.
+  decidio: Guille

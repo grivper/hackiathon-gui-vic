@@ -82,8 +82,8 @@
 - id: TAR-006
   tarea: Validación de carga y reporte de calidad (T01)
   responsable: Guille
-  estado: Pendiente
-  fecha: '2026-10-06'
+  estado: Hecho
+  fecha: 2026-10-06T22:12-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-002
