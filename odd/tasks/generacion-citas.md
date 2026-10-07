@@ -22,7 +22,7 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
 - [x] G1 Evidence retrieval `motor/evidencia.py` (test-first, fixtures)
 - [x] G2 Citation validator `motor/citas.py` (test-first: invalid id, wrong campo, invented figure, no citation, coverage)
 - [x] G3 Abstention rules `motor/abstencion.py` (test-first: T06 unanswerable, null value, year out of range, titles-only scope text)
-- [ ] G4 Prompt builder with injection defense (test-first: T07 canary in a synthetic headline)
+- [x] G4 Prompt builder with injection defense (test-first: T07 canary in a synthetic headline)
 - [ ] G5 LLM client with fake and Ollama backends; model and params recorded
 - [ ] G6 `motor/generar.py` pipeline + `fichas` table + jsonl export + `make generar`, end-to-end with the fake LLM
 - [ ] G7 Real run with Ollama when available, docs (interfaz-brief contract for `fichas`), bitacora TAR-009, commits
@@ -35,3 +35,4 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
 - G1: RED (collection error, module missing) then GREEN (8 passed); full suite 138 passed. Real data check: economia group returns 3 news + 4 World Bank indicators (latest non-null year, 2024); the USGS-linked group returns 2 news + event us6000ril5. Indicators are annual: the prompt/validator must keep year and unit visible (CU-02).
 - G2: RED (collection error, module missing) then GREEN (19 passed); full suite 157 passed. Discard reasons: sin_cita, evidencia_inexistente, campo_inexistente, campo_nulo, cifra_no_sustentada, tipo_invalido, texto_vacio, afirmacion_invalida; schema failures and zero surviving claims degrade to `abstencion`. Figures may match rounded values; "1.400" is read both as 1,4 and 1400.
 - G3: RED (collection error, module missing) then GREEN (10 passed); full suite 167 passed. `decidir_abstencion_grupo` (sin_evidencia), `consultar_indicador` (indicador_ausente / valor_nulo / anio_fuera_de_rango, exact lookup, no LLM), `alcance_de` (titulares vs datos oficiales). Real data has no null indicator values, so `valor_nulo` is covered by the synthetic test only. Contradiction handling (T05, "versiones") is not part of G3 and remains for the generation step.
+- G4: RED (collection error, module missing) then GREEN (14 passed); full suite 181 passed. `construir_prompt` (system = rules + mandatory scope; user = sources as JSON between `<<<FUENTE ...>>>`/`<<<FIN_FUENTE>>>`; delimiters in source text neutralized; fields truncated to 400 chars; deterministic), `ESQUEMA_SALIDA` (JSON schema for Ollama), `obedecio_inyeccion` (canary check, T07). Limit: this proves the prompt is built defensively; whether a real 7-8B model resists the injection still needs the real run in G7.
