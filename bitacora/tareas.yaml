@@ -98,8 +98,8 @@
 - id: TAR-008
   tarea: Motor de puntaje con reglas versionadas y estado de evidencia
   responsable: Guille
-  estado: Pendiente
-  fecha: '2026-10-06'
+  estado: Hecho
+  fecha: 2026-10-07T06:44-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-003

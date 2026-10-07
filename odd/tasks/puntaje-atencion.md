@@ -17,9 +17,11 @@ Score every event group with the challenge formula `P = 30R + 25I + 20U + 15N + 
 - Group theme = majority theme of its news (embeddings method).
 
 ## Tasks
-- [ ] T1 `motor/reglas_puntaje.yaml` + loader and validation (weights sum 100, ranges without overlap)
-- [ ] T2 Component functions R, I, U, N, E + total, priority, tie-break, evidence state (test-first, fixtures)
-- [ ] T3 `motor/puntuar.py` pipeline and CLI, DuckDB tables `puntaje` and `meta_puntaje`, `make puntuar` in `make motor`
-- [ ] T4 Real run, docs (interfaz-brief, README), bitacora TAR-008, commits
+- [x] T1 `motor/reglas_puntaje.yaml` + loader and validation (weights sum 100, ranges without overlap)
+- [x] T2 Component functions R, I, U, N, E + total, priority, tie-break, evidence state (test-first, fixtures)
+- [x] T3 `motor/puntuar.py` pipeline and CLI, DuckDB tables `puntaje` and `meta_puntaje`, `make puntuar` in `make motor`
+- [x] T4 Real run, docs (interfaz-brief, README), bitacora TAR-008, commits
 
 ## Evidence
+- Commit 6316121 on feat/puntaje-atencion (code + 33 tests; full suite 105 passed). Real run 35 s: 25069 groups, 612 alto / 5035 medio / 19422 bajo; evidence 6 suficiente / 1816 parcial / 23247 insuficiente.
+- Open point: official-data link for E is thematic (any economia/servicios_publicos group gets it), which lifts single-source TVN groups to `parcial`. Pending user decision.
