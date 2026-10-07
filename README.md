@@ -9,6 +9,14 @@ y Víctor (producto, interfaz, Notion y pruebas). Plan detallado: `documentacion
 2. `make instalar`.
 3. Para ver el avance, abre las páginas de Notion que te compartieron. No necesitas el token.
 
+### Bandeja editorial en Windows (sin GNU Make)
+
+Con el entorno virtual creado y las bases DuckDB preparadas, inicia la interfaz con:
+
+```
+.venv\Scripts\python.exe -m streamlit run app/app.py
+```
+
 **Quién sincroniza:** solo una persona ejecuta `python notion_sync.py`. El estado de la sincronización
 (`.notion_state.json`) es local y no se sube a git: si dos personas sincronizan, Notion queda con
 páginas duplicadas. Los demás editan los archivos de `bitacora/` (`tareas.yaml`, `decisiones.yaml`,
