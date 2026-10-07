@@ -17,8 +17,11 @@ Classify the news into the 6 challenge themes (economia, logistica_canal, turism
 - Blind labeling sample: `motor/muestra_etiquetado.py` writes ~100 stratified recent headlines WITHOUT model output for the teammate to label; `motor/evaluar.py` computes macro-F1, per-class precision/recall and confusion for each method.
 
 ## Tasks
-- [ ] T1 Dependencies, `make modelos`, `make clasificar`, `motor/temas.yaml`
-- [ ] T2 `motor/clasificar.py`: embeddings cache, zero-shot classifier with abstention, TF-IDF baseline, tables in DuckDB
-- [ ] T3 `motor/agrupar.py`: event grouping with provenance counting, T02/CU-03 behavior
-- [ ] T4 `motor/muestra_etiquetado.py` + `motor/evaluar.py` (macro-F1 on human labels)
-- [ ] T5 Tests, real run, README, bitacora (TAR-007, T02), commits
+- [x] T1 Dependencies, `make modelos`, `make clasificar`, `motor/temas.yaml`
+- [x] T2 `motor/clasificar.py`: embeddings cache, zero-shot classifier with abstention, TF-IDF baseline, tables in DuckDB
+- [x] T3 `motor/agrupar.py`: event grouping with provenance counting, T02/CU-03 behavior
+- [x] T4 `motor/muestra_etiquetado.py` + `motor/evaluar.py` (macro-F1 on human labels)
+- [x] T5 Tests, real run, README, bitacora (TAR-007, T02), commits
+
+## Evidence
+- Commits on feat/clasificacion-agrupacion. Tests: 72 passed. Real runs: classify 62 s (embeddings 88% otros, tfidf 97% otros), group 84 s (25069 groups, max span 3 d). Dev-regression agreement 20/24 (developer labels, not evaluation). Macro-F1 pending the human labels (104-headline blind sample).

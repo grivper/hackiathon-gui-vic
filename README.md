@@ -31,6 +31,26 @@ en las dos máquinas significa los mismos datos. Los registros con fecha inváli
 la tabla `rechazados` y no frenan la carga (prueba T01). Solo una persona regenera el snapshot (`make datos`) y
 lo commitea; la otra solo hace `git pull`.
 
+## Motor: clasificación por tema y agrupación de eventos
+
+```
+make motor        # descarga el modelo si falta (una vez, ~470 MB) y corre clasificar + agrupar (idempotente)
+make muestra      # genera la muestra ciega a etiquetar a mano (data/etiquetas/muestra_etiquetado.csv)
+make evaluar      # macro-F1 contra las etiquetas humanas (data/evaluacion_clasificacion.md)
+```
+
+- **Temas:** se editan en `motor/temas.yaml` (descripción y semillas de los 6 temas del reto, más grupos de
+  contraste como deportes, sucesos o política que se mapean a `otros`).
+- **Clasificación:** por defecto, embeddings multilingües (`paraphrase-multilingual-MiniLM-L12-v2`, en CPU,
+  sin red una vez descargado) comparados contra prototipos de cada tema; si el parecido es bajo o hay
+  empate, el sistema se abstiene (`otros`). El baseline es TF-IDF con las mismas semillas.
+- **Agrupación:** titulares del mismo evento por similitud de embeddings dentro de una ventana de 3 días y
+  con un máximo de 3 días por grupo. La corroboración cuenta procedencias distintas, no cantidad de
+  notas: una agencia repetida por varios medios vale una sola.
+- Los resultados viven en `data/motor.duckdb` (derivado, no se sube a git).
+- **Etiquetado humano:** quien etiqueta sigue `data/etiquetas/LEEME_etiquetado.md`, sin mirar el modelo. Las
+  etiquetas sí se suben a git. Mientras no existan, no se reporta macro-F1.
+
 ## Datos: snapshot propio de desarrollo
 
 Mientras no llegue el paquete oficial, `ingesta/descargar_snapshot.py` descarga las cuatro

@@ -90,8 +90,8 @@
 - id: TAR-007
   tarea: Clasificación temática y agrupación de eventos, con baseline TF-IDF
   responsable: Guille
-  estado: Pendiente
-  fecha: '2026-10-06'
+  estado: Hecho
+  fecha: 2026-10-06T23:09-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-003
@@ -155,3 +155,20 @@
     gdelt'
   tipo: Tarea
   epica: EPI-002
+- id: TAR-015
+  tarea: Definir y ajustar los 6 temas en motor/temas.yaml (descripción y semillas)
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:10-05:00
+  notas: Es edición de texto. Después correr make clasificar para ver el efecto.
+  tipo: Tarea
+  epica: EPI-003
+- id: TAR-016
+  tarea: Etiquetar a ciegas los 104 titulares de data/etiquetas/muestra_etiquetado.csv y correr make evaluar
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-06T23:10-05:00
+  notas: Seguir data/etiquetas/LEEME_etiquetado.md. No mirar la salida del modelo. Con las etiquetas se
+    reporta el macro-F1 que exige el reto.
+  tipo: Tarea
+  epica: EPI-003
