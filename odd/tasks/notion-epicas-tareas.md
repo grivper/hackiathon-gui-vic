@@ -20,3 +20,6 @@ Add epics and loose tasks to `bitacora/tareas.yaml`, with epic progress visible 
 - [x] T3 Tests for progress/state derivation and validation (epic refs exist)
 - [x] T4 Real sync against simulation workspace and visual check
 - [x] T5 Docs (README) and work-unit commit(s)
+
+## Evidence
+- Work-unit commit: dc97462 (feat/notion-epicas-tareas). Tests: 14 passed. Real sync against simulation workspace: 17 rows, 5 epics with progress, second run idempotent.
