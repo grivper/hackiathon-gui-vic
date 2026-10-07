@@ -41,7 +41,7 @@ The data and grouping pipelines are available, but editors have no product surfa
 - Verification commands go through the delegated writer first; independent verification follows the native assessment plan.
 
 ## Tasks
-- [ ] **SIB-01 — Bootstrap a tested read-only inbox query.** Status: in progress; independent verification blocked. TAR-010 and TAR-017 are in progress; Streamlit, the app/query boundary, and focused tests are implemented. Commit evidence: pending checkpoint.
+- [ ] **SIB-01 — Bootstrap a tested read-only inbox query.** Status: in progress; independent verification blocked. TAR-010 and TAR-017 are in progress; Streamlit, the app/query boundary, and focused tests are implemented. Checkpoint commit: `c61c28d` (pushed; task not closed).
 - [ ] **SIB-02 — Deliver the Bandeja screen.** Status: pending. Render topic/date controls and prioritized group cards, document startup on Windows without GNU Make, run focused and full checks, mark TAR-017 done while TAR-010 remains in progress, and commit the work unit. Commit evidence: pending.
 
 ## Acceptance criteria
@@ -60,6 +60,7 @@ The data and grouping pipelines are available, but editors have no product surfa
 - 2026-10-07: SIB-01 implementation added `streamlit==1.54.0`, a read-only DuckDB query boundary, a minimal Spanish Streamlit shell, and temporary-database tests. Observed TDD: RED (`ModuleNotFoundError: app`), then GREEN (`3 passed`); writer full suite `75 passed`; Notion dry-run and `git diff --check` passed.
 - 2026-10-07: Parent spot check passed (`3 passed`), Streamlit started headlessly on port 8517, both DuckDB SHA-256 values stayed unchanged, and LSP diagnostics were clean for all three Python files.
 - 2026-10-07: Native reliability review lineage `review-e4cdfa14b87ef2b9` is blocked before verdict because the reviewer transport reported quota exhaustion (retry horizon approximately 72 hours). Native assessment therefore requires an independent verifier, but the configured `gentle-ai-verify` agent failed twice without executing tools. No review verdict or independent-verifier evidence exists; SIB-01 remains open.
+- 2026-10-07: Shared incomplete checkpoint `c61c28d` pushed to `origin/feat/streamlit-bandeja`; this preserves code and evidence for teammate continuation without claiming SIB-01 complete.
 
 ## Next step
-Share the verified implementation as an explicitly incomplete checkpoint, then resume the frozen native review when reviewer capacity returns. Do not mark SIB-01 complete until the required independent verification or terminal native review is observed.
+Resume frozen review lineage `review-e4cdfa14b87ef2b9` when reviewer capacity returns. Do not mark SIB-01 complete or start SIB-02 until the required independent verification or terminal native review is observed.
