@@ -34,7 +34,7 @@ def reglas() -> dict:
 # --------------------------------------------------------------------------- reglas_puntaje.yaml
 
 def test_reglas_puntaje_reales_cargan_y_los_pesos_suman_100(reglas):
-    assert reglas["version"] == "v0.1"
+    assert reglas["version"] == "v0.2"
     assert sum(reglas["pesos"].values()) == 100
 
 
@@ -147,17 +147,29 @@ def test_la_repeticion_nunca_sube_el_puntaje_total(reglas):
 
 # --------------------------------------------------------------------------- componente_E / estado_evidencia
 
-def test_componente_e_corroboracion_fuente_primaria_y_dato_oficial_capa_en_1(reglas):
-    e = puntuar.componente_E(
-        corroboracion=2, es_fuente_primaria=True, hay_dato_oficial=True, reglas=reglas
-    )
+def test_componente_e_corroboracion_y_fuente_primaria_suman_sin_dato_oficial(reglas):
+    # v0.2: el contexto oficial de nivel-tema (Banco Mundial / USGS) ya no suma a E.
+    # Con corroboracion=2 (0.2 por la 2da procedencia) + fuente primaria (0.4) da 0.6,
+    # no 1.0: el tope real de 1.0 solo se demuestra con reglas de prueba (ver el test
+    # siguiente), porque los pesos reales (0.4 + 0.4) nunca llegan a saturarlo.
+    e = puntuar.componente_E(corroboracion=2, es_fuente_primaria=True, reglas=reglas)
+    assert e == pytest.approx(0.6)
+
+
+def test_componente_e_se_satura_en_uno_con_pesos_altos():
+    reglas_prueba = {
+        "evidencia": {
+            "peso_por_procedencia_adicional": 0.3,
+            "tope_procedencias": 0.9,
+            "peso_fuente_primaria": 0.6,
+        }
+    }
+    e = puntuar.componente_E(corroboracion=5, es_fuente_primaria=True, reglas=reglas_prueba)
     assert e == 1.0
 
 
 def test_componente_e_sin_nada_es_cero(reglas):
-    e = puntuar.componente_E(
-        corroboracion=1, es_fuente_primaria=False, hay_dato_oficial=False, reglas=reglas
-    )
+    e = puntuar.componente_E(corroboracion=1, es_fuente_primaria=False, reglas=reglas)
     assert e == 0.0
 
 
@@ -171,10 +183,14 @@ def test_componente_e_sin_nada_es_cero(reglas):
     ],
 )
 def test_estado_evidencia_matriz(corroboracion, fuente_fuerte, esperado):
-    estado = puntuar.estado_evidencia(
-        corroboracion=corroboracion, es_fuente_primaria=fuente_fuerte, hay_dato_oficial=False
-    )
+    estado = puntuar.estado_evidencia(corroboracion=corroboracion, es_fuente_primaria=fuente_fuerte)
     assert estado == esperado
+
+
+def test_estado_evidencia_ignora_el_contexto_oficial_de_nivel_tema(reglas):
+    # Un grupo de eventos_naturales con un sismo USGS en ventana pero sin corroboracion
+    # ni fuente primaria sigue siendo insuficiente: el dato oficial es solo contexto.
+    assert puntuar.estado_evidencia(corroboracion=1, es_fuente_primaria=False) == "insuficiente"
 
 
 # --------------------------------------------------------------------------- helpers de grupo
@@ -197,18 +213,42 @@ def test_es_fuente_primaria_por_sufijo_de_dominio_oficial(reglas):
     assert puntuar.es_fuente_primaria("tvn-2.com", reglas) is False
 
 
-def test_hay_indicador_vinculado_por_tema(reglas):
+def test_indicadores_vinculados_solo_para_economia(reglas):
     disponibles = {"FP.CPI.TOTL.ZG", "SP.POP.TOTL"}
-    assert puntuar.hay_indicador_vinculado("economia", disponibles, reglas) is True
-    assert puntuar.hay_indicador_vinculado("turismo", disponibles, reglas) is False
+    assert puntuar.indicadores_vinculados("economia", disponibles, reglas) == ["FP.CPI.TOTL.ZG"]
+    # servicios_publicos y logistica_canal ya no tienen mapeo (v0.2): sin sustento
+    # tem\u00e1tico claro, no se fuerza la relaci\u00f3n.
+    assert puntuar.indicadores_vinculados("turismo", disponibles, reglas) == []
+    assert puntuar.indicadores_vinculados("servicios_publicos", disponibles, reglas) == []
+    assert puntuar.indicadores_vinculados("logistica_canal", disponibles, reglas) == []
 
 
-def test_hay_evento_sismico_en_ventana():
+def test_contar_eventos_en_ventana():
     fecha_max = datetime(2026, 1, 9, 12, 0, 0)
     dentro = [datetime(2026, 1, 8, 0, 0, 0)]
     fuera = [datetime(2025, 1, 1, 0, 0, 0)]
-    assert puntuar.hay_evento_sismico_en_ventana(fecha_max, dentro, ventana_dias=7) is True
-    assert puntuar.hay_evento_sismico_en_ventana(fecha_max, fuera, ventana_dias=7) is False
+    assert puntuar.contar_eventos_en_ventana(fecha_max, dentro, ventana_dias=7) == 1
+    assert puntuar.contar_eventos_en_ventana(fecha_max, fuera, ventana_dias=7) == 0
+    assert puntuar.contar_eventos_en_ventana(fecha_max, dentro + fuera, ventana_dias=7) == 1
+
+
+def test_contexto_oficial_de_economia_lista_indicadores(reglas):
+    disponibles = {"FP.CPI.TOTL.ZG", "NY.GDP.MKTP.KD.ZG"}
+    texto = puntuar.contexto_oficial_de("economia", datetime(2026, 1, 1), disponibles, [], reglas)
+    assert texto == "FP.CPI.TOTL.ZG, NY.GDP.MKTP.KD.ZG"
+
+
+def test_contexto_oficial_de_eventos_naturales_cuenta_sismos_en_ventana(reglas):
+    fecha_max = datetime(2026, 1, 9, 12, 0, 0)
+    eventos = [datetime(2026, 1, 8, 0, 0, 0)]
+    texto = puntuar.contexto_oficial_de("eventos_naturales", fecha_max, set(), eventos, reglas)
+    assert "1 evento" in texto
+    assert "USGS" in texto
+
+
+def test_contexto_oficial_de_vacio_sin_eventos_ni_tema_relevante(reglas):
+    assert puntuar.contexto_oficial_de("eventos_naturales", datetime(2026, 1, 9), set(), [], reglas) == ""
+    assert puntuar.contexto_oficial_de("turismo", datetime(2026, 1, 9), {"FP.CPI.X"}, [], reglas) == ""
 
 
 # --------------------------------------------------------------------------- prioridad / orden
@@ -298,12 +338,12 @@ def _filas_puntaje(out_path: Path) -> dict:
     con = duckdb.connect(str(out_path), read_only=True)
     try:
         filas = con.execute(
-            "SELECT grupo_id, tema, R, I, U, N, E, puntaje, prioridad, estado_evidencia, version_reglas, motivos "
-            "FROM puntaje"
+            "SELECT grupo_id, tema, R, I, U, N, E, puntaje, prioridad, estado_evidencia, version_reglas, motivos, "
+            "contexto_oficial FROM puntaje"
         ).fetchall()
     finally:
         con.close()
-    columnas = ["grupo_id", "tema", "R", "I", "U", "N", "E", "puntaje", "prioridad", "estado_evidencia", "version_reglas", "motivos"]
+    columnas = ["grupo_id", "tema", "R", "I", "U", "N", "E", "puntaje", "prioridad", "estado_evidencia", "version_reglas", "motivos", "contexto_oficial"]
     return {f[0]: dict(zip(columnas, f)) for f in filas}
 
 
@@ -317,12 +357,15 @@ def test_pipeline_calcula_los_cuatro_grupos_del_fixture(dbs):
 
     eco = filas["G-ECO1"]
     assert eco["tema"] == "economia"
-    assert (eco["R"], eco["I"], eco["U"], eco["N"], eco["E"]) == (1.0, 1.0, 1.0, 1.0, 1.0)
-    assert eco["puntaje"] == 100.0
+    # v0.2: E ya no suma el dato oficial (Banco Mundial). corroboracion=2 (0.2) +
+    # fuente primaria (0.4) = 0.6, no 1.0.
+    assert (eco["R"], eco["I"], eco["U"], eco["N"], eco["E"]) == pytest.approx((1.0, 1.0, 1.0, 1.0, 0.6))
+    assert eco["puntaje"] == 96.0
     assert eco["prioridad"] == "alto"
     assert eco["estado_evidencia"] == "suficiente"
-    assert eco["version_reglas"] == "v0.1"
+    assert eco["version_reglas"] == "v0.2"
     assert eco["motivos"]  # explicación no vacía
+    assert eco["contexto_oficial"] == "FP.CPI.TOTL.ZG, NY.GDP.MKTP.KD.ZG"
 
     tur = filas["G-TUR1"]
     assert tur["tema"] == "turismo"  # mayoría sobre "otros" (2 vs 1)
@@ -330,19 +373,25 @@ def test_pipeline_calcula_los_cuatro_grupos_del_fixture(dbs):
     assert tur["puntaje"] == 41.0
     assert tur["prioridad"] == "medio"
     assert tur["estado_evidencia"] == "insuficiente"
+    assert tur["contexto_oficial"] == ""
 
     otr = filas["G-OTR1"]
     assert otr["tema"] == "otros"
     assert otr["R"] == 0.0
     assert otr["puntaje"] == 42.5
     assert otr["prioridad"] == "medio"
+    assert otr["contexto_oficial"] == ""
 
     nat = filas["G-NAT1"]
     assert nat["tema"] == "eventos_naturales"
-    assert (nat["R"], nat["I"], nat["U"], nat["N"], nat["E"]) == (1.0, 0.3, 1.0, 1.0, 0.4)
-    assert nat["puntaje"] == 76.5
+    # v0.2: el sismo USGS en ventana ya no suma a E ni cambia estado_evidencia; sigue
+    # siendo contexto informativo en `contexto_oficial`.
+    assert (nat["R"], nat["I"], nat["U"], nat["N"], nat["E"]) == (1.0, 0.3, 1.0, 1.0, 0.0)
+    assert nat["puntaje"] == 72.5
     assert nat["prioridad"] == "alto"
-    assert nat["estado_evidencia"] == "parcial"  # dato oficial (USGS) sin corroboracion >= 2
+    assert nat["estado_evidencia"] == "insuficiente"  # sin corroboracion>=2 ni fuente primaria
+    assert "1 evento" in nat["contexto_oficial"]
+    assert "USGS" in nat["contexto_oficial"]
 
 
 def test_pipeline_es_idempotente_sin_forzar(dbs, capsys):
