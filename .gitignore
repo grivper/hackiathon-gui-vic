@@ -9,3 +9,4 @@ __pycache__/
 .atl/.skill-registry.cache.json
 # The TVN RSS carries article descriptions: not redistributed (recipe in ingesta/).
 data/raw/tvn/
+.env.oficial

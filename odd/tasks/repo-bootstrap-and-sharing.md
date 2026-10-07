@@ -12,7 +12,8 @@ Make `hackiathon-gui-vic` an independent Git repository, publish it as a private
 ## Tasks
 - [~] T1 Add `.gitignore` (done) and `.env.example` (BLOCKED: Gentle AI safety policy denies writing that path; needs a user-approved plan).
 - [x] T2 `git init -b main`, secrets scan clean, first commit `74a9775`.
-- [ ] T3 Create private GitHub repo and push; invite `vicmat04`. BLOCKED: `gh` PAT lacks createRepository permission; user creates the empty private repo in the web UI.
+- [x] T3 (push) Private repo `grivper/hackiathon-gui-vic` created by the user; pushed `main` (4 commits) using a dedicated repo-scoped token read from `GITHUB_TOKEN_HACKIATHON` via a repo-local credential helper (no secret stored in `.git/config`).
+- [x] T3b Invited `vicmat04` with write permission (GitHub API HTTP 201, invitation pending acceptance); `GITHUB_TOKEN_HACKIATHON` exported in the `gsh` alias.
 - [ ] T4 Enable `core.hooksPath hooks`; validate `notion_sync.py --dry-run`.
 - [ ] T5 Export project memories with `engram sync` for the collaborator.
 

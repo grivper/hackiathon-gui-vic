@@ -66,6 +66,13 @@ def buscar(items: list, ident: str) -> dict:
     sys.exit(f"No existe el ID {ident}.")
 
 
+def buscar_opcional(items: list, ident: str) -> dict | None:
+    for it in items:
+        if str(it.get("id")) == ident:
+            return it
+    return None
+
+
 # ---------------------------------------------------------------- comandos
 
 def cmd_decision(a) -> None:
@@ -87,12 +94,29 @@ def cmd_decision(a) -> None:
 
 def cmd_tarea(a) -> None:
     items = leer("tareas")
+    epica = a.epica
+    if epica:
+        padre = buscar_opcional(items, epica)
+        if not padre or padre.get("tipo") != "Épica":
+            sys.exit(f"No existe la épica {epica}.")
     nueva = {"id": siguiente_id(items, "TAR"), "tarea": a.titulo,
              "responsable": a.responsable or os.getenv("BITACORA_AUTOR", ""),
-             "estado": a.estado, "fecha": ahora(), "notas": a.notas or ""}
+             "estado": a.estado, "fecha": ahora(), "notas": a.notas or "",
+             "tipo": "Tarea", "epica": epica or ""}
     items.append(nueva)
     escribir("tareas", items)
     print(f"Tarea {nueva['id']} registrada.")
+
+
+def cmd_epica(a) -> None:
+    items = leer("tareas")
+    nueva = {"id": siguiente_id(items, "EPI"), "tarea": a.titulo,
+             "responsable": a.responsable or os.getenv("BITACORA_AUTOR", ""),
+             "estado": "Pendiente", "fecha": ahora(), "notas": "",
+             "tipo": "Épica", "epica": ""}
+    items.append(nueva)
+    escribir("tareas", items)
+    print(f"Épica {nueva['id']} registrada.")
 
 
 def cmd_estado(a) -> None:
@@ -131,6 +155,7 @@ def cmd_prueba(a) -> None:
 
 def cmd_resumen(_a) -> None:
     tareas, decisiones, pruebas = leer("tareas"), leer("decisiones"), leer("pruebas")
+    tareas = [t for t in tareas if t.get("tipo", "Tarea") == "Tarea"]
     print(f"Tareas: {len(tareas)} (mínimo exigido: 8)")
     for e in ESTADOS_TAREA:
         print(f"  {e:<10} {sum(1 for t in tareas if t.get('estado') == e)}")
@@ -167,7 +192,13 @@ def main() -> None:
     t.add_argument("--responsable")
     t.add_argument("--estado", default="Pendiente", choices=ESTADOS_TAREA)
     t.add_argument("--notas")
+    t.add_argument("--epica", help="ID de la épica a la que pertenece, p. ej. EPI-001")
     t.set_defaults(fn=cmd_tarea)
+
+    ep = sub.add_parser("epica", parents=[comun], help="registrar una épica")
+    ep.add_argument("titulo")
+    ep.add_argument("--responsable")
+    ep.set_defaults(fn=cmd_epica)
 
     e = sub.add_parser("estado", parents=[comun], help="cambiar estado de una tarea o decisión")
     e.add_argument("id")
