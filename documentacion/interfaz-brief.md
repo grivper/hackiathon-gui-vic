@@ -24,7 +24,7 @@ El código de la interfaz va en `app/`. No toques `motor/`, `ingesta/` ni `data/
 |---|---|---|---|
 | 1 | Bandeja | Lista de grupos de noticias priorizados, con filtro por tema y por fecha. Caso CU-01: "¿qué cinco temas merecen revisión y por qué?" | TAR-017 |
 | 2 | Ficha de evidencia | Titulares del grupo, quién lo reporta (procedencias), corroboración, fecha original, qué falta verificar | TAR-018 |
-| 3 | Contexto oficial | Indicadores del Banco Mundial y sismos USGS relacionados. No confundir un dato anual histórico con uno de hoy | TAR-019 |
+| 3 | Contexto oficial | Indicadores del Banco Mundial y sismos USGS (columna `puntaje.contexto_oficial`, solo contexto). Un sismo USGS verificado para la noticia queda en `puntaje.evento_usgs_id`. No confundir un dato anual histórico con uno de hoy | TAR-019 |
 | 4 | Consulta | Caja de pregunta en español. Respuesta con citas, o abstención explicada (CU-04) | TAR-020 |
 | 5 | Borrador y revisión | Borrador con citas por afirmación y 5 estados de revisión | TAR-021 |
 
@@ -38,6 +38,7 @@ Se leen con DuckDB en modo solo lectura. Dos archivos: `data/senales.duckdb` (da
 |---|---|---|
 | motor | `clasificacion` | `id_noticia`, `metodo` (`embeddings` o `tfidf`), `tema`, `score`, `segundo_tema`, `margen`, `contraste` |
 | motor | `grupos` | `grupo_id`, `n_noticias`, `n_procedencias`, `procedencias`, `fecha_min`, `fecha_max`, `titulo_representativo`, `corroboracion`, `es_repeticion` |
+| motor | `puntaje` | `grupo_id`, `tema`, `R`, `I`, `U`, `N`, `E` (0-1), `puntaje` (0-100), `prioridad` (`bajo`/`medio`/`alto`), `estado_evidencia` (`insuficiente`/`parcial`/`suficiente`), `version_reglas`, `motivos` (texto que explica cada componente) |
 | motor | `grupo_noticias` | `grupo_id`, `id_noticia`, `procedencia`, `similitud_al_centroide` |
 | senales | `noticias` | `id_noticia`, `titulo`, `url`, `medio`, `fecha_publicacion`, `fecha_deteccion`, `origen` |
 | senales | `indicadores` | `id_evidencia`, `pais_iso3`, `indicador_nombre`, `anio`, `valor` (puede ser nulo), `unidad`, `fuente_url` |
@@ -72,7 +73,7 @@ filas = con.execute("""
 
 ## Todavía no existe (se enchufa después con el mismo formato)
 
-- **Puntaje de atención** `P = 30R + 25I + 20U + 15N + 10E` (TAR-008, Guille). Hasta entonces, ordená por `fecha_max` y `corroboracion`.
+- **Puntaje de atención** (TAR-008): ya existe en la tabla `puntaje` (`make puntuar`, reglas en `motor/reglas_puntaje.yaml`). Ordená por `puntaje` desc, desempate por `U` y luego `grupo_id`. Mostrá `version_reglas` y `motivos`. El `estado_evidencia` es independiente del puntaje: una prioridad alta con evidencia insuficiente es "requiere investigación", nunca "publicable". La fecha de referencia de `U` es la última fecha de los datos, no la de hoy.
 - **Fichas y borradores con citas** (TAR-009, Guille). Formato de `fichas.jsonl` del reto: `id_caso`, `modalidad`, `ids_fuente`, `afirmaciones`, `citas`, `puntaje`, `componentes`, `estado_evidencia`, `borrador`, `estado_revision`.
 - Mientras tanto la interfaz puede usar datos de ejemplo con ese mismo formato.
 
