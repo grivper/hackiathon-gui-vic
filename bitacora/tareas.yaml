@@ -235,8 +235,8 @@
   tipo: Tarea
   epica: EPI-004
 - id: TAR-022
-  tarea: Instalar Ollama en la máquina de la demo y medir la latencia de un modelo 7-8B (meta mediana
-    15 s)
+  tarea: Instalar Ollama en la máquina de la demo y medir la latencia de gemma3:4b (modelo vigente; meta
+    mediana 15 s)
   responsable: Víctor
   estado: Pendiente
   fecha: 2026-10-06T23:19-05:00
