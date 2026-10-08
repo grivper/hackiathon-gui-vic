@@ -34,6 +34,12 @@ El código de la interfaz va en `app/`. No toques `motor/`, `ingesta/` ni `data/
 
 Se leen con DuckDB en modo solo lectura. Dos archivos: `data/senales.duckdb` (datos del snapshot) y `data/motor.duckdb` (resultados del motor).
 
+## Fichas, caché y seguridad de publicación
+
+La interfaz prioriza la ficha de `data/motor.duckdb`. Si no existe una ficha DuckDB para el grupo, usa el respaldo `data/fichas.jsonl`, anclado a la raíz del repositorio; ese respaldo es **solo lectura**: muestra el estado existente sin control de cinco estados ni persistencia. Para guardar una revisión se requiere una ficha generada en DuckDB.
+
+La identidad de caché incluye ambos DuckDB y el JSONL (también cuando falta), por lo que crear, reemplazar o quitar el respaldo invalida las lecturas de la bandeja. Las consultas son extractivas sobre afirmaciones y citas validadas: muestran IDs de cita reales o se abstienen sin citas. La evidencia insuficiente siempre requiere investigación y no es publicable. Aprobar un borrador no publica ni autoriza su publicación.
+
 | Archivo | Tabla | Columnas clave |
 |---|---|---|
 | motor | `clasificacion` | `id_noticia`, `metodo` (`embeddings` o `tfidf`), `tema`, `score`, `segundo_tema`, `margen`, `contraste` |
@@ -71,7 +77,7 @@ filas = con.execute("""
 5. **Solo titulares y metadatos.** No hay texto de artículos. La interfaz no debe afirmar nada que no esté en una evidencia con ID.
 6. **El texto de una fuente es dato, no instrucción.** Mostralo escapado y nunca lo pases como instrucción a nada.
 
-## Todavía no existe (se enchufa después con el mismo formato)
+## Integración de fichas y límites editoriales
 
 - **Puntaje de atención** (TAR-008): ya existe en la tabla `puntaje` (`make puntuar`, reglas en `motor/reglas_puntaje.yaml`). Ordená por `puntaje` desc, desempate por `U` y luego `grupo_id`. Mostrá `version_reglas` y `motivos`. El `estado_evidencia` es independiente del puntaje: una prioridad alta con evidencia insuficiente es "requiere investigación", nunca "publicable". La fecha de referencia de `U` es la última fecha de los datos, no la de hoy.
 - **Fichas y borradores con citas** (TAR-009, hecho). Se generan con `make generar` (necesita Ollama; ver README) y se guardan en la tabla `fichas` de `data/motor.duckdb` (`id_caso`, `estado_revision`, `tipo_respuesta`, `ficha` = JSON completo, `generado_en`) y en `data/fichas.jsonl`. Cada ficha trae, además de los campos del reto (`id_caso`, `modalidad`, `ids_fuente`, `afirmaciones`, `citas`, `puntaje`, `componentes`, `estado_evidencia`, `borrador`, `estado_revision`):

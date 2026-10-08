@@ -118,9 +118,11 @@
 - id: TAR-010
   tarea: Interfaz con bandeja, ficha, borrador y revisión
   responsable: Víctor
-  estado: En curso
-  fecha: 2026-10-07T08:57-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T11:10-05:00
+  notas: >-
+    Bandeja, ficha, consulta citada, borrador, revisión y fallback offline
+    verificados; la app carga correctamente en navegador.
   tipo: Tarea
   epica: EPI-004
 - id: TAR-011
@@ -128,16 +130,18 @@
   responsable: Guille
   estado: En curso
   fecha: 2026-10-08T07:38-05:00
-  notas: '2026-10-08T07:06-05:00 · T01-T08 hechas (T03, T04, T05 corregidas; evidencia en tests/test_aceptacion.py,
-    sin Ollama). Faltan T09 (brief, depende de la UI de Victor), T10 (demo sin internet) y el benchmark
+  notas: '2026-10-08T07:06-05:00 · T01-T08 hechas (T03, T04, T05
+    corregidas; evidencia en tests/test_aceptacion.py, sin Ollama). Faltan T09
+    (brief, depende de la UI de Victor), T10 (demo sin internet) y el benchmark
     de 40 consultas (decidir quien las arma).
 
-    2026-10-08T07:21-05:00 · Corrida con el modelo real gemma3:4b registrada en documentacion/evidencia-modelo-real.md:
-    T03, T04, T06 ok; T05 falla con el modelo real (no declara la contradiccion). Latencia mediana ~66
-    s por ficha.
+    2026-10-08T07:21-05:00 · Corrida con el modelo real gemma3:4b registrada
+    en documentacion/evidencia-modelo-real.md: T03, T04, T06 ok; T05 falla con
+    el modelo real (no declara la contradiccion). Latencia mediana ~66 s
+    por ficha.
 
-    2026-10-08T07:38-05:00 · T05 corregida y verificada con el modelo real (corrida C). Quedan T09, T10
-    y el benchmark de 40 consultas.'
+    2026-10-08T07:38-05:00 · T05 corregida y verificada con el modelo real
+    (corrida C). Quedan T09, T10 y el benchmark de 40 consultas.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-012
@@ -149,61 +153,78 @@
   tipo: Tarea
   epica: EPI-005
 - id: TAR-013
-  tarea: Recapturar el RSS de TVN cada día hasta el jueves (mínimo 3 capturas más)
+  tarea: >-
+    Recapturar el RSS de TVN cada día hasta el jueves (mínimo 3 capturas más)
   responsable: Guille
   estado: Hecho
   fecha: 2026-10-08T06:37-05:00
-  notas: 'El RSS no guarda historial: cada captura trae ~150 ítems recientes. Comando: python ingesta/descargar_snapshot.py
-    --solo tvn. Las capturas se acumulan y se deduplican. Capturas hechas: 3 (2026-10-07, 2026-10-08;
-    +43 noticias la segunda, +28 la tercera). Snapshot: 30225 noticias, manifest 81640bd328e6. Cerrada
-    al jueves 2026-10-08.'
+  notas: 'El RSS no guarda historial: cada captura trae ~150 ítems recientes.
+    Comando: python ingesta/descargar_snapshot.py --solo tvn. Las capturas se
+    acumulan y se deduplican. Capturas hechas: 3 (2026-10-07, 2026-10-08; +43
+    noticias la segunda, +28 la tercera). Snapshot: 30225 noticias, manifest
+    81640bd328e6. Cerrada al jueves 2026-10-08.'
   tipo: Tarea
   epica: EPI-002
 - id: TAR-014
   tarea: Reintentar GDELT desde otra red o más tarde (opcional)
   responsable: Guille
   fecha: 2026-10-08T06:32-05:00
-  notas: '2026-10-07: 429 persistente desde la IP de casa, incluso con consultas aisladas y 90 s de espera.
-    Ya hay 30154 noticias de TVN por sitemaps, así que GDELT solo aporta variedad de medios. Opciones:
-    otra red (datos del celular) o horas después. Comando: python ingesta/descargar_snapshot.py --solo
-    gdelt. 2026-10-08: DESCARTADA (opcional). Probado desde casa y desde datos del celular: GDELT sigue
-    limitando la IP (1 de cada 3 ventanas responde; el resto devuelve texto de limite con HTTP 200). Se
-    corrigio el script para reintentar y reanudar (fix/gdelt-reintento), pero la descarga completa llevaria
-    mas de una hora con resultado incierto y solo suma variedad de medios. Cierre: las fuentes actuales
-    son suficientes (manifest d4068230602a): TVN sitemaps 29954 noticias en 13 meses, TVN RSS 196, GDELT
-    151 (parcial, 14-17 jul 2026), Banco Mundial 540 valores y USGS 208 sismos. El minimo del reto es
-    100 noticias y el snapshot lo supera con holgura. No se necesita mas GDELT.'
+  notas: '2026-10-07: 429 persistente desde la IP de casa, incluso con consultas
+    aisladas y 90 s de espera. Ya hay 30154 noticias de TVN por sitemaps, así
+    que GDELT solo aporta variedad de medios. Opciones: otra red (datos del
+    celular) o horas después. Comando: python ingesta/descargar_snapshot.py
+    --solo gdelt. 2026-10-08: DESCARTADA (opcional). Probado desde casa y desde
+    datos del celular: GDELT sigue limitando la IP (1 de cada 3 ventanas
+    responde; el resto devuelve texto de limite con HTTP 200). Se corrigio el
+    script para reintentar y reanudar (fix/gdelt-reintento), pero la descarga
+    completa llevaria mas de una hora con resultado incierto y solo suma
+    variedad de medios. Cierre: las fuentes actuales son suficientes (manifest
+    d4068230602a): TVN sitemaps 29954 noticias en 13 meses, TVN RSS 196,
+    GDELT 151 (parcial, 14-17 jul 2026), Banco Mundial 540 valores y USGS
+    208 sismos. El minimo del reto es 100 noticias y el snapshot lo supera
+    con holgura. No se necesita mas GDELT.'
   estado: Hecho
   tipo: Tarea
   epica: EPI-002
 - id: TAR-015
-  tarea: Definir y ajustar los 6 temas en motor/temas.yaml (descripción y semillas)
+  tarea: >-
+    Definir y ajustar los 6 temas en motor/temas.yaml (descripción y semillas)
   responsable: Víctor
   estado: Pendiente
   fecha: 2026-10-06T23:10-05:00
-  notas: Es edición de texto. Después correr make clasificar para ver el efecto.
+  notas: >-
+    Es edición de texto. Después correr make clasificar para ver el efecto.
   tipo: Tarea
   epica: EPI-003
 - id: TAR-016
-  tarea: Etiquetar a ciegas los 104 titulares de data/etiquetas/muestra_etiquetado.csv y correr make evaluar
+  tarea: >-
+    Etiquetar a ciegas los 104 titulares de
+    data/etiquetas/muestra_etiquetado.csv y correr make evaluar
   responsable: Víctor
   estado: Hecho
   fecha: 2026-10-07T16:11-05:00
-  notas: Seguir data/etiquetas/LEEME_etiquetado.md. No mirar la salida del modelo. Con las etiquetas se
-    reporta el macro-F1 que exige el reto.
+  notas: >-
+    Seguir data/etiquetas/LEEME_etiquetado.md. No mirar la salida del modelo.
+    Con las etiquetas se reporta el macro-F1 que exige el reto.
   tipo: Tarea
   epica: EPI-003
 - id: TAR-017
-  tarea: 'Interfaz: bandeja de temas y grupos priorizados con filtros por tema y fecha (CU-01)'
+  tarea: >-
+    Interfaz: bandeja de temas y grupos priorizados con filtros por tema y fecha
+    (CU-01)
   responsable: Víctor
   estado: Hecho
   fecha: 2026-10-07T15:46-05:00
-  notas: SIB-01 implementado y con pruebas locales; cierre pendiente de revisión independiente porque
-    el transporte del revisor agotó cuota. Evidencia completa en odd/tasks/streamlit-bandeja.md.
+  notas: >-
+    SIB-01 implementado y con pruebas locales; cierre pendiente de revisión
+    independiente porque el transporte del revisor agotó cuota. Evidencia
+    completa en odd/tasks/streamlit-bandeja.md.
   tipo: Tarea
   epica: EPI-004
 - id: TAR-018
-  tarea: 'Interfaz: ficha de evidencia del grupo con procedencias, corroboración y fecha original'
+  tarea: >-
+    Interfaz: ficha de evidencia del grupo con procedencias, corroboración
+    y fecha original
   responsable: Víctor
   estado: Hecho
   fecha: 2026-10-07T20:32-05:00
@@ -211,7 +232,9 @@
   tipo: Tarea
   epica: EPI-004
 - id: TAR-019
-  tarea: 'Interfaz: panel de contexto oficial con indicadores del Banco Mundial y sismos USGS'
+  tarea: >-
+    Interfaz: panel de contexto oficial con indicadores del Banco Mundial
+    y sismos USGS
   responsable: Víctor
   estado: Hecho
   fecha: 2026-10-07T20:49-05:00
@@ -235,22 +258,26 @@
   tipo: Tarea
   epica: EPI-004
 - id: TAR-022
-  tarea: Instalar Ollama en la máquina de la demo y medir la latencia de gemma3:4b (modelo vigente; meta
-    mediana 15 s)
+  tarea: >-
+    Instalar Ollama en la máquina de la demo y medir la latencia de gemma3:4b
+    (modelo vigente; meta mediana 15 s)
   responsable: Víctor
   estado: Hecho
   fecha: 2026-10-08T08:57-05:00
-  notas: '2026-10-08T08:57-05:00 · Medición de desarrollo histórica (máquina de Guille, i7-1165G7, 4
-    núcleos, 15 GB, solo CPU, gemma3:4b, n=5): mediana 29,7 s, p95 49,7 s, 5,7 tok/s, JSON válido 5/5,
-    cita válida 4/5. Con num_thread=8: mediana 30,7 s, p95 44,8 s (sin mejora). No cumple la meta de
-    15 s en CPU; pregenerar las fichas finales.
+  notas: '2026-10-08T08:57-05:00 · Medición de desarrollo histórica (máquina
+    de Guille, i7-1165G7, 4 núcleos, 15 GB, solo CPU, gemma3:4b, n=5): mediana
+    29,7 s, p95 49,7 s, 5,7 tok/s, JSON válido 5/5, cita válida 4/5. Con
+    num_thread=8: mediana 30,7 s, p95 44,8 s (sin mejora). No cumple la meta
+    de 15 s en CPU; pregenerar las fichas finales.
 
-    Medición oficial completada en la máquina de demo: Ollama 0.40.1; `motor/medir_llm.py --modelo
-    gemma3:4b --n 10` con overrides del entorno explícitamente desactivados; n=10; mediana 18,86863055
-    s; p95 41,04204075 s; mediana 9,856653 tok/s; JSON válido 10/10; al menos una cita válida 9/10;
-    opciones efectivas num_thread=4, num_ctx=4096, num_predict=768, temperature=0, seed=7. La meta de
-    mediana de 15 s no se cumplió, pero Guille completó correctamente la medición requerida; se decide
-    pregenerar antes de la demo. Evidencia: documentacion/evidencia-modelo-real.md.'
+    Medición oficial completada en la máquina de demo: Ollama 0.40.1;
+    `motor/medir_llm.py --modelo gemma3:4b --n 10` con overrides del entorno
+    explícitamente desactivados; n=10; mediana 18,86863055 s; p95 41,04204075 s;
+    mediana 9,856653 tok/s; JSON válido 10/10; al menos una cita válida 9/10;
+    opciones efectivas num_thread=4, num_ctx=4096, num_predict=768,
+    temperature=0, seed=7. La meta de mediana de 15 s no se cumplió, pero
+    Guille completó correctamente la medición requerida; se decide pregenerar
+    antes de la demo. Evidencia: documentacion/evidencia-modelo-real.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-023
@@ -306,9 +333,11 @@
     Interfaz: conectar la interfaz a las tablas de data/motor.duckdb
     (contrato en documentacion/interfaz-brief.md)
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:21-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T11:10-05:00
+  notas: >-
+    DRI-03A/B: fichas DuckDB con fallback JSONL de solo lectura, consulta
+    extractiva citada y revisión segura; 287 tests y smoke Playwright aprobados.
   tipo: Tarea
   epica: EPI-004
 - id: TAR-029

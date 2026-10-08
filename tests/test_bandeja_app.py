@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import importlib.util
+import sys
 from datetime import date, datetime
+from pathlib import Path
+from unittest.mock import MagicMock, Mock
+
+import pytest
 
 from app.app import (
     database_fingerprint,
@@ -11,7 +17,29 @@ from app.app import (
     render_group_draft,
     render_official_context,
 )
-from app.data import GroupFicha, InboxGroup
+from app.data import ChatResponse, GroupFicha, InboxGroup
+
+
+def test_script_mode_import_loads_sibling_data_without_running_main(monkeypatch):
+    app_path = Path(__file__).parents[1] / "app" / "app.py"
+    repo_root = app_path.parents[1].resolve()
+    script_paths = [
+        str(app_path.parent),
+        *(path for path in sys.path if path and Path(path).resolve() != repo_root),
+    ]
+    monkeypatch.setattr(sys, "path", script_paths)
+    monkeypatch.delitem(sys.modules, "app", raising=False)
+    monkeypatch.delitem(sys.modules, "app.data", raising=False)
+    monkeypatch.delitem(sys.modules, "data", raising=False)
+    spec = importlib.util.spec_from_file_location("streamlit_script", app_path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.delitem(sys.modules, "data", raising=False)
+
+    assert module.__package__ == ""
+    assert module.fetch_inbox_groups.__module__ == "data"
 
 
 _GROUP = InboxGroup(
@@ -29,25 +57,28 @@ _GROUP = InboxGroup(
 )
 
 
-def test_database_fingerprint_changes_when_either_database_changes(tmp_path):
+def test_database_fingerprint_changes_when_any_data_source_changes_and_handles_missing_jsonl(tmp_path):
     motor_path = tmp_path / "motor.duckdb"
     signals_path = tmp_path / "senales.duckdb"
+    fichas_path = tmp_path / "fichas.jsonl"
     motor_path.write_bytes(b"motor-v1")
     signals_path.write_bytes(b"signals-v1")
 
-    original = database_fingerprint(motor_path, signals_path)
+    missing = database_fingerprint(motor_path, signals_path, fichas_path)
+    assert database_fingerprint(motor_path, signals_path, fichas_path) == missing
 
-    motor_path.write_bytes(b"motor-v2-with-a-different-size")
-    after_motor_change = database_fingerprint(motor_path, signals_path)
-    signals_path.write_bytes(b"signals-v2-with-a-different-size")
-    after_signals_change = database_fingerprint(motor_path, signals_path)
+    fichas_path.write_text('{"id_caso": "G-1"}\n', encoding="utf-8")
+    with_fichas = database_fingerprint(motor_path, signals_path, fichas_path)
+    fichas_path.write_text('{"id_caso": "G-1", "updated": true}\n', encoding="utf-8")
+    after_fichas_change = database_fingerprint(motor_path, signals_path, fichas_path)
 
-    assert after_motor_change != original
-    assert after_signals_change != after_motor_change
+    assert with_fichas != missing
+    assert after_fichas_change != with_fichas
 
 
-def test_high_priority_with_insufficient_evidence_requires_investigation():
-    guidance = editorial_guidance("alto", "insuficiente")
+@pytest.mark.parametrize("prioridad", ["bajo", "medio", "alto"])
+def test_insufficient_evidence_always_requires_investigation_and_is_not_publishable(prioridad):
+    guidance = editorial_guidance(prioridad, "insuficiente")
 
     assert "requiere investigación" in guidance
     assert "no es publicable" in guidance
@@ -160,7 +191,7 @@ def test_render_group_draft_exposes_the_five_mandatory_states_for_a_real_respons
     widgets["caption"].assert_any_call("Citas empleadas: E-1 · titulo")
 
 
-def test_render_group_draft_renders_abstention_without_draft_text(monkeypatch):
+def test_render_group_draft_renders_an_abstention_safe_draft_and_warning(monkeypatch):
     from unittest.mock import Mock
 
     widgets = _patch_draft_widgets(monkeypatch)
@@ -168,7 +199,7 @@ def test_render_group_draft_renders_abstention_without_draft_text(monkeypatch):
         id_caso="G-1",
         estado_revision="nuevo",
         tipo_respuesta="abstencion",
-        borrador=None,
+        borrador="No se pudo verificar el hecho con la evidencia disponible.",
         citas=[],
         afirmaciones=[],
         motivo_abstencion="No hay corroboración suficiente.",
@@ -179,12 +210,31 @@ def test_render_group_draft_renders_abstention_without_draft_text(monkeypatch):
 
     render_group_draft(_GROUP)
 
-    assert not any(
-        call.args and call.args[0] == "El evento ocurrió en enero." for call in widgets["markdown"].call_args_list
+    widgets["markdown"].assert_any_call(
+        "No se pudo verificar el hecho con la evidencia disponible."
     )
+    assert any("Abstención:" in str(call) for call in widgets["warning"].call_args_list)
     assert any(
         "No hay corroboración suficiente." in str(call) for call in widgets["caption"].call_args_list
     )
+
+
+def test_render_group_draft_jsonl_fallback_is_read_only_without_selectbox_or_persistence(monkeypatch):
+    widgets = _patch_draft_widgets(monkeypatch)
+    ficha = GroupFicha(
+        id_caso="G-1", estado_revision="nuevo", tipo_respuesta="respuesta",
+        borrador="Ficha de respaldo.", citas=[], afirmaciones=[], motivo_abstencion=None,
+        generado_en=None, source="jsonl", persistable=False,
+    )
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=ficha))
+    persist_mock = Mock()
+    monkeypatch.setattr("app.app.persist_ficha_review_state", persist_mock)
+
+    render_group_draft(_GROUP)
+
+    widgets["selectbox"].assert_not_called()
+    persist_mock.assert_not_called()
+    assert any("solo lectura" in str(call).lower() for call in widgets["warning"].call_args_list)
 
 
 def test_render_group_draft_scopes_the_selectbox_key_to_the_generation_timestamp_so_regenerating_does_not_inherit_approval(monkeypatch):
@@ -218,7 +268,7 @@ def test_render_group_draft_scopes_the_selectbox_key_to_the_generation_timestamp
 def test_render_group_draft_persists_the_review_state_when_the_editor_changes_it(monkeypatch):
     from unittest.mock import Mock
 
-    widgets = _patch_draft_widgets(monkeypatch, selectbox_return="aprobado como borrador")
+    _patch_draft_widgets(monkeypatch, selectbox_return="aprobado como borrador")
     ficha = GroupFicha(
         id_caso="G-1", estado_revision="nuevo", tipo_respuesta="respuesta",
         borrador="v1", citas=[], afirmaciones=[], motivo_abstencion=None,
@@ -252,26 +302,55 @@ def test_render_group_draft_does_not_persist_when_the_state_is_unchanged(monkeyp
     persist_mock.assert_not_called()
 
 
-def test_render_group_chat_initializes_session_state(monkeypatch):
-    from unittest.mock import MagicMock, Mock
+def test_render_group_draft_approved_warning_does_not_authorize_publication(monkeypatch):
+    widgets = _patch_draft_widgets(monkeypatch, selectbox_return="aprobado como borrador")
+    ficha = GroupFicha(
+        id_caso="G-1", estado_revision="aprobado como borrador", tipo_respuesta="respuesta",
+        borrador="v1", citas=[], afirmaciones=[], motivo_abstencion=None,
+        generado_en=datetime(2026, 1, 1),
+    )
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=ficha))
+    monkeypatch.setattr("app.app.persist_ficha_review_state", Mock())
 
-    st_expander = MagicMock()
-    st_caption = Mock()
-    st_warning = Mock()
-    st_chat_input = Mock(return_value=None)
-    session_state = {}
+    render_group_draft(_GROUP)
 
-    monkeypatch.setattr("app.app.st.expander", st_expander)
-    monkeypatch.setattr("app.app.st.caption", st_caption)
-    monkeypatch.setattr("app.app.st.warning", st_warning)
-    monkeypatch.setattr("app.app.st.chat_input", st_chat_input)
-    monkeypatch.setattr("app.app.st.session_state", session_state)
+    assert any("ni autoriza su publicación" in str(call) for call in widgets["success"].call_args_list)
+
+
+def test_render_group_chat_uses_real_evidence_and_verified_citation_ids(monkeypatch):
+    widgets = {name: Mock() for name in ("caption", "warning", "markdown")}
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value="¿Qué pasó?"))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.spinner", MagicMock())
+    monkeypatch.setattr("app.app.st.session_state", {})
+    for name, mock in widgets.items():
+        monkeypatch.setattr(f"app.app.st.{name}", mock)
+    ask_mock = Mock(return_value=ChatResponse("Hecho validado.", False, ["N-real"]))
+    monkeypatch.setattr("app.app.ask_group_question", ask_mock)
 
     render_group_chat(_GROUP)
 
-    assert "chat_G-1" in session_state
-    assert session_state["chat_G-1"] == []
-    st_chat_input.assert_called_once()
-    st_warning.assert_any_call(
-        "Respuesta simulada: aún no usa el LLM ni la evidencia real (pendiente TAR-020/TAR-028)."
+    assert ask_mock.call_args.args == ("G-1", "¿Qué pasó?")
+    assert ask_mock.call_args.kwargs["fichas_path"].name == "fichas.jsonl"
+    assert "simulada" not in str(widgets["caption"].call_args_list).lower()
+    widgets["caption"].assert_any_call("Citas verificadas: N-real")
+
+
+def test_render_group_chat_unsupported_question_abstains_without_citations(monkeypatch):
+    widgets = {name: Mock() for name in ("caption", "warning", "markdown")}
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value="¿Quién ganó?"))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.spinner", MagicMock())
+    monkeypatch.setattr("app.app.st.session_state", {})
+    for name, mock in widgets.items():
+        monkeypatch.setattr(f"app.app.st.{name}", mock)
+    monkeypatch.setattr(
+        "app.app.ask_group_question", Mock(return_value=ChatResponse("No hay evidencia.", True, []))
     )
+
+    render_group_chat(_GROUP)
+
+    assert any("abstención" in str(call).lower() for call in widgets["warning"].call_args_list)
+    assert not any("Citas" in str(call) for call in widgets["caption"].call_args_list)

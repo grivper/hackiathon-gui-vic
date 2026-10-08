@@ -8,35 +8,48 @@ from pathlib import Path
 import duckdb
 import streamlit as st
 
-from app.data import (
-    VALID_REVIEW_STATES,
-    EvidenceRow,
-    InboxGroup,
-    ScoreUnavailableError,
-    ask_group_question,
-    fetch_group_evidence,
-    fetch_group_ficha,
-    fetch_inbox_filter_options,
-    fetch_inbox_groups,
-    persist_ficha_review_state,
-)
+if __package__:
+    from . import data as data_module
+else:
+    import data as data_module
+
+VALID_REVIEW_STATES = data_module.VALID_REVIEW_STATES
+EvidenceRow = data_module.EvidenceRow
+InboxGroup = data_module.InboxGroup
+ScoreUnavailableError = data_module.ScoreUnavailableError
+ask_group_question = data_module.ask_group_question
+fetch_group_evidence = data_module.fetch_group_evidence
+fetch_group_ficha = data_module.fetch_group_ficha
+fetch_inbox_filter_options = data_module.fetch_inbox_filter_options
+fetch_inbox_groups = data_module.fetch_inbox_groups
+persist_ficha_review_state = data_module.persist_ficha_review_state
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 MOTOR_PATH = ROOT_DIR / "data" / "motor.duckdb"
 SIGNALS_PATH = ROOT_DIR / "data" / "senales.duckdb"
+FICHAS_PATH = ROOT_DIR / "data" / "fichas.jsonl"
+
+
+def _file_fingerprint(path: str | Path) -> tuple[int, int]:
+    """Return a stable cache identity, including for an absent optional file."""
+
+    try:
+        stat = Path(path).stat()
+    except FileNotFoundError:
+        return (-1, -1)
+    return (stat.st_mtime_ns, stat.st_size)
 
 
 def database_fingerprint(
-    motor_path: str | Path, signals_path: str | Path
-) -> tuple[tuple[int, int], tuple[int, int]]:
-    """Return a read-only cache identity for both DuckDB database files."""
+    motor_path: str | Path, signals_path: str | Path, fichas_path: str | Path
+) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int]]:
+    """Return a read-only cache identity for DuckDB files and JSONL fichas."""
 
-    motor_stat = Path(motor_path).stat()
-    signals_stat = Path(signals_path).stat()
     return (
-        (motor_stat.st_mtime_ns, motor_stat.st_size),
-        (signals_stat.st_mtime_ns, signals_stat.st_size),
+        _file_fingerprint(motor_path),
+        _file_fingerprint(signals_path),
+        _file_fingerprint(fichas_path),
     )
 
 
@@ -44,7 +57,7 @@ def database_fingerprint(
 def load_inbox_filter_options(
     motor_path: str,
     signals_path: str,
-    database_identity: tuple[tuple[int, int], tuple[int, int]],
+    database_identity: tuple[tuple[int, int], tuple[int, int], tuple[int, int]],
 ) -> tuple[list[str], date | None, date | None]:
     """Cache uncapped filter choices until either database file changes."""
 
@@ -55,7 +68,7 @@ def load_inbox_filter_options(
 def load_group_evidence(
     motor_path: str,
     signals_path: str,
-    database_identity: tuple[tuple[int, int], tuple[int, int]],
+    database_identity: tuple[tuple[int, int], tuple[int, int], tuple[int, int]],
     grupo_id: str,
 ) -> list[EvidenceRow]:
     """Cache read-only group evidence until either database file changes."""
@@ -67,7 +80,7 @@ def load_group_evidence(
 def load_inbox(
     motor_path: str,
     signals_path: str,
-    database_identity: tuple[tuple[int, int], tuple[int, int]],
+    database_identity: tuple[tuple[int, int], tuple[int, int], tuple[int, int]],
     topic: str | None,
     start_date: date | None,
     end_date: date | None,
@@ -92,8 +105,10 @@ def _group_date(group: InboxGroup) -> date | None:
 def editorial_guidance(prioridad: str, estado_evidencia: str) -> str:
     """Return safe editorial guidance without treating score as publication approval."""
 
-    if prioridad == "alto" and estado_evidencia == "insuficiente":
-        return "Prioridad alta: requiere investigación y no es publicable."
+    if estado_evidencia == "insuficiente":
+        return (
+            f"Prioridad {prioridad}: requiere investigación y no es publicable."
+        )
     return f"Evidencia: {estado_evidencia}. La prioridad no aprueba publicación."
 
 
@@ -174,12 +189,11 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
 def render_group_chat(group: InboxGroup) -> None:
     """Render a chat interface for cited CU-04 queries per group."""
 
-    with st.expander("Consulta citada (simulada)", expanded=False):
-        st.warning(
-            "Respuesta simulada: aún no usa el LLM ni la evidencia real "
-            "(pendiente TAR-020/TAR-028)."
+    with st.expander("Consulta sobre evidencia validada", expanded=False):
+        st.caption(
+            "La respuesta es extractiva: solo recupera afirmaciones y citas "
+            "validadas de la ficha."
         )
-        st.caption("Consultá sobre este grupo. La respuesta de ejemplo no está basada en evidencia real.")
 
         chat_key = f"chat_{group.grupo_id}"
         if chat_key not in st.session_state:
@@ -197,9 +211,14 @@ def render_group_chat(group: InboxGroup) -> None:
             with st.chat_message("user"):
                 st.markdown(question)
 
-            # Mock LLM generation
-            with st.spinner("Buscando en la evidencia..."):
-                response = ask_group_question(group.grupo_id, question)
+            with st.spinner("Buscando en la evidencia validada..."):
+                response = ask_group_question(
+                    group.grupo_id,
+                    question,
+                    motor_path=MOTOR_PATH,
+                    signals_path=SIGNALS_PATH,
+                    fichas_path=FICHAS_PATH,
+                )
 
             msg_data = {
                 "role": "assistant",
@@ -211,9 +230,12 @@ def render_group_chat(group: InboxGroup) -> None:
             with st.chat_message("assistant"):
                 st.markdown(response.respuesta)
                 if response.abstencion:
-                    st.warning("Abstención: La respuesta puede estar limitada por falta de datos.")
-                if response.citas:
-                    st.caption(f"Citas simuladas: {', '.join(response.citas)}")
+                    st.warning(
+                        "Abstención: no hay evidencia validada suficiente para responder "
+                        "esta consulta; requiere investigación."
+                    )
+                elif response.citas:
+                    st.caption(f"Citas verificadas: {', '.join(response.citas)}")
 
 
 def render_group_draft(group: InboxGroup) -> None:
@@ -228,13 +250,17 @@ def render_group_draft(group: InboxGroup) -> None:
     with st.expander("Borrador y revisión (IA)", expanded=False):
         st.caption("Aprobar el borrador no lo publica automáticamente.")
 
-        ficha = fetch_group_ficha(MOTOR_PATH, SIGNALS_PATH, group.grupo_id)
+        ficha = fetch_group_ficha(
+            MOTOR_PATH, SIGNALS_PATH, group.grupo_id, fichas_path=FICHAS_PATH
+        )
         if ficha is None:
             st.info("Borrador no generado para este grupo (ejecutar make generar).")
             return
 
         if ficha.tipo_respuesta == "abstencion":
             st.warning("Abstención: no hay evidencia suficiente para redactar un borrador.")
+            if ficha.borrador:
+                st.markdown(ficha.borrador)
             if ficha.motivo_abstencion:
                 st.caption(f"Motivo: {ficha.motivo_abstencion}")
         else:
@@ -256,6 +282,13 @@ def render_group_draft(group: InboxGroup) -> None:
 
         st.markdown("---")
         st.markdown("**Revisión editorial**")
+        if not ficha.persistable:
+            st.warning(
+                "Ficha JSONL de solo lectura: el estado no se puede guardar. "
+                "La persistencia requiere una ficha generada en DuckDB."
+            )
+            return
+
         try:
             index = VALID_REVIEW_STATES.index(ficha.estado_revision)
         except ValueError:
@@ -272,7 +305,9 @@ def render_group_draft(group: InboxGroup) -> None:
             persist_ficha_review_state(MOTOR_PATH, group.grupo_id, new_state)
 
         if new_state == "aprobado como borrador":
-            st.success("Borrador aprobado. (Nota: Esto no publica el artículo en el CMS).")
+            st.success(
+                "Borrador aprobado como borrador: ni publica ni autoriza su publicación."
+            )
         elif new_state == "requiere evidencia":
             st.warning("Se requiere más investigación o evidencia de otras fuentes.")
 
@@ -297,7 +332,7 @@ def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> No
         )
         st.caption(f"Motivos: {group.motivos}")
         guidance = editorial_guidance(group.prioridad, group.estado_evidencia)
-        if group.prioridad == "alto" and group.estado_evidencia == "insuficiente":
+        if group.estado_evidencia == "insuficiente":
             st.warning(guidance)
         else:
             st.caption(guidance)
@@ -319,7 +354,7 @@ def main() -> None:
     st.caption("Orden: mayor puntaje, luego urgencia (U) y finalmente identificador.")
 
     try:
-        fingerprint = database_fingerprint(MOTOR_PATH, SIGNALS_PATH)
+        fingerprint = database_fingerprint(MOTOR_PATH, SIGNALS_PATH, FICHAS_PATH)
         topics, min_date, max_date = load_inbox_filter_options(
             str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint
         )
