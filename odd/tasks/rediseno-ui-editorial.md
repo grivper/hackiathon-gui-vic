@@ -49,3 +49,6 @@ After the click the link button showed an empty dark pill: its text took a dark 
 
 ## Pass 7: chat with fixed height + example questions
 The chat history now lives in a fixed-height scrollable box (`CHAT_HISTORY_HEIGHT`, 380px) so the expander never grows. While the history is empty the box shows example questions built from the ficha's own cited claims (`suggest_questions` in app/data.py), as buttons that send the question. Each example is answerable by construction (it shares a term with a cited claim). Without a ficha it says there is no draft yet instead of inventing examples. Verified in Chrome with 12 messages: box stays 378px, scrolled to the newest message, input stays put.
+
+## Pass 8: "Resumen del reporte" breakdown (documentacion/RESUMEN_REPORTE.md)
+The summary paragraph is now five rows (badge, criterion chips/label, value + thin 0-1 bar), parsed from the same motor text (`resumen_reporte_html` in app/estilos.py; falls back to the plain text if the format changes). The side panel no longer repeats R/I/U/N/E: it keeps score, Prioridad/Evidencia tiles and "Reglas vX.Y". The spec's last note ("the side panel already shows bars") contradicts its IMPORTANT section; followed IMPORTANT. Presentation only: the text and values are unchanged.

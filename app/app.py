@@ -452,9 +452,7 @@ def render_ficha(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
             else "Sin repetición detectada en este grupo."
         )
         st.markdown(
-            estilos.section_html(
-                "Resumen del reporte", f"{group.motivos}\n\n{repetition}"
-            ),
+            estilos.resumen_reporte_html(group.motivos, repetition),
             unsafe_allow_html=True,
         )
         render_group_evidence(group, evidence_rows)
@@ -480,9 +478,6 @@ def render_ficha(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
                 puntaje=group.puntaje,
                 prioridad=group.prioridad,
                 estado_evidencia=group.estado_evidencia,
-                componentes={
-                    "R": group.R, "I": group.I, "U": group.U, "N": group.N, "E": group.E
-                },
                 version_reglas=group.version_reglas,
             ),
             unsafe_allow_html=True,

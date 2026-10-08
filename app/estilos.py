@@ -6,6 +6,7 @@ Every dynamic string goes through ``html.escape``.
 
 from __future__ import annotations
 
+import re
 from html import escape as e
 from typing import Iterable
 
@@ -109,15 +110,25 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .tile .v{font-family:'Newsreader',serif;font-size:clamp(17px,1.6vw,22px);font-weight:600}
 .tile.danger{background:#f9e3e6;color:#6e1124}
 .tile.warn{background:#fbe9bf;color:#5e4300}
-.comps{border-top:1px solid #e6e1d3;padding-top:6px}
-.comp{display:grid;grid-template-columns:24px 1fr 32px;gap:10px;align-items:center;margin:12px 0;
-  font-family:ui-monospace,Menlo,monospace;font-size:13px}
-.comp b{font-weight:700}
-.comp span{text-align:right}
-.comp .bar{margin:0;height:8px}
-.comp .bar i{background:#15171c}
-.comp.low b,.comp.low span{color:#a3162f}
-.comp.low .bar i{background:#a3162f}
+.rrow{display:grid;grid-template-columns:40px 1fr 64px;gap:16px;align-items:start;
+  padding:16px 0;border-top:1px solid #e6e1d3}
+.rbadge{width:40px;height:40px;border-radius:50%;background:#15171c;color:#f4f1ea;
+  display:flex;align-items:center;justify-content:center;
+  font-family:ui-monospace,Menlo,monospace;font-size:16px;font-weight:700}
+.rbadge.low{background:#a3162f;color:#fff}
+.rbody{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:40px}
+.rchip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px;
+  border-radius:999px;background:#ebe7da;font-size:14px}
+.rchip span{color:#5a5648}
+.rchip b{font-weight:600}
+.rlabel{font-size:15px;font-weight:600}
+.rnote{flex-basis:100%;font-size:14px;line-height:1.5;color:#5a5648}
+.rval{font-family:'Newsreader',Georgia,serif;font-size:30px;line-height:40px;font-weight:600;text-align:right}
+.rval.low{color:#a3162f}
+.rbar{height:4px;border-radius:99px;background:#e6e1d3;overflow:hidden}
+.rbar i{display:block;height:100%;background:#15171c}
+.rbar.low i{background:#a3162f}
+.rfoot{padding:14px 0 4px;border-top:1px solid #e6e1d3;font-size:14px;color:#5a5648}
 .rules{font-size:12px;color:#5a5648}
 
 /* widgets */
@@ -270,27 +281,68 @@ def note_html(text: str) -> str:
     return f'<div class="body">{e(text)}</div>'
 
 
-def component_bars_html(componentes: dict[str, float]) -> str:
-    """R/I/U/N/E bars. The motor stores each component on a 0-1 scale."""
+_COMPONENT = re.compile(r"([RIUNE])=(\d+(?:\.\d+)?)\s*\(([^()]*)\)")
 
-    rows = []
-    for letter in "RIUNE":
-        value = float(componentes[letter])
-        low = letter == "E" and value < 0.4
-        klass = f"comp {letter.lower()}{' low' if low else ''}"
-        rows.append(
-            f'<div class="{klass}"><b>{letter}</b>'
-            f'<div class="bar"><i style="width:{_fmt_pct(value * 100)}"></i></div>'
-            f"<span>{value:.1f}</span></div>"
+
+def _pretty(text: str) -> str:
+    """Presentation only: underscores to spaces, True/False to Sí/No."""
+
+    text = text.strip().replace("_", " ")
+    return {"True": "Sí", "False": "No"}.get(text, text)
+
+
+def _criterion_html(detail: str) -> str:
+    """Chips (key=value), a plain label, and trailing notes for one component."""
+
+    parts = [p.strip() for p in detail.split(";") if p.strip()]
+    main, notes = (parts[0] if parts else ""), parts[1:]
+    chips, label = [], []
+    for item in (x.strip() for x in main.split(",") if x.strip()):
+        if "=" in item:
+            key, value = item.split("=", 1)
+            chips.append(f'<span class="rchip"><span>{e(_pretty(key))}</span><b>{e(_pretty(value))}</b></span>')
+        else:
+            label.append(item)
+    body = ""
+    if label:
+        body += f'<span class="rlabel">{e(" ".join(label).replace("_", " "))}</span>'
+    body += "".join(chips)
+    body += "".join(f'<span class="rnote">{e(n[0].upper() + n[1:])}.</span>' for n in notes)
+    return body
+
+
+def resumen_reporte_html(texto: str, pie: str = "") -> str:
+    """"Resumen del reporte": one row per R/I/U/N/E component, parsed from the motor's text.
+
+    Presentation only. When the text does not match the expected format it is shown as is.
+    """
+
+    components = _COMPONENT.findall(texto)
+    if not components:
+        footer = f'<div class="rfoot">{e(pie)}</div>' if pie else ""
+        return f'<div class="sec"><h2>Resumen del reporte</h2><div class="body">{e(texto)}</div>{footer}</div>'
+    rest = re.sub(r"[;\s]+", " ", _COMPONENT.sub("", texto)).strip()
+    footer_text = " ".join(part for part in (rest, pie) if part)
+    rows = ""
+    for letter, value, detail in components:
+        number = float(value)
+        low = " low" if number == 0.0 else ""
+        rows += (
+            '<div class="rrow">'
+            f'<div class="rbadge{low}">{letter}</div>'
+            f'<div class="rbody">{_criterion_html(detail)}</div>'
+            f'<div><div class="rval{low}">{number:.1f}</div>'
+            f'<div class="rbar{low}"><i style="width:{_fmt_pct(number * 100)}"></i></div></div>'
+            "</div>"
         )
-    return "".join(rows)
+    footer = f'<div class="rfoot">{e(footer_text)}</div>' if footer_text else ""
+    return f'<div class="sec"><h2>Resumen del reporte</h2>{rows}{footer}</div>'
 
 
 def aside_html(
     puntaje: float,
     prioridad: str,
     estado_evidencia: str,
-    componentes: dict[str, float],
     version_reglas: str,
 ) -> str:
     return (
@@ -301,9 +353,7 @@ def aside_html(
         f'<div class="tile danger"><div class="k">Prioridad</div><div class="v">{e(prioridad.capitalize())}</div></div>'
         f'<div class="tile warn"><div class="k">Evidencia</div><div class="v">{e(estado_evidencia.capitalize())}</div></div>'
         "</div>"
-        '<div class="comps"><div class="lbl" style="padding-top:12px">Componentes R / I / U / N / E</div>'
-        f"{component_bars_html(componentes)}"
-        f'<div class="rules">Reglas {e(version_reglas)}</div></div>'
+        f'<div class="rules">Reglas {e(version_reglas)}</div>'
         "</div>"
     )
 

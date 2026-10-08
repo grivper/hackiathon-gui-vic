@@ -5,7 +5,7 @@ from app.estilos import (
     alert_html,
     aside_html,
     chips_html,
-    component_bars_html,
+    resumen_reporte_html,
     ficha_header_html,
     heading_html,
     section_html,
@@ -51,33 +51,59 @@ def test_score_bar_width_is_clamped_to_0_100():
     assert "Atención<b>90.0</b>" in score_block_html(90.0)
 
 
-def test_component_bars_use_the_real_0_to_1_scale():
-    out = component_bars_html({"R": 1.0, "I": 0.5, "U": 0.25, "N": 2.0, "E": 0.0})
+REAL_SUMMARY = (
+    "R=1.0 (tema=servicios_publicos, medio_nacional=True); I=1.0 (alcance=nacional); "
+    "U=1.0 (antigüedad vs fecha_ref); N=1.0 (repetición=no); "
+    "E=0.0 (procedencias/fuente primaria; contexto oficial de nivel-tema no suma, "
+    "ver contexto_oficial)"
+)
 
+
+def test_resumen_renders_five_rows_with_badge_chips_value_and_bar():
+    out = resumen_reporte_html(REAL_SUMMARY, "Sin repetición detectada en este grupo.")
+
+    assert out.count('class="rrow"') == 5
     for letter in "RIUNE":
-        assert f"<b>{letter}</b>" in out
-    assert "width:100%" in out  # R=1.0 fills the bar (and N=2.0 is clamped)
-    assert "width:50%" in out
-    assert "width:25%" in out
+        assert f'<div class="rbadge' in out and f">{letter}</div>" in out
+    assert out.count('class="rval') == 5
+    assert out.count('class="rbar') == 5
+    # chips: key/value pairs, underscores shown as spaces, True -> Sí
+    assert '<span class="rchip"><span>tema</span><b>servicios publicos</b></span>' in out
+    assert "<b>Sí</b>" in out
+    assert '<span class="rchip"><span>alcance</span><b>nacional</b></span>' in out
+    # label-only criterion and its notes
+    assert '<span class="rlabel">antigüedad vs fecha ref</span>' in out
+    assert "procedencias/fuente primaria" in out
+    assert "Contexto oficial de nivel-tema no suma, ver contexto_oficial." in out
+    # footer note
+    assert '<div class="rfoot">Sin repetición detectada en este grupo.</div>' in out
+
+
+def test_resumen_highlights_only_zero_components_and_scales_the_bar():
+    out = resumen_reporte_html(
+        "R=1.0 (a=b); I=0.5 (a=b); U=0.25 (a=b); N=1.0 (a=b); E=0.0 (x)"
+    )
+
+    assert out.count('rbadge low') == 1 and out.count('rval low') == 1
+    assert "width:100%" in out and "width:50%" in out and "width:25%" in out
     assert "width:0%" in out
-    assert ">1.0<" in out and ">0.0<" in out
 
 
-def test_component_bars_highlight_a_low_E_only():
-    low = component_bars_html({"R": 1, "I": 1, "U": 1, "N": 1, "E": 0.0})
-    high = component_bars_html({"R": 1, "I": 1, "U": 1, "N": 1, "E": 1.0})
+def test_resumen_escapes_everything_and_falls_back_to_the_plain_text():
+    out = resumen_reporte_html("R=1.0 (<script>x</script>=<b>y</b>)")
+    assert "<script>" not in out and "&lt;script&gt;" in out
 
-    assert 'class="comp e low"' in low
-    assert 'class="comp e low"' not in high
-    assert 'class="comp r low"' not in low
+    fallback = resumen_reporte_html("formato <i>inesperado</i>", "pie")
+    assert "<i>" not in fallback and "&lt;i&gt;inesperado" in fallback
+    assert "Resumen del reporte" in fallback and "pie" in fallback
+    assert 'class="rrow"' not in fallback
 
 
-def test_aside_shows_score_tiles_components_and_rules_version_escaped():
+def test_aside_has_score_tiles_and_rules_but_no_component_breakdown():
     out = aside_html(
         puntaje=90.0,
         prioridad="<alto>",
         estado_evidencia="insuficiente",
-        componentes={"R": 1, "I": 1, "U": 1, "N": 1, "E": 0},
         version_reglas="v0.3<",
     )
 
@@ -85,7 +111,7 @@ def test_aside_shows_score_tiles_components_and_rules_version_escaped():
     assert "<alto>" not in out
     assert "Insuficiente" in out
     assert "Reglas v0.3&lt;" in out
-    assert "Componentes R / I / U / N / E" in out
+    assert "Componentes" not in out and 'class="comp' not in out
 
 
 def test_ficha_header_alert_section_and_heading_escape_dynamic_text():
