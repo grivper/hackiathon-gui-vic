@@ -17,7 +17,7 @@ import urllib.request
 from dataclasses import dataclass, field
 
 HOST_DEFECTO = "http://127.0.0.1:11434"
-MODELO_DEFECTO = "qwen2.5:3b-instruct-q4_K_M"
+MODELO_DEFECTO = "gemma3:4b"
 
 
 @dataclass

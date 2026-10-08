@@ -6,7 +6,7 @@ código y reporta mediana y p95 de tiempo, tokens por segundo y cuántas salidas
 válido y conservan al menos una afirmación con cita válida. Sirve para elegir modelo con
 datos (meta del reto: mediana <= 15 s) y para documentar parámetros y limitaciones.
 
-Uso: python motor/medir_llm.py --modelo qwen2.5:3b-instruct-q4_K_M --n 5
+Uso: python motor/medir_llm.py --modelo gemma3:4b --n 5
 """
 from __future__ import annotations
 
