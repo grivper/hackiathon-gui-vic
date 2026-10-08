@@ -397,9 +397,6 @@ def render_bandeja_row(group: InboxGroup, rank: int) -> None:
 def render_ficha(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Full-page ficha: score, evidence, official context, query and draft."""
 
-    if st.button("← Volver a la bandeja", key="volver"):
-        st.session_state["ficha_id"] = None
-        st.rerun()
     st.markdown(
         estilos.ficha_header_html(group.tema, group.grupo_id, group.titulo_representativo),
         unsafe_allow_html=True,

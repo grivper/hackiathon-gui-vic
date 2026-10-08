@@ -48,9 +48,9 @@ def test_open_ficha_then_back_restores_the_bandeja(monkeypatch):
     assert f"Registro editorial {group_id}" in text
     for section in ("Resumen del reporte", "Evidencia y procedencias", "Puntaje de atención"):
         assert section in text
-    assert not any(b.key and b.key.startswith("abrir_") for b in at.button)
+    assert "Bandeja de revisión" not in text
 
-    next(b for b in at.button if b.key == "volver").click().run()
+    next(b for b in at.button if b.key == "volver-abajo").click().run()
 
     assert not at.exception
     assert at.session_state["ficha_id"] is None
