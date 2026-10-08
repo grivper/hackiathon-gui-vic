@@ -43,6 +43,7 @@ lo commitea; la otra solo hace `git pull`.
 
 ```
 make motor        # descarga el modelo si falta (una vez, ~470 MB) y corre clasificar + agrupar + puntuar (idempotente)
+make generar      # fichas con borrador citado (tabla `fichas` y data/fichas.jsonl); necesita Ollama, ver abajo
 make muestra      # genera la muestra ciega a etiquetar a mano (data/etiquetas/muestra_etiquetado.csv)
 make evaluar      # macro-F1 contra las etiquetas humanas (data/evaluacion_clasificacion.md)
 ```
@@ -164,3 +165,14 @@ jurado. El espacio personal queda como respaldo.
 - `python notion_sync.py --dry-run` valida los archivos sin llamar a Notion.
 - Errores del hook: `.notion_sync.log`.
 - Si borraste páginas en Notion: elimina `.notion_state.json` y vuelve a sincronizar.
+
+## Generación con LLM local (Ollama)
+
+`make generar` usa un LLM local por Ollama (sin API externa). El código valida las citas y decide la abstención; el modelo solo redacta.
+
+1. Instalá Ollama (https://ollama.com) y bajá un modelo: `ollama pull qwen2.5:7b-instruct-q4_K_M` (fichas finales) o `qwen2.5:1.5b-instruct-q4_K_M` (pruebas rápidas).
+2. Con el servidor en marcha: `LLM_MODELO=qwen2.5:7b-instruct-q4_K_M make generar`, o `make generar GRUPOS="--grupo G-xxxx"` para grupos concretos (`--forzar` regenera fichas ya revisadas).
+3. Variables opcionales: `OLLAMA_HOST`, `LLM_NUM_THREAD` (núcleos físicos, 4 por defecto), `LLM_NUM_CTX` (4096), `LLM_NUM_PREDICT` (768).
+4. `python motor/medir_llm.py --modelo ... --n 4 --min-noticias 2` mide mediana y p95 de latencia y cuántas salidas conservan citas válidas.
+
+En una CPU de 4 núcleos sin GPU el 7B tarda entre 50 y 100 s por grupo (el 1.5B, 12-54 s): la meta de mediana ≤ 15 s no se cumple, así que las fichas finales conviene pregenerarlas antes de la demo.

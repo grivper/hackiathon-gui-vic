@@ -71,3 +71,11 @@
   justificacion: El motor y la interfaz se conectan por las tablas de data/motor.duckdb, así que se pueden
     construir en paralelo sin pisarse el código.
   decidio: Guille
+- id: DEC-008
+  decision: 'LLM local con Ollama: gemma3:4b para la generación de las fichas, corriendo uno por vez con contexto acotado'
+  fecha: 2026-10-07T19:50-05:00
+  estado: Vigente
+  contexto: Las pruebas extendidas de 5 grupos con Qwen3-8B, Qwen3-4B y Gemma3n E2B demostraron que la laptop tiene poca memoria (16 GB) y levantan la presión de memoria del sistema o crashean (OOM).
+  alternativas: qwen3:8b, qwen3:4b, gemma3n:e2b, qwen2.5:7b (descartados por consumir toda la memoria, disparar el PSI memory o retener mal las citas).
+  justificacion: Gemma 3 4B fue el único que completó el ciclo con citas válidas 5/5, sin colgar la máquina, siempre que se configure con think=false y contexto acotado. La latencia ronda los 43-74 s.
+  decidio: Guille
