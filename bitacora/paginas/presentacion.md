@@ -17,6 +17,7 @@
 
 ## 4. Arquitectura e IA (2 min)
 *   **Stack:** DuckDB para almacenamiento veloz, Gemma 3 4B corriendo localmente con Ollama, y validación estricta por código (no por prompt).
+*   **Clasificación Rigurosa:** "Para clasificar los cables no improvisamos: partimos 93 etiquetas humanas en dos mitades (entrenamiento y validación). Ajustamos las semillas temáticas elevando nuestra métrica macro-F1 de 0.339 a 0.490, descartando ajustes más agresivos que provocaban sobreajuste. Es IA con rigor técnico."
 *   **Offline y Privacidad:** Explicar cómo la IA corre sin internet, protegiendo los datos de TVN de nubes públicas de terceros.
 *   **Validación:** Mostrar el validador de citas y la mitigación de Prompt Injection (Caso T07 - Canario).
 
