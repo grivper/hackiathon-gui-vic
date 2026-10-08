@@ -193,9 +193,18 @@
 - id: TAR-015
   tarea: Definir y ajustar los 6 temas en motor/temas.yaml (descripción y semillas)
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:10-05:00
-  notas: Es edición de texto. Después correr make clasificar para ver el efecto.
+  estado: Hecho
+  fecha: 2026-10-08T14:05-05:00
+  notas: 'Es edición de texto. Después correr make clasificar para ver el efecto.
+
+    2026-10-08T14:05-05:00 · 2026-10-08T14:05-05:00 · Los 6 temas quedan como estaban. Se probaron 8 variantes
+    (semillas genericas, descripciones de turismo y servicios publicos, umbrales 0.18-0.35, margen 0.01-0.06,
+    contraste on/off), midiendo con las 93 etiquetas humanas partidas en ajuste/validacion (motor/evaluar.py
+    ahora reporta esa particion). La mejor candidata subia macro-F1 0.339 -> 0.490, pero el guard independiente
+    test_embeddings_reales_acuerdan_80pct_con_etiquetas_dev_mini (24 titulares) bajaba de 21/24 a 18/24,
+    perdiendo casos obvios (Metro amplia horario, apagones). Ninguna variante mejora ambos sets, asi que
+    la ganancia no generaliza y se descarto. Soportes por clase muy chicos (turismo n=2, regulacion n=3):
+    un reajuste confiable necesita mas etiquetas, no mas tanteo. Evidencia: odd/tasks/temas-clasificacion.md.'
   tipo: Tarea
   epica: EPI-003
 - id: TAR-016
