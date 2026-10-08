@@ -66,9 +66,9 @@
 - id: TAR-004
   tarea: Confirmar si CU-05 (banca) es obligatorio en la modalidad editorial
   responsable: Guille
-  estado: Pendiente
-  fecha: '2026-10-06'
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T08:24-05:00
+  notas: CU-05 (banca) es opcional; se confirmó en la reunión y el documento del reto lo menciona.
   tipo: Tarea
   epica: EPI-001
 - id: TAR-005
