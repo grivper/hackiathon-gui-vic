@@ -16,7 +16,38 @@ Apply the validated topic/threshold tuning that raises embeddings macro-F1 from 
 - Ollama is NOT available on this machine: regenerating that ficha requires Victor's machine.
 
 ## Tasks
-- [ ] T1 Apply tuned `motor/temas.yaml`; test for the evaluation harness (tune/val split) so the gain is reproducible
+- [x] T1 (partial) Evaluation harness added; tuned temas.yaml REVERTED, see evidence. Original T1 text: Apply tuned `motor/temas.yaml`; test for the evaluation harness (tune/val split) so the gain is reproducible
 - [ ] T2 Rebuild motor (clasificar/agrupar/puntuar) and regenerate `data/evaluacion_clasificacion.md`
 - [ ] T3 Reconcile `G-9dd46610ff94`: decide and apply (regenerate ficha on Victor's machine, or swap the demo case), re-run benchmark
 - [ ] T4 Update bitacora/docs, full suite, Notion dry-run, commit(s), push
+
+## Evidence / outcome: tuning REJECTED on second evidence set
+
+The tuned `motor/temas.yaml` was applied, measured, and then reverted. `motor/evaluar.py` keeps the
+reproducible tune/validation split (7 new tests, suite 327 passed).
+
+A pre-existing guard test, `tests/test_clasificar.py::test_embeddings_reales_acuerdan_80pct_con_etiquetas_dev_mini`
+(24 dev-written headlines, independent of the 93 blind labels, asserting >= 0.8), failed with the
+tuned file. It exists precisely to catch regressions when touching temas.yaml/thresholds, and it did.
+
+| variant | 93 labels (val / total) | dev-mini |
+| --- | --- | --- |
+| base (current) | 0.290 / 0.339 | **21/24 (88%)** |
+| seeds only (v5) | 0.311 / 0.361 | 19/24 |
+| + score 0.20 | 0.342 / 0.421 | 17/24 |
+| + turismo narrowed | 0.346 / 0.431 | 17/24 |
+| + margin 0.03 (candidate) | 0.367 / 0.490 | 18/24 (guard FAILS) |
+| score 0.20 only, no seeds | - | 20/24 |
+| margin 0.03 only, no seeds | - | 20/24 |
+| health-in-servicios_publicos only | 0.289 / 0.337 | 19/24 |
+
+Every variant degrades dev-mini; none reaches the 0.8 guard except the current file. The two clearest
+losses are unambiguous cases ("El Metro de Panama amplia su horario", "Apagones prolongados generan
+quejas"), which the candidate sends to `otros`. Even the conceptually motivated change alone (human
+labellers put state health under servicios_publicos) does not help either set: 0.339 -> 0.337 and 21 -> 19.
+
+Conclusion: the macro-F1 gain on the 93 blind labels does not generalize to a second independent set,
+so it is not a real improvement. The thresholds and seeds stay as they are. Per-class supports in the
+93-label sample are tiny (turismo n=2, regulacion n=3), which makes macro-F1 unstable; a trustworthy
+retune needs more labels, not more tuning. No downstream artifact changed: motor, scores, the five
+demo fichas and the benchmark are untouched, and Ollama regeneration is no longer needed.

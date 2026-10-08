@@ -127,6 +127,18 @@ def tasa_abstencion(y_pred: list[str]) -> float:
     return sum(1 for p in y_pred if p == "otros") / len(y_pred)
 
 
+def partir_muestra(etiquetas: list[dict]) -> dict[str, list[dict]]:
+    """Parte `etiquetas` en dos mitades deterministicas por paridad de indice (posicion
+    en la lista, no por id_noticia): indice par -> "ajuste", indice impar ->
+    "validacion". Tambien devuelve "completa" (la lista entera, sin tocar). Se usa para
+    validar cualquier ajuste de `motor/temas.yaml`: un cambio solo se acepta si mejora
+    el macro-F1 en AMBAS mitades (si solo mejora una, probablemente sobreajusta la
+    muestra de 93 etiquetas en vez de generalizar)."""
+    ajuste = [e for i, e in enumerate(etiquetas) if i % 2 == 0]
+    validacion = [e for i, e in enumerate(etiquetas) if i % 2 == 1]
+    return {"ajuste": ajuste, "validacion": validacion, "completa": list(etiquetas)}
+
+
 def evaluar_metodo(etiquetas: list[dict], predicciones_metodo: dict[str, str]) -> dict | None:
     """Une `etiquetas` (humanas) con las predicciones de un metodo por id_noticia.
     Devuelve None si no hay ningun id_noticia en comun (el metodo no cubre la muestra)."""
@@ -142,6 +154,7 @@ def evaluar_metodo(etiquetas: list[dict], predicciones_metodo: dict[str, str]) -
     metricas = calcular_metricas(y_true, y_pred)
     metricas["n"] = len(pares)
     metricas["abstencion"] = tasa_abstencion(y_pred)
+    metricas["predicciones_metodo"] = predicciones_metodo
     return metricas
 
 
@@ -191,6 +204,36 @@ def formatear_reporte(
         for fila in metricas["matriz_confusion"]:
             lineas.append(" ".join(str(v) for v in fila))
         lineas.append("```")
+        lineas.append("")
+
+    lineas.append("## Macro-F1 por mitad (ajuste / validacion)")
+    lineas.append("")
+    lineas.append("La muestra se parte de forma deterministica por paridad de indice (indice par "
+                  "-> ajuste, indice impar -> validacion, sin azar ni hash); un cambio en "
+                  "`motor/temas.yaml` solo cuenta como mejora si el macro-F1 sube en AMBAS "
+                  "mitades, lo que protege contra sobreajustar la muestra de 93 etiquetas.")
+    lineas.append("")
+    partes = partir_muestra(etiquetas)
+    for metodo, metricas in resultados_por_metodo.items():
+        lineas.append(f"### Metodo: {metodo}")
+        lineas.append("")
+        if metricas is None:
+            lineas.append("Sin cobertura: ninguna de las noticias etiquetadas aparece en "
+                          "`clasificacion` para este metodo.")
+            lineas.append("")
+            continue
+        predicciones_metodo = metricas["predicciones_metodo"]
+        lineas.append("| mitad | n | macro-F1 | abstencion |")
+        lineas.append("|---|---|---|---|")
+        for mitad in ("ajuste", "validacion", "completa"):
+            metricas_mitad = evaluar_metodo(partes[mitad], predicciones_metodo)
+            if metricas_mitad is None:
+                lineas.append(f"| {mitad} | 0 | - | - |")
+                continue
+            lineas.append(
+                f"| {mitad} | {metricas_mitad['n']} | {metricas_mitad['macro_f1']:.3f} | "
+                f"{100 * metricas_mitad['abstencion']:.1f}% |"
+            )
         lineas.append("")
 
     return "\n".join(lineas)
