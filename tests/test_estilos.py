@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from app.estilos import CSS, component_bars_html, hero_html, score_card_html
+from app.estilos import (
+    CSS,
+    component_bars_html,
+    empty_draft_html,
+    evidence_head_html,
+    evidence_kv_html,
+    hero_html,
+    info_html,
+    score_card_html,
+)
 
 
 def test_hero_escapes_nothing_dynamic_but_shows_the_three_kpis():
@@ -46,3 +55,45 @@ def test_component_bars_render_all_five_with_value_and_clamp():
 def test_css_defines_the_design_tokens():
     for token in ("#f4f1ea", "#15171c", "#a3162f", "Newsreader", "Source Sans 3"):
         assert token in CSS
+
+
+def test_info_html_escapes_text_label_and_link():
+    out = info_html("<b>x</b>", "<i>t</i>", href="https://a.b/?q=1&r=\"2\"", link_text="<id>")
+
+    assert 'class="info"' in out
+    assert "<i>" not in out and "<b>x</b>" not in out
+    assert "&lt;i&gt;" in out
+    assert "&amp;r=" in out and "&quot;2&quot;" in out
+    assert "&lt;id&gt;" in out
+
+
+def test_info_html_without_label_or_link_is_just_the_text():
+    out = info_html("", "Por verificar: algo")
+
+    assert out == '<div class="info"><div>Por verificar: algo</div></div>'
+
+
+def test_empty_draft_html_keeps_the_exact_message():
+    out = empty_draft_html()
+
+    assert 'class="empty"' in out
+    assert "Borrador no generado para este grupo (ejecutar <code>make generar</code>)." in out
+
+
+def test_evidence_head_escapes_title_and_id():
+    out = evidence_head_html("<script>x</script>", "N-1<")
+
+    assert "<script>" not in out
+    assert "ID de evidencia: N-1&lt;" in out
+
+
+def test_evidence_kv_marks_missing_values_and_escapes():
+    out = evidence_kv_html([("Medio", "<b>TVN</b>"), ("Fecha", "No disponible")])
+
+    assert "&lt;b&gt;TVN&lt;/b&gt;" in out
+    assert out.count('class="v na"') == 1
+
+
+def test_css_styles_expanders_chat_and_empty_states():
+    for selector in ('stExpander', 'stChatInput', 'stChatMessage', ".kv", ".empty", ".info"):
+        assert selector in CSS

@@ -148,10 +148,18 @@ def render_official_context(contexto: str | None, usgs_id: str | None) -> None:
 
     if usgs_id:
         url = f"https://earthquake.usgs.gov/earthquakes/eventpage/{usgs_id}"
-        st.info(f"**Evento sísmico verificado (USGS):** [{usgs_id}]({url})")
+        st.markdown(
+            estilos.info_html(
+                "Evento sísmico verificado (USGS):", "", href=url, link_text=usgs_id
+            ),
+            unsafe_allow_html=True,
+        )
 
     if contexto:
-        st.info(f"**Indicadores Banco Mundial:** {contexto}")
+        st.markdown(
+            estilos.info_html("Indicadores Banco Mundial:", contexto),
+            unsafe_allow_html=True,
+        )
 
 
 def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
@@ -162,30 +170,39 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
             f"{group.n_noticias} artículos agrupados. La corroboración considera "
             f"{group.corroboracion} procedencias distintas, no repeticiones del mismo origen."
         )
-        st.info(evidence_verification_guidance(group.estado_evidencia))
+        st.markdown(
+            estilos.info_html("", evidence_verification_guidance(group.estado_evidencia)),
+            unsafe_allow_html=True,
+        )
         if not evidence_rows:
             st.caption("No hay miembros de evidencia disponibles para este grupo.")
             return
 
         for row in evidence_rows:
-            st.markdown(f"**{row.titulo or 'Titular no disponible'}**")
-            st.caption(f"ID de evidencia: {row.id_noticia}")
+            st.markdown(
+                estilos.evidence_head_html(
+                    row.titulo or "Titular no disponible", str(row.id_noticia)
+                ),
+                unsafe_allow_html=True,
+            )
             if row.url:
                 st.link_button("Abrir fuente", row.url)
-            st.caption(
-                f"Medio: {row.medio or 'No disponible'} · "
-                f"Procedencia: {row.procedencia or 'No disponible'}"
-            )
-            st.caption(
-                "Fecha de publicación/original: "
-                f"{evidence_date_label(row.fecha_publicacion)} · "
-                f"Fecha de detección: {evidence_date_label(row.fecha_deteccion)}"
-            )
+            details = [
+                ("Medio", row.medio or "No disponible"),
+                ("Procedencia", row.procedencia or "No disponible"),
+                (
+                    "Fecha de publicación/original",
+                    evidence_date_label(row.fecha_publicacion),
+                ),
+                ("Fecha de detección", evidence_date_label(row.fecha_deteccion)),
+            ]
             if row.similitud_al_centroide is not None:
-                st.caption(
-                    "Similitud con el grupo: "
-                    f"{row.similitud_al_centroide:.0%} (referencia para revisar la agrupación)."
+                details.append(
+                    ("Similitud con el grupo", f"{row.similitud_al_centroide:.0%}")
                 )
+            st.markdown(estilos.evidence_kv_html(details), unsafe_allow_html=True)
+            if row.similitud_al_centroide is not None:
+                st.caption("La similitud es una referencia para revisar la agrupación.")
 
 
 def render_group_chat(group: InboxGroup) -> None:
@@ -262,7 +279,7 @@ def render_group_draft(group: InboxGroup) -> None:
             MOTOR_PATH, SIGNALS_PATH, group.grupo_id, fichas_path=FICHAS_PATH
         )
         if ficha is None:
-            st.info("Borrador no generado para este grupo (ejecutar make generar).")
+            st.markdown(estilos.empty_draft_html(), unsafe_allow_html=True)
             return
 
         if ficha.tipo_respuesta == "abstencion":

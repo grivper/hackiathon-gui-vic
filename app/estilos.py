@@ -52,6 +52,33 @@ header[data-testid="stHeader"]{display:none}
 .stButton>button{border-radius:999px;background:#15171c;color:#f4f1ea;border:0;min-height:44px;font-weight:600;padding:0 20px}
 .stButton>button:hover{background:#a3162f;color:#fff}
 div[data-baseweb="select"]>div, .stDateInput input{background:#fff;border:1px solid #cfc9b9;border-radius:10px;min-height:44px}
+
+div[data-testid="stExpander"]{border:1px solid #ddd8cb;border-radius:14px;background:#fbfaf6;margin-top:8px}
+div[data-testid="stExpander"] summary{font-weight:600;min-height:52px;font-size:16px;color:#15171c}
+div[data-testid="stExpander"] summary svg{color:#a3162f}
+
+.note{font-size:14px;line-height:1.5;color:#5a5648;margin:0 0 12px}
+.info{display:flex;gap:12px;align-items:flex-start;background:#e1e9f4;color:#17335a;
+  border-radius:12px;padding:14px 16px;font-size:15px;line-height:1.5;margin:12px 0}
+.info a{color:#17335a;font-weight:600}
+
+.evid{background:#fbfaf6;border:1px solid #ddd8cb;border-radius:14px;padding:20px 20px 4px;margin-top:12px}
+.evid h3{font-family:'Newsreader',Georgia,serif;font-size:21px;line-height:1.3;font-weight:600;margin:0 0 10px;padding:0}
+.evid .id{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#5a5648;margin-bottom:6px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 24px;
+  border-top:1px solid #e6e1d3;padding-top:14px;margin:14px 0 8px}
+.kv .k{font-size:12px;font-weight:600;color:#5a5648}
+.kv .v{font-size:15px}
+.kv .v.na{color:#5a5648}
+
+.empty{display:flex;gap:12px;align-items:center;background:#fff;border:1px dashed #b9b29f;
+  border-radius:12px;padding:18px 20px;font-size:15px;color:#3b392f}
+.empty code{background:#ebe7da;border-radius:6px;padding:2px 6px;font-size:13px}
+
+div[data-testid="stChatInput"]{background:#fff;border:1px solid #cfc9b9;border-radius:14px}
+div[data-testid="stChatInput"] textarea{color:#15171c;font-size:15px}
+div[data-testid="stChatInput"] button{background:#15171c;color:#f4f1ea;border-radius:10px}
+div[data-testid="stChatMessage"]{background:#fbfaf6;border:1px solid #ddd8cb;border-radius:14px;padding:12px 16px}
 </style>
 """
 
@@ -123,3 +150,40 @@ def component_bars_html(componentes: dict[str, float]) -> str:
             f"<span>{float(value):.1f}</span></div>"
         )
     return '<div class="panel"><div class="meta">Componentes R / I / U / N / E</div>' + "".join(rows) + "</div>"
+
+
+def info_html(label: str, text: str, href: str | None = None, link_text: str | None = None) -> str:
+    """Informational notice. ``label`` is optional bold prefix; ``href`` adds a link."""
+
+    prefix = f"<b>{e(label)}</b> " if label else ""
+    body = e(text)
+    if href:
+        body += f'<a href="{e(href)}">{e(link_text or href)}</a>'
+    return f'<div class="info"><div>{prefix}{body}</div></div>'
+
+
+def empty_draft_html() -> str:
+    return (
+        '<div class="empty">Borrador no generado para este grupo '
+        "(ejecutar <code>make generar</code>).</div>"
+    )
+
+
+def evidence_head_html(titulo: str, id_noticia: str) -> str:
+    """Opening of an evidence card; the source button and ``evidence_kv_html`` follow."""
+
+    return (
+        '<div class="evid">'
+        f"<h3>{e(titulo)}</h3>"
+        f'<div class="id">ID de evidencia: {e(id_noticia)}</div>'
+        "</div>"
+    )
+
+
+def evidence_kv_html(items: Iterable[tuple[str, str]]) -> str:
+    cells = "".join(
+        f'<div><div class="k">{e(k)}</div>'
+        f'<div class="v{" na" if v == "No disponible" else ""}">{e(v)}</div></div>'
+        for k, v in items
+    )
+    return f'<div class="kv">{cells}</div>'

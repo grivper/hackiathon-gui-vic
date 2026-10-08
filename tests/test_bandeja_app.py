@@ -119,10 +119,11 @@ def test_render_official_context_displays_available_sources(monkeypatch):
     monkeypatch.setattr("app.app.st.markdown", st_markdown)
     render_official_context("PIB: 5%", "usgs-123")
     st_markdown.assert_any_call("**Contexto oficial (Banco Mundial / USGS)**")
-    st_info.assert_any_call("**Indicadores Banco Mundial:** PIB: 5%")
-    st_info.assert_any_call(
-        "**Evento sísmico verificado (USGS):** [usgs-123](https://earthquake.usgs.gov/earthquakes/eventpage/usgs-123)"
-    )
+    st_info.assert_not_called()
+    rendered = " ".join(str(call.args[0]) for call in st_markdown.call_args_list)
+    assert "Indicadores Banco Mundial:" in rendered and "PIB: 5%" in rendered
+    assert "Evento sísmico verificado (USGS):" in rendered
+    assert "https://earthquake.usgs.gov/earthquakes/eventpage/usgs-123" in rendered
 
 
 def _patch_draft_widgets(monkeypatch, *, selectbox_return="nuevo"):
@@ -153,9 +154,9 @@ def test_render_group_draft_shows_an_honest_message_when_no_ficha_exists(monkeyp
 
     render_group_draft(_GROUP)
 
-    widgets["info"].assert_any_call(
-        "Borrador no generado para este grupo (ejecutar make generar)."
-    )
+    widgets["info"].assert_not_called()
+    rendered = " ".join(str(call.args[0]) for call in widgets["markdown"].call_args_list)
+    assert "Borrador no generado para este grupo (ejecutar <code>make generar</code>)." in rendered
     widgets["selectbox"].assert_not_called()
 
 

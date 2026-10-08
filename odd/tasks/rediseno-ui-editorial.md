@@ -17,3 +17,9 @@ Apply the visual redesign to the Streamlit inbox. Visual only: no change to scor
 - pytest: 332 passed. `notion_sync.py --dry-run`: no errors.
 - AppTest (app dir on sys.path, as `streamlit run`): no exceptions, 50 cards rendered, hero KPIs wired to the filtered groups.
 - Not checked: real browser visual pass. Fonts load from Google Fonts (offline demo falls back to Georgia/sans-serif).
+
+## Annex v2 (documentacion/REDISENO_UI_FICHA_ANEXO.md)
+Style-only pass inside the expanders: `.info` replaces blue `st.info` (verification guidance, official context), `.empty` replaces the "Borrador no generado" info, evidence cards with `.evid` + `.kv` grid (source button kept between them), light expander/chat CSS, `.streamlit/config.toml` forces the light theme. No tabs, no new navigation, expander names and logic untouched.
+- Existing tests that asserted `st.info` for these two spots now assert the HTML via `st.markdown` (implementation detail, same text).
+- pytest: 338 passed; dry-run OK; AppTest: no exceptions, 51 evidence cards, 50 empty-draft states.
+- Not checked: real browser (chat input / sub-expander contrast, theme) .
