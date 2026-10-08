@@ -52,3 +52,6 @@ The chat history now lives in a fixed-height scrollable box (`CHAT_HISTORY_HEIGH
 
 ## Pass 8: "Resumen del reporte" breakdown (documentacion/RESUMEN_REPORTE.md)
 The summary paragraph is now five rows (badge, criterion chips/label, value + thin 0-1 bar), parsed from the same motor text (`resumen_reporte_html` in app/estilos.py; falls back to the plain text if the format changes). The side panel no longer repeats R/I/U/N/E: it keeps score, Prioridad/Evidencia tiles and "Reglas vX.Y". The spec's last note ("the side panel already shows bars") contradicts its IMPORTANT section; followed IMPORTANT. Presentation only: the text and values are unchanged.
+
+## Pass 9: larger text
+All CSS font sizes between 11 and 16px went up by 2px (metadata, chips, labels, notes, body) and native Streamlit text got explicit sizes (paragraphs 17px, captions 15px, labels 15px, inputs and buttons 17px, expander titles 18px). Headlines and big numbers unchanged. Verified in Chrome on both pages.
