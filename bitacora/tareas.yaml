@@ -296,8 +296,8 @@
   tarea: 'Subir el recall de la clasificación: ajustar umbral_score y umbral_margen y re-evaluar con make
     evaluar'
   responsable: Guille
-  estado: Pendiente
-  fecha: 2026-10-07T17:07-05:00
+  estado: Hecho
+  fecha: 2026-10-07T22:31-05:00
   notas: 'Macro-F1 embeddings 0,258 y 90% de titulares en ''otros'' (data/evaluacion_clasificacion.md).
     Medir cada cambio con make evaluar; coordinar con TAR-015 (Víctor, semillas en motor/temas.yaml) para
     no pisar el mismo archivo. Muestra chica (93): no sobreajustar.'

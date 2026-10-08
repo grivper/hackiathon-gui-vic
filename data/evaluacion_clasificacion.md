@@ -6,29 +6,29 @@
 ## Metodo: embeddings
 
 - Noticias evaluadas (con etiqueta humana y prediccion de este metodo): 93
-- Macro-F1: 0.258
-- Tasa de abstencion (el metodo dijo `otros`): 90.3%
+- Macro-F1: 0.339
+- Tasa de abstencion (el metodo dijo `otros`): 57.0%
 
 | tema | precision | recall | F1 | soporte |
 |---|---|---|---|---|
-| economia | 1.000 | 0.143 | 0.250 | 7 |
-| logistica_canal | 1.000 | 0.333 | 0.500 | 3 |
+| economia | 0.333 | 0.286 | 0.308 | 7 |
+| logistica_canal | 1.000 | 0.667 | 0.800 | 3 |
 | turismo | 0.000 | 0.000 | 0.000 | 2 |
-| servicios_publicos | 0.000 | 0.000 | 0.000 | 9 |
-| eventos_naturales | 0.500 | 0.167 | 0.250 | 6 |
+| servicios_publicos | 0.200 | 0.222 | 0.211 | 9 |
+| eventos_naturales | 0.333 | 0.500 | 0.400 | 6 |
 | regulacion | 0.000 | 0.000 | 0.000 | 3 |
-| otros | 0.702 | 0.937 | 0.803 | 63 |
+| otros | 0.717 | 0.603 | 0.655 | 63 |
 
 Matriz de confusion (filas = etiqueta humana, columnas = prediccion), orden: economia, logistica_canal, turismo, servicios_publicos, eventos_naturales, regulacion, otros
 
 ```
-1 0 0 0 0 0 6
-0 1 0 0 0 0 2
-0 0 0 0 0 0 2
-0 0 1 0 0 0 8
-0 0 0 1 1 0 4
+2 0 0 2 0 0 3
+0 2 0 0 0 1 0
+0 0 0 1 0 0 1
+0 0 1 2 0 0 6
+0 0 0 1 3 0 2
 0 0 0 0 0 0 3
-0 0 0 2 1 1 59
+4 0 8 4 6 3 38
 ```
 
 ## Metodo: tfidf

@@ -17,7 +17,11 @@ parametros:
   # forzar una elección arbitraria. El baseline TF-IDF es más disperso (vocabulario exacto),
   # así que usa sus propios umbrales, más bajos.
   umbral_score: 0.25
-  umbral_margen: 0.02
+  umbral_margen: 0.01
+  # TAR-031: sin grupos de contraste el vecino mas cercano siempre es un tema y abstienen
+  # solo los umbrales. Sobre las 93 etiquetas (opcion C): macro-F1 0.258 -> 0.339 y
+  # titulares en `otros` ~90% -> ~57%, a costa de precision (ver data/evaluacion_clasificacion.md).
+  usar_contraste: false
   umbral_score_tfidf: 0.12
   umbral_margen_tfidf: 0.02
 
