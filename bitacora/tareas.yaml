@@ -76,7 +76,11 @@
   responsable: Guille
   estado: Hecho
   fecha: 2026-10-08T00:12-05:00
-  notas: 'Manifest con version, fecha de corte, consultas, cantidades, licencias por fuente, SHA-256 y transformaciones (seccion 7). make procesar es reproducible: con data/raw limpio regenera processed/ identico byte a byte (solo cambia fecha_corte_utc). GDELT: reintento ante el texto de limite y reanudacion con fechas fijas (TAR-014). raw/ no esta en git: mover descargas parciales a data/_descartado/ antes de reprocesar (ver README).'
+  notas: 'Manifest con version, fecha de corte, consultas, cantidades, licencias por fuente, SHA-256 y
+    transformaciones (seccion 7). make procesar es reproducible: con data/raw limpio regenera processed/
+    identico byte a byte (solo cambia fecha_corte_utc). GDELT: reintento ante el texto de limite y reanudacion
+    con fechas fijas (TAR-014). raw/ no esta en git: mover descargas parciales a data/_descartado/ antes
+    de reprocesar (ver README).'
   tipo: Tarea
   epica: EPI-002
 - id: TAR-006
@@ -148,16 +152,18 @@
 - id: TAR-014
   tarea: Reintentar GDELT desde otra red o más tarde (opcional)
   responsable: Guille
-  fecha: 2026-10-06T21:43-05:00
+  fecha: 2026-10-08T06:32-05:00
   notas: '2026-10-07: 429 persistente desde la IP de casa, incluso con consultas aisladas y 90 s de espera.
     Ya hay 30154 noticias de TVN por sitemaps, así que GDELT solo aporta variedad de medios. Opciones:
     otra red (datos del celular) o horas después. Comando: python ingesta/descargar_snapshot.py --solo
     gdelt. 2026-10-08: DESCARTADA (opcional). Probado desde casa y desde datos del celular: GDELT sigue
     limitando la IP (1 de cada 3 ventanas responde; el resto devuelve texto de limite con HTTP 200). Se
     corrigio el script para reintentar y reanudar (fix/gdelt-reintento), pero la descarga completa llevaria
-    mas de una hora con resultado incierto y solo suma variedad de medios. No hay datos de GDELT en el
-    snapshot.'
-  estado: Bloqueada
+    mas de una hora con resultado incierto y solo suma variedad de medios. Cierre: las fuentes actuales
+    son suficientes (manifest d4068230602a): TVN sitemaps 29954 noticias en 13 meses, TVN RSS 196, GDELT
+    151 (parcial, 14-17 jul 2026), Banco Mundial 540 valores y USGS 208 sismos. El minimo del reto es
+    100 noticias y el snapshot lo supera con holgura. No se necesita mas GDELT.'
+  estado: Hecho
   tipo: Tarea
   epica: EPI-002
 - id: TAR-015
