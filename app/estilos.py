@@ -14,22 +14,26 @@ CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Source+Sans+3:wght@400;600;700&display=swap');
 header[data-testid="stHeader"]{display:none}
 .stApp{background:#f4f1ea;font-family:'Source Sans 3',sans-serif;color:#15171c}
-.block-container{max-width:1280px;padding-top:0}
+.block-container{max-width:1280px;padding:0 40px 56px}
+/* No gutter: the full-bleed header must reach the window edge. Wheel, touch and keys still scroll. */
+html,body,.stApp,section.stMain{overflow-x:hidden}
+section.stMain{scrollbar-width:none}
+section.stMain::-webkit-scrollbar{display:none}
 .serif{font-family:'Newsreader',Georgia,serif}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
 /* header (bandeja and ficha) */
 .hero{background:#15171c;color:#f4f1ea;border-bottom:4px solid #a3162f;
   width:100vw;margin:-1rem 0 24px calc(50% - 50vw);
-  padding:36px calc(50vw - 640px + 40px);display:flex;flex-wrap:wrap;gap:32px;
+  padding:36px max(40px,calc(50vw - 640px + 40px));display:flex;flex-wrap:wrap;gap:32px;
   justify-content:space-between;align-items:flex-end;box-sizing:border-box}
 .hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#e5a3ae}
 .hero h1{font-family:'Newsreader',serif;font-size:56px;line-height:1.02;margin:8px 0;color:#f4f1ea;letter-spacing:-1px;padding:0;font-weight:600}
 .kpi{display:inline-block;margin-left:36px}
 .kpi b{display:block;font-family:'Newsreader',serif;font-size:52px;line-height:1;font-weight:600}
 .kpi span{font-size:13px;color:#c9c5b9}
-.hero.ficha{flex-direction:column;align-items:flex-start;gap:12px;padding:20px calc(50vw - 640px + 40px) 36px}
-.hero.ficha .top{width:100%;display:flex;justify-content:flex-end;min-height:44px;align-items:center}
+.hero.ficha{flex-direction:column;align-items:flex-start;gap:12px;padding:20px max(40px,calc(50vw - 640px + 40px)) 36px}
+.hero.ficha .top{width:100%;display:flex;justify-content:flex-end;min-height:56px;align-items:center}
 .hero.ficha .meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .hero.ficha .tema{color:#f0a7b2}
 .hero.ficha .rid{font-size:13px;color:#c9c5b9}
@@ -101,7 +105,8 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .tiles{display:flex;gap:10px}
 .tile{flex:1;border-radius:12px;padding:12px 14px}
 .tile .k{font-size:12px;font-weight:600}
-.tile .v{font-family:'Newsreader',serif;font-size:26px;font-weight:600}
+.tile{min-width:0}
+.tile .v{font-family:'Newsreader',serif;font-size:clamp(17px,1.6vw,22px);font-weight:600}
 .tile.danger{background:#f9e3e6;color:#6e1124}
 .tile.warn{background:#fbe9bf;color:#5e4300}
 .comps{border-top:1px solid #e6e1d3;padding-top:6px}
@@ -119,9 +124,11 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .stButton>button,.stLinkButton>a{border-radius:999px;background:#15171c;color:#f4f1ea;border:0;min-height:44px;font-weight:600;padding:0 20px}
 .stButton>button:hover,.stLinkButton>a:hover{background:#a3162f;color:#fff}
 .stButton>button p,.stLinkButton>a p{color:inherit}
-.st-key-volver{position:relative;z-index:5;margin-bottom:-76px}
-.st-key-volver button{background:transparent;color:#f4f1ea;padding:0 4px;margin-left:-61px}
-.st-key-volver button:hover{background:transparent;color:#f0a7b2}
+.st-key-volver{position:relative;z-index:5;margin-bottom:-88px;width:fit-content}
+.st-key-volver button,.st-key-volver-abajo button{background:#f4f1ea;color:#15171c;padding:0 20px;white-space:nowrap}
+.st-key-volver button:hover,.st-key-volver-abajo button:hover{background:#a3162f;color:#fff}
+.st-key-volver button p,.st-key-volver-abajo button p{white-space:nowrap;color:inherit}
+.st-key-volver-abajo{margin-top:8px}
 div[data-baseweb="select"]>div,.stDateInput input{background:#fff;border:1px solid #cfc9b9;border-radius:10px;min-height:44px}
 div[data-testid="stExpander"]{border:1px solid #ddd8cb;border-radius:14px;background:#fbfaf6;margin-top:8px}
 div[data-testid="stExpander"] summary{font-weight:600;min-height:52px;font-size:16px;color:#15171c}

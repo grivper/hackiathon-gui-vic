@@ -446,6 +446,9 @@ def render_ficha(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
             st.markdown(estilos.heading_html("Consulta"), unsafe_allow_html=True)
             render_group_chat(group)
             render_group_draft(group)
+        if st.button("← Volver a la bandeja", key="volver-abajo"):
+            st.session_state["ficha_id"] = None
+            st.rerun()
     with side_column:
         st.markdown(
             estilos.aside_html(

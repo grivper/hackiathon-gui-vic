@@ -35,3 +35,8 @@ The exported mockups show the structure the user actually wants: a compact inbox
 
 ## Pass 3: match Bandeja_referencia.html / Ficha_referencia.html (user chose the two-page structure)
 Full-bleed dark header (100vw), cream filter bar, title + note on one row, each inbox row is one white card with the button inside it, evidence card is one boxed unit (title, id, source button, grid), alert/info/empty icons as inline SVG. Content stays capped at 1280px centred, as in the mockups.
+
+## Pass 4: edge strip and back button (user screenshot)
+- Cause of the strip: the page scrollbar gutter (about 10px) stayed paper-coloured next to the full-bleed dark header; below ~1360px the header padding also went negative, clipping the text and adding a horizontal scrollbar.
+- Fix: hide the scroll gutter (wheel/touch/keys still scroll), `max()` padding, container padding 40px so header text and content align, no horizontal overflow.
+- "Volver a la bandeja" is now a solid cream pill at the top-left of the header, plus a second one at the end of the ficha. Verified in Chrome at 1100px and 1440px; clicking it returns to the inbox.
