@@ -195,3 +195,51 @@ def test_T05_no_califica_ninguna_version_como_verdadera_o_falsa(dbs):
     ficha = _ficha(dbs, llm.ClienteFalso([_contradiccion()]))
     texto = ficha["borrador"].lower()
     assert "verdader" not in texto and "falso" not in texto
+
+
+# --------------------------------------------------------------------------- T03
+
+@pytest.fixture()
+def dbs_recirculada(dbs):
+    """N-old se publicó en 2024 y el sitemap la detectó otra vez en 2026; N-a solo tiene fecha de detección."""
+    motor, senales = dbs
+    con = duckdb.connect(str(senales))
+    con.execute("DELETE FROM noticias WHERE id_noticia = 'N-b'")
+    con.execute("INSERT INTO noticias VALUES ('N-old', 'Inflación cae 0,3 % en junio', 'http://old', 'tvn-pa.com', ?, ?)",
+                [datetime(2024, 6, 12, 8, 0), datetime(2026, 7, 15, 22, 0)])
+    con.close()
+    con = duckdb.connect(str(motor))
+    con.execute("INSERT INTO grupo_noticias VALUES ('G-ECO', 'N-old', 'tvn-pa.com', 0.95)")
+    con.close()
+    return dbs
+
+
+def test_T03_noticia_antigua_recirculada_muestra_su_fecha_original_y_no_es_un_evento_nuevo(dbs_recirculada):
+    """T03: mostrar la fecha original; no presentarla como un evento nuevo."""
+    cliente = llm.ClienteFalso([_salida(_a("Según tvn-pa.com, la inflación cayó 0,3 % en junio.", id_="N-old"))])
+    ficha = _ficha(dbs_recirculada, cliente)
+    linea = next(l for l in ficha["borrador"].splitlines() if "[N-old" in l)
+    assert "2024-06-12" in linea, "debe mostrar la fecha de publicación original"
+    assert "no es un evento nuevo" in linea.lower()
+
+
+def test_T03_noticia_sin_fecha_de_publicacion_dice_que_solo_se_conoce_la_deteccion(dbs_recirculada):
+    cliente = llm.ClienteFalso([_salida(_a("Según tvn-pa.com, la inflación cayó 0,3 % en junio.", id_="N-a"))])
+    ficha = _ficha(dbs_recirculada, cliente)
+    linea = next(l for l in ficha["borrador"].splitlines() if "[N-a" in l)
+    assert "2026-07-15" in linea and "detectada" in linea.lower()
+    assert "no es un evento nuevo" not in linea.lower()
+
+
+def test_T03_la_fecha_del_evento_es_la_de_publicacion_y_el_puntaje_de_urgencia_baja():
+    """La urgencia (U) se calcula con la fecha original, no con la del rastreo."""
+    from datetime import timedelta  # noqa: PLC0415
+
+    import yaml  # noqa: PLC0415
+
+    from motor import puntuar  # noqa: PLC0415
+
+    reglas = yaml.safe_load(Path("motor/reglas_puntaje.yaml").read_text(encoding="utf-8"))
+    ref = datetime(2026, 10, 8)
+    assert puntuar.componente_U(ref - timedelta(days=850), ref, reglas) < puntuar.componente_U(ref - timedelta(hours=2), ref, reglas)
+    assert puntuar.componente_U(ref - timedelta(days=850), ref, reglas) == reglas["u_tramos"][-1]["score"]

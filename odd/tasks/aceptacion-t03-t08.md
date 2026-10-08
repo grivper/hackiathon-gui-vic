@@ -15,7 +15,7 @@ Run the acceptance tests of the challenge that the engine can already answer: T0
 - [x] P2 T04 annual World Bank figure keeps country, year and unit, not described as today's figure
 - [x] P3 T08 high-priority case exposes components and rule; priority never publishes (estado_revision stays `nuevo`)
 - [x] P4 T05 incompatible claims: both versions, scope and pending review shown
-- [ ] P5 T03 old recirculated news: original date shown, not presented as new event
+- [x] P5 T03 old recirculated news: original date shown, not presented as new event
 - [ ] P6 Record T03-T06, T08 in `bitacora/pruebas.yaml`, update TAR-011 notes, full suite, commit(s)
 
 ## Evidence
@@ -23,3 +23,4 @@ Run the acceptance tests of the challenge that the engine can already answer: T0
 - P2 T04: RED on `test_T04_el_codigo_agrega_pais_anio_y_unidad_aunque_el_modelo_los_omita` (draft depended on the model writing year/unit; country only appeared inside the evidence id). Fix: `evidencia` now carries `pais_iso3`; `generar._borrador` appends country, year, unit and "dato anual" for indicator citations, by code. GREEN; full suite 258 passed.
 - P3 T08: GREEN on first run (characterization): components, rules text and priority already exposed; no publication state exists (`app.data.VALID_REVIEW_STATES`); priority does not bypass abstention.
 - P4 T05: RED (draft had both versions and scope but no pending-review line). Fix: `generar._borrador` adds "Revisión pendiente" for `contradiccion`, by code. GREEN; suite 263 passed.
+- P5 T03: RED (draft showed no dates). Fix: `generar._contexto_noticia` writes original publication date, or "detectada ... fecha de publicación no disponible", and flags >30 days between publication and detection as "vuelve a circular, no es un evento nuevo". U already used the original date (agrupar coalesce), confirmed by test. GREEN; suite 266 passed.
