@@ -10,8 +10,10 @@ import streamlit as st
 
 if __package__:
     from . import data as data_module
+    from . import estilos
 else:
     import data as data_module
+    import estilos
 
 VALID_REVIEW_STATES = data_module.VALID_REVIEW_STATES
 EvidenceRow = data_module.EvidenceRow
@@ -318,20 +320,35 @@ def render_group_draft(group: InboxGroup) -> None:
             st.warning("Se requiere más investigación o evidencia de otras fuentes.")
 
 
-def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
+def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow], rank: int = 1) -> None:
     """Render score, evidence, corroboration, and repetition as distinct facts."""
 
     group_date = _group_date(group)
     with st.container(border=True):
-        st.subheader(group.titulo_representativo)
-        st.caption(f"Tema: {group.tema} · Fecha más reciente: {evidence_date_label(group_date)}")
-        score, priority, evidence = st.columns(3)
-        score.metric("Puntaje", f"{group.puntaje:.1f}")
-        priority.metric("Prioridad", group.prioridad)
-        evidence.metric("Estado de evidencia", group.estado_evidencia)
-        articles, sources = st.columns(2)
-        articles.metric("Artículos agrupados", group.n_noticias)
-        sources.metric("Corroboración (procedencias distintas)", group.corroboracion)
+        priority_kind = "danger" if group.prioridad.lower() == "alto" else ""
+        evidence_kind = "warn" if group.estado_evidencia == "insuficiente" else ""
+        st.markdown(
+            estilos.score_card_html(
+                rank=rank,
+                tema=group.tema,
+                fecha=evidence_date_label(group_date),
+                titulo=group.titulo_representativo,
+                chips=[
+                    (f"Prioridad {group.prioridad}", priority_kind),
+                    (f"Evidencia {group.estado_evidencia}", evidence_kind),
+                    (f"{group.n_noticias} artículos agrupados", ""),
+                    (f"{group.corroboracion} procedencias distintas (corroboración)", ""),
+                ],
+                puntaje=group.puntaje,
+            ),
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            estilos.component_bars_html(
+                {"R": group.R, "I": group.I, "U": group.U, "N": group.N, "E": group.E}
+            ),
+            unsafe_allow_html=True,
+        )
         st.caption(
             f"Reglas: {group.version_reglas} · Componentes R/I/U/N/E: "
             f"{group.R:.1f}/{group.I:.1f}/{group.U:.1f}/{group.N:.1f}/{group.E:.1f}"
@@ -355,9 +372,10 @@ def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> No
 def main() -> None:
     """Render the Spanish editorial inbox and its explicit data states."""
 
-    st.set_page_config(page_title="Bandeja editorial")
-    st.title("Bandeja editorial")
-    st.caption("Orden: mayor puntaje, luego urgencia (U) y finalmente identificador.")
+    st.set_page_config(page_title="Bandeja editorial", layout="wide")
+    st.markdown(estilos.CSS, unsafe_allow_html=True)
+    hero_slot = st.empty()
+    hero_slot.markdown(estilos.hero_html(0, 0, 0), unsafe_allow_html=True)
 
     try:
         fingerprint = database_fingerprint(MOTOR_PATH, SIGNALS_PATH, FICHAS_PATH)
@@ -399,7 +417,22 @@ def main() -> None:
         st.info("No hay grupos que coincidan con los filtros seleccionados.")
         return
 
-    for group in groups:
+    hero_slot.markdown(
+        estilos.hero_html(
+            len(groups),
+            sum(g.prioridad.lower() == "alto" for g in groups),
+            sum(g.estado_evidencia == "insuficiente" for g in groups),
+        ),
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        estilos.section_title_html(
+            "Bandeja editorial",
+            "Orden: mayor puntaje, luego urgencia (U) y finalmente identificador.",
+        ),
+        unsafe_allow_html=True,
+    )
+    for rank, group in enumerate(groups, 1):
         try:
             evidence_rows = load_group_evidence(
                 str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, group.grupo_id
@@ -407,7 +440,7 @@ def main() -> None:
         except duckdb.Error:
             evidence_rows = []
             st.warning("No se pudo cargar la evidencia de este grupo.")
-        render_group_card(group, evidence_rows)
+        render_group_card(group, evidence_rows, rank)
 
 
 if __name__ == "__main__":
