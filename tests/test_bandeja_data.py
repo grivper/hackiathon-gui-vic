@@ -1,11 +1,24 @@
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
 from datetime import date, datetime
 
 import duckdb
 import pytest
 
-from app.data import ScoreUnavailableError, fetch_inbox_groups, open_inbox_repository
+import json
+
+from app.data import (
+    EvidenceRow,
+    ScoreUnavailableError,
+    ask_group_question,
+    fetch_group_evidence,
+    fetch_group_ficha,
+    fetch_inbox_filter_options,
+    fetch_inbox_groups,
+    open_inbox_repository,
+    persist_ficha_review_state,
+)
 
 
 def _create_databases(tmp_path, *, with_scores=True):
@@ -68,31 +81,234 @@ def _create_databases(tmp_path, *, with_scores=True):
                 motor.execute(
                     "INSERT INTO grupo_noticias VALUES (?, ?, ?, ?)",
                     [group_id, news_id, "medio", 0.9],
-                )
+                )  # noqa: S608
                 classifications.append((news_id, "embeddings", topic, 0.8, None, None, "modelo", None))
-        motor.executemany("INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?, ?)", classifications)
+        motor.executemany("INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?, ?)", classifications)  # noqa: S608
         if with_scores:
             motor.execute("""
                 CREATE TABLE puntaje (
                     grupo_id TEXT, tema TEXT, R DOUBLE, I DOUBLE, U DOUBLE, N DOUBLE, E DOUBLE,
                     puntaje DOUBLE, prioridad TEXT, estado_evidencia TEXT,
-                    version_reglas TEXT, motivos TEXT
+                    version_reglas TEXT, motivos TEXT,
+                    contexto_oficial TEXT, evento_usgs_id TEXT
                 )
             """)
             scores = [
-                ("G-NUEVO", "economia", 1.0, 0.8, 0.7, 0.1, 0.2, 85.0, "alto", "insuficiente", "v0.3", "requiere contraste"),
-                ("G-FUENTES", "salud", 1.0, 0.5, 0.2, 1.0, 0.8, 80.0, "alto", "suficiente", "v0.3", "fuentes independientes"),
-                ("G-ALFA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial"),
-                ("G-BETA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial"),
-                ("G-OTROS", "otros", 0.0, 0.0, 1.0, 1.0, 0.0, 95.0, "alto", "suficiente", "v0.3", "excluido"),
+                ("G-NUEVO", "economia", 1.0, 0.8, 0.7, 0.1, 0.2, 85.0, "alto", "insuficiente", "v0.3", "requiere contraste", "Crecimiento del PIB: 5%", None),
+                ("G-FUENTES", "salud", 1.0, 0.5, 0.2, 1.0, 0.8, 80.0, "alto", "suficiente", "v0.3", "fuentes independientes", None, None),
+                ("G-ALFA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial", None, None),
+                ("G-BETA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial", None, None),
+                ("G-OTROS", "otros", 0.0, 0.0, 1.0, 1.0, 0.0, 95.0, "alto", "suficiente", "v0.3", "excluido", None, "usgs-1234"),
             ]
-            motor.executemany("INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", scores)
+            motor.executemany("INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", scores)  # noqa: S608
     finally:
         motor.close()
 
     signals = duckdb.connect(str(signals_path))
-    signals.close()
+    try:
+        signals.execute("""
+            CREATE TABLE noticias (
+                id_noticia TEXT,
+                titulo TEXT,
+                url TEXT,
+                medio TEXT,
+                fecha_publicacion TIMESTAMP,
+                fecha_deteccion TIMESTAMP,
+                origen TEXT
+            )
+        """)
+        signals.executemany(
+            "INSERT INTO noticias VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [
+                ("E-3", "Titular sin publicación", "https://example.com/3", "medio-c", None, datetime(2026, 1, 6), "sitemap"),
+                ("E-2", "Titular del mismo día", "https://example.com/2", "medio-b", datetime(2026, 1, 4), datetime(2026, 1, 5), "rss"),
+                ("E-1", "Titular temprano", "https://example.com/1", "medio-a", datetime(2026, 1, 3), datetime(2026, 1, 4), "rss"),
+                ("E-4", "Titular del mismo día B", "https://example.com/4", "medio-d", datetime(2026, 1, 4), datetime(2026, 1, 4), "gdelt"),
+            ],
+        )
+    finally:
+        signals.close()
+    motor = duckdb.connect(str(motor_path))
+    try:
+        motor.executemany(
+            "INSERT INTO grupo_noticias VALUES (?, ?, ?, ?)",
+            [
+                ("G-EVID", "E-3", "agencia:EFE", None),
+                ("G-EVID", "E-2", "medio-b", 0.82),
+                ("G-EVID", "E-1", "medio-a", 0.91),
+                ("G-EVID", "E-4", "medio-d", 0.82),
+                ("G-OTRO", "E-1", "medio-a", 0.91),
+            ],
+        )
+    finally:
+        motor.close()
     return motor_path, signals_path
+
+
+def test_fetch_group_evidence_returns_ordered_metadata_without_substituting_dates(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    rows = fetch_group_evidence(motor_path, signals_path, "G-EVID")
+
+    assert [row.id_noticia for row in rows] == ["E-1", "E-4", "E-2", "E-3"]
+    assert rows[0] == EvidenceRow(
+        id_noticia="E-1",
+        titulo="Titular temprano",
+        url="https://example.com/1",
+        medio="medio-a",
+        procedencia="medio-a",
+        fecha_publicacion=datetime(2026, 1, 3),
+        fecha_deteccion=datetime(2026, 1, 4),
+        similitud_al_centroide=0.91,
+    )
+    assert [row.procedencia for row in rows[1:3]] == ["medio-d", "medio-b"]
+    assert rows[1].fecha_publicacion == datetime(2026, 1, 4)
+    assert rows[1].fecha_deteccion == datetime(2026, 1, 4)
+    assert rows[3].fecha_publicacion is None
+    assert rows[3].fecha_deteccion == datetime(2026, 1, 6)
+    assert rows[3].similitud_al_centroide is None
+    with pytest.raises(FrozenInstanceError):
+        rows[0].titulo = "No modificar"  # type: ignore[misc]
+
+
+def test_ask_group_question_returns_abstention_when_unrelated():
+    response = ask_group_question("G-EVID", "irrelevant")
+    assert response.abstencion is True
+    assert not response.citas
+
+
+def _create_fichas_table(motor_path, rows):
+    connection = duckdb.connect(str(motor_path))
+    try:
+        connection.execute(
+            "CREATE TABLE fichas (id_caso TEXT, estado_revision TEXT, tipo_respuesta TEXT, "
+            "ficha TEXT, generado_en TIMESTAMP)"
+        )
+        connection.executemany(
+            "INSERT INTO fichas VALUES (?, ?, ?, ?, ?)", rows
+        )
+    finally:
+        connection.close()
+
+
+def test_fetch_group_ficha_returns_none_when_table_is_missing(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    assert fetch_group_ficha(motor_path, signals_path, "G-NUEVO") is None
+
+
+def test_fetch_group_ficha_returns_none_when_no_row_matches(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    _create_fichas_table(
+        motor_path,
+        [
+            (
+                "G-OTRO",
+                "nuevo",
+                "respuesta",
+                json.dumps({"borrador": "x", "citas": [], "afirmaciones": []}),
+                datetime(2026, 1, 1),
+            )
+        ],
+    )
+
+    assert fetch_group_ficha(motor_path, signals_path, "G-NUEVO") is None
+
+
+def test_fetch_group_ficha_parses_a_real_response_with_citations(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    ficha_json = json.dumps(
+        {
+            "borrador": "El evento ocurrió en enero.",
+            "citas": [{"id_evidencia": "E-1", "campo": "titulo"}],
+            "afirmaciones": [{"texto": "El evento ocurrió en enero.", "id_evidencia": "N-1", "campo": "titulo"}],
+            "tipo_respuesta": "respuesta",
+            "motivo_abstencion": None,
+            "estado_revision": "nuevo",
+        }
+    )
+    _create_fichas_table(
+        motor_path,
+        [("G-NUEVO", "en revisión", "respuesta", ficha_json, datetime(2026, 1, 2, 9, 0))],
+    )
+
+    ficha = fetch_group_ficha(motor_path, signals_path, "G-NUEVO")
+
+    assert ficha is not None
+    assert ficha.id_caso == "G-NUEVO"
+    assert ficha.estado_revision == "en revisión"  # outer column is authoritative
+    assert ficha.tipo_respuesta == "respuesta"
+    assert ficha.borrador == "El evento ocurrió en enero."
+    assert ficha.citas == [("E-1", "titulo")]
+    assert ficha.afirmaciones == ["El evento ocurrió en enero."]
+    assert ficha.motivo_abstencion is None
+    assert ficha.generado_en == datetime(2026, 1, 2, 9, 0)
+
+
+def test_fetch_group_ficha_parses_an_abstention_without_a_draft(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    ficha_json = json.dumps(
+        {
+            "borrador": None,
+            "citas": [],
+            "afirmaciones": [],
+            "tipo_respuesta": "abstencion",
+            "motivo_abstencion": "No hay corroboración suficiente.",
+            "estado_revision": "nuevo",
+        }
+    )
+    _create_fichas_table(
+        motor_path,
+        [("G-NUEVO", "nuevo", "abstencion", ficha_json, datetime(2026, 1, 2))],
+    )
+
+    ficha = fetch_group_ficha(motor_path, signals_path, "G-NUEVO")
+
+    assert ficha.tipo_respuesta == "abstencion"
+    assert ficha.borrador is None
+    assert ficha.motivo_abstencion == "No hay corroboración suficiente."
+
+
+def test_persist_ficha_review_state_updates_the_outer_column(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    ficha_json = json.dumps(
+        {"borrador": "x", "citas": [], "afirmaciones": [], "tipo_respuesta": "respuesta",
+         "motivo_abstencion": None, "estado_revision": "nuevo"}
+    )
+    _create_fichas_table(
+        motor_path, [("G-NUEVO", "nuevo", "respuesta", ficha_json, datetime(2026, 1, 2))]
+    )
+
+    persist_ficha_review_state(motor_path, "G-NUEVO", "aprobado como borrador")
+
+    ficha = fetch_group_ficha(motor_path, signals_path, "G-NUEVO")
+    assert ficha.estado_revision == "aprobado como borrador"
+
+
+def test_persist_ficha_review_state_rejects_unknown_states(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    with pytest.raises(ValueError):
+        persist_ficha_review_state(motor_path, "G-NUEVO", "publicado")
+
+
+def test_persist_ficha_review_state_is_a_noop_without_the_table(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    persist_ficha_review_state(motor_path, "G-NUEVO", "nuevo")  # must not raise or create the table
+
+    assert fetch_group_ficha(motor_path, signals_path, "G-NUEVO") is None
+
+
+def test_fetch_group_evidence_returns_empty_for_an_unknown_group_and_keeps_databases_read_only(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    assert fetch_group_evidence(motor_path, signals_path, "G-DESCONOCIDO") == []
+    with (
+        open_inbox_repository(motor_path, signals_path) as connection,
+        pytest.raises(duckdb.InvalidInputException),
+    ):
+        connection.execute("INSERT INTO senales.noticias VALUES ('NUEVA', '', '', '', NULL, NULL, '')")
 
 
 def test_fetch_inbox_groups_returns_score_metadata_and_exact_score_order(tmp_path):
@@ -108,6 +324,8 @@ def test_fetch_inbox_groups_returns_score_metadata_and_exact_score_order(tmp_pat
     assert rows[0].estado_evidencia == "insuficiente"
     assert rows[0].version_reglas == "v0.3"
     assert rows[0].motivos == "requiere contraste"
+    assert rows[0].contexto_oficial == "Crecimiento del PIB: 5%"
+    assert rows[0].evento_usgs_id is None
     assert (rows[0].R, rows[0].I, rows[0].N, rows[0].E) == (1.0, 0.8, 0.1, 0.2)
     assert rows[0].n_noticias == 5
     assert rows[0].n_procedencias == 1
@@ -129,6 +347,44 @@ def test_fetch_inbox_groups_requires_the_scoring_table(tmp_path):
 
     with pytest.raises(ScoreUnavailableError, match="Ejecute el motor de puntaje"):
         fetch_inbox_groups(motor_path, signals_path)
+
+
+def test_fetch_inbox_filter_options_returns_distinct_topics_and_date_bounds(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    topics, min_date, max_date = fetch_inbox_filter_options(motor_path, signals_path)
+
+    assert topics == ["economia", "educacion", "salud"]
+    assert min_date == date(2026, 1, 3)
+    assert max_date == date(2026, 1, 5)
+
+
+def test_fetch_inbox_filter_options_requires_the_scoring_table(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path, with_scores=False)
+
+    with pytest.raises(ScoreUnavailableError, match="Ejecute el motor de puntaje"):
+        fetch_inbox_filter_options(motor_path, signals_path)
+
+
+def test_fetch_inbox_filter_options_returns_empty_bounds_when_no_groups_exist(tmp_path):
+    motor_path = tmp_path / "motor.duckdb"
+    signals_path = tmp_path / "senales.duckdb"
+    motor = duckdb.connect(str(motor_path))
+    try:
+        motor.execute("CREATE TABLE grupos (grupo_id TEXT, fecha_max TIMESTAMP)")
+        motor.execute(
+            "CREATE TABLE puntaje (grupo_id TEXT, tema TEXT)"
+        )
+    finally:
+        motor.close()
+    signals = duckdb.connect(str(signals_path))
+    signals.close()
+
+    topics, min_date, max_date = fetch_inbox_filter_options(motor_path, signals_path)
+
+    assert topics == []
+    assert min_date is None
+    assert max_date is None
 
 
 def test_open_inbox_repository_keeps_motor_database_read_only(tmp_path):

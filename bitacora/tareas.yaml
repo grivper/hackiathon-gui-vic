@@ -184,32 +184,32 @@
 - id: TAR-018
   tarea: 'Interfaz: ficha de evidencia del grupo con procedencias, corroboración y fecha original'
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:18-05:00
+  estado: Hecho
+  fecha: 2026-10-07T20:32-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004
 - id: TAR-019
   tarea: 'Interfaz: panel de contexto oficial con indicadores del Banco Mundial y sismos USGS'
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:18-05:00
+  estado: Hecho
+  fecha: 2026-10-07T20:49-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004
 - id: TAR-020
   tarea: 'Interfaz: caja de consulta con respuesta citada o abstención (CU-04)'
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:18-05:00
+  estado: Hecho
+  fecha: 2026-10-07T21:15-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004
 - id: TAR-021
   tarea: 'Interfaz: borrador con citas y revisión humana con los 5 estados'
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:19-05:00
+  estado: Hecho
+  fecha: 2026-10-07T21:33-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004

@@ -9,10 +9,16 @@ import duckdb
 import streamlit as st
 
 from app.data import (
+    VALID_REVIEW_STATES,
+    EvidenceRow,
     InboxGroup,
     ScoreUnavailableError,
+    ask_group_question,
+    fetch_group_evidence,
+    fetch_group_ficha,
     fetch_inbox_filter_options,
     fetch_inbox_groups,
+    persist_ficha_review_state,
 )
 
 
@@ -43,6 +49,18 @@ def load_inbox_filter_options(
     """Cache uncapped filter choices until either database file changes."""
 
     return fetch_inbox_filter_options(motor_path, signals_path)
+
+
+@st.cache_data
+def load_group_evidence(
+    motor_path: str,
+    signals_path: str,
+    database_identity: tuple[tuple[int, int], tuple[int, int]],
+    grupo_id: str,
+) -> list[EvidenceRow]:
+    """Cache read-only group evidence until either database file changes."""
+
+    return fetch_group_evidence(motor_path, signals_path, grupo_id)
 
 
 @st.cache_data
@@ -79,20 +97,200 @@ def editorial_guidance(prioridad: str, estado_evidencia: str) -> str:
     return f"Evidencia: {estado_evidencia}. La prioridad no aprueba publicación."
 
 
-def render_group_card(group: InboxGroup) -> None:
+def evidence_date_label(value: date | datetime | None) -> str:
+    """Format source dates without substituting one metadata field for another."""
+
+    if value is None:
+        return "No disponible"
+    return value.strftime("%d/%m/%Y")
+
+
+def evidence_verification_guidance(estado_evidencia: str) -> str:
+    """State the remaining editorial verification without approving publication."""
+
+    if estado_evidencia == "insuficiente":
+        return (
+            "Por verificar: confirme el hecho con procedencias distintas; "
+            "requiere investigación y no es publicable."
+        )
+    return (
+        "Por verificar: confirme atribución, contexto y vigencia antes de publicar; "
+        "la evidencia no sustituye la verificación editorial."
+    )
+
+
+def render_official_context(contexto: str | None, usgs_id: str | None) -> None:
+    """Render the official context panel without conflating history with breaking news."""
+
+    if not contexto and not usgs_id:
+        return
+
+    st.markdown("---")
+    st.markdown("**Contexto oficial (Banco Mundial / USGS)**")
+    st.caption("Esta sección provee una línea base histórica u oficial y no debe confundirse con la noticia en curso.")
+
+    if usgs_id:
+        url = f"https://earthquake.usgs.gov/earthquakes/eventpage/{usgs_id}"
+        st.info(f"**Evento sísmico verificado (USGS):** [{usgs_id}]({url})")
+
+    if contexto:
+        st.info(f"**Indicadores Banco Mundial:** {contexto}")
+
+
+def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
+    """Render read-only member metadata, keeping corroboration separate from volume."""
+
+    with st.expander("Detalle de evidencia", expanded=False):
+        st.caption(
+            f"{group.n_noticias} artículos agrupados. La corroboración considera "
+            f"{group.corroboracion} procedencias distintas, no repeticiones del mismo origen."
+        )
+        st.info(evidence_verification_guidance(group.estado_evidencia))
+        if not evidence_rows:
+            st.caption("No hay miembros de evidencia disponibles para este grupo.")
+            return
+
+        for row in evidence_rows:
+            st.markdown(f"**{row.titulo or 'Titular no disponible'}**")
+            st.caption(f"ID de evidencia: {row.id_noticia}")
+            if row.url:
+                st.link_button("Abrir fuente", row.url)
+            st.caption(
+                f"Medio: {row.medio or 'No disponible'} · "
+                f"Procedencia: {row.procedencia or 'No disponible'}"
+            )
+            st.caption(
+                "Fecha de publicación/original: "
+                f"{evidence_date_label(row.fecha_publicacion)} · "
+                f"Fecha de detección: {evidence_date_label(row.fecha_deteccion)}"
+            )
+            if row.similitud_al_centroide is not None:
+                st.caption(
+                    "Similitud con el grupo: "
+                    f"{row.similitud_al_centroide:.0%} (referencia para revisar la agrupación)."
+                )
+
+
+def render_group_chat(group: InboxGroup) -> None:
+    """Render a chat interface for cited CU-04 queries per group."""
+
+    with st.expander("Consulta citada (simulada)", expanded=False):
+        st.warning(
+            "Respuesta simulada: aún no usa el LLM ni la evidencia real "
+            "(pendiente TAR-020/TAR-028)."
+        )
+        st.caption("Consultá sobre este grupo. La respuesta de ejemplo no está basada en evidencia real.")
+
+        chat_key = f"chat_{group.grupo_id}"
+        if chat_key not in st.session_state:
+            st.session_state[chat_key] = []
+
+        for msg in st.session_state[chat_key]:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+                if msg.get("citas"):
+                    st.caption(f"Citas: {', '.join(msg['citas'])}")
+
+        if question := st.chat_input("Escribí tu consulta acá...", key=f"input_{group.grupo_id}"):
+            # Immediate render of user question
+            st.session_state[chat_key].append({"role": "user", "content": question})
+            with st.chat_message("user"):
+                st.markdown(question)
+
+            # Mock LLM generation
+            with st.spinner("Buscando en la evidencia..."):
+                response = ask_group_question(group.grupo_id, question)
+
+            msg_data = {
+                "role": "assistant",
+                "content": response.respuesta,
+                "citas": response.citas
+            }
+            st.session_state[chat_key].append(msg_data)
+
+            with st.chat_message("assistant"):
+                st.markdown(response.respuesta)
+                if response.abstencion:
+                    st.warning("Abstención: La respuesta puede estar limitada por falta de datos.")
+                if response.citas:
+                    st.caption(f"Citas simuladas: {', '.join(response.citas)}")
+
+
+def render_group_draft(group: InboxGroup) -> None:
+    """Render the real TAR-009 editorial draft with mandatory review states.
+
+    Reads a fresh ficha on every render (not cached): the selectbox key is
+    scoped to the ficha's own generation timestamp, so a regenerated ficha
+    for the same group never inherits a previous approval left over in the
+    widget's session state.
+    """
+
+    with st.expander("Borrador y revisión (IA)", expanded=False):
+        st.caption("Aprobar el borrador no lo publica automáticamente.")
+
+        ficha = fetch_group_ficha(MOTOR_PATH, SIGNALS_PATH, group.grupo_id)
+        if ficha is None:
+            st.info("Borrador no generado para este grupo (ejecutar make generar).")
+            return
+
+        if ficha.tipo_respuesta == "abstencion":
+            st.warning("Abstención: no hay evidencia suficiente para redactar un borrador.")
+            if ficha.motivo_abstencion:
+                st.caption(f"Motivo: {ficha.motivo_abstencion}")
+        else:
+            if ficha.tipo_respuesta == "contradiccion":
+                st.warning("Contradicción detectada entre las fuentes citadas.")
+            st.caption(
+                "Borrador citable basado exclusivamente en la evidencia del grupo."
+            )
+            st.markdown(ficha.borrador or "")
+            if ficha.afirmaciones:
+                with st.popover("Ver afirmaciones base"):
+                    for a in ficha.afirmaciones:
+                        st.markdown(f"- {a}")
+            if ficha.citas:
+                citas_label = ", ".join(
+                    f"{id_evidencia} · {campo}" for id_evidencia, campo in ficha.citas
+                )
+                st.caption(f"Citas empleadas: {citas_label}")
+
+        st.markdown("---")
+        st.markdown("**Revisión editorial**")
+        try:
+            index = VALID_REVIEW_STATES.index(ficha.estado_revision)
+        except ValueError:
+            index = 0
+
+        new_state = st.selectbox(
+            "Estado del borrador",
+            list(VALID_REVIEW_STATES),
+            index=index,
+            key=f"select_{group.grupo_id}_{ficha.generado_en}"
+        )
+
+        if new_state != ficha.estado_revision:
+            persist_ficha_review_state(MOTOR_PATH, group.grupo_id, new_state)
+
+        if new_state == "aprobado como borrador":
+            st.success("Borrador aprobado. (Nota: Esto no publica el artículo en el CMS).")
+        elif new_state == "requiere evidencia":
+            st.warning("Se requiere más investigación o evidencia de otras fuentes.")
+
+
+def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Render score, evidence, corroboration, and repetition as distinct facts."""
 
     group_date = _group_date(group)
     with st.container(border=True):
         st.subheader(group.titulo_representativo)
-        st.caption(f"Tema: {group.tema} · Fecha más reciente: {group_date:%d/%m/%Y}")
+        st.caption(f"Tema: {group.tema} · Fecha más reciente: {evidence_date_label(group_date)}")
         score, priority, evidence = st.columns(3)
         score.metric("Puntaje", f"{group.puntaje:.1f}")
         priority.metric("Prioridad", group.prioridad)
         evidence.metric("Estado de evidencia", group.estado_evidencia)
         articles, sources = st.columns(2)
         articles.metric("Artículos agrupados", group.n_noticias)
-        sources.metric("Corroboración (fuentes distintas)", group.corroboracion)
+        sources.metric("Corroboración (procedencias distintas)", group.corroboracion)
         st.caption(
             f"Reglas: {group.version_reglas} · Componentes R/I/U/N/E: "
             f"{group.R:.1f}/{group.I:.1f}/{group.U:.1f}/{group.N:.1f}/{group.E:.1f}"
@@ -107,6 +305,10 @@ def render_group_card(group: InboxGroup) -> None:
             st.warning("Repetición detectada: no aumenta la corroboración.")
         else:
             st.caption("Sin repetición detectada en este grupo.")
+        render_official_context(group.contexto_oficial, group.evento_usgs_id)
+        render_group_evidence(group, evidence_rows)
+        render_group_chat(group)
+        render_group_draft(group)
 
 
 def main() -> None:
@@ -157,7 +359,14 @@ def main() -> None:
         return
 
     for group in groups:
-        render_group_card(group)
+        try:
+            evidence_rows = load_group_evidence(
+                str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, group.grupo_id
+            )
+        except duckdb.Error:
+            evidence_rows = []
+            st.warning("No se pudo cargar la evidencia de este grupo.")
+        render_group_card(group, evidence_rows)
 
 
 if __name__ == "__main__":
