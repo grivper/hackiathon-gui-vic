@@ -1,7 +1,7 @@
 {
   "version": "v0-dev",
   "nota": "Snapshot de desarrollo propio, no es el paquete oficial de la organización.",
-  "fecha_corte_utc": "2026-10-08T04:14:31Z",
+  "fecha_corte_utc": "2026-10-08T11:35:54Z",
   "consultas": [
     {
       "fuente": "gdelt",
@@ -91,7 +91,7 @@
     },
     {
       "fuente": "tvn_rss",
-      "capturas": 2
+      "capturas": 3
     },
     {
       "fuente": "tvn_sitemap",
@@ -100,8 +100,8 @@
   ],
   "archivos": {
     "processed/noticias.csv": {
-      "registros": 30197,
-      "sha256": "b30ca2ee4c192426bee68e3f1ea4726865b8817b3f5c61bf32b56a744fb1015b"
+      "registros": 30225,
+      "sha256": "185fd458b976ec5cee2f3d6bb919ae5526c25526c976b50e1f5185686b0e2fe4"
     },
     "processed/excluidos.csv": {
       "registros": 0,
@@ -109,7 +109,7 @@
     },
     "processed/fuentes.json": {
       "registros": 124,
-      "sha256": "b1f0a9a9ac1a80c60999024f2e90d17f20e911ca679dcc7a9b683d34a1b819c2"
+      "sha256": "4a7678b8eada383ad2547ffcedca76a7cb97ee4a77c12b1b1a1f2e9f6cbe8f90"
     },
     "processed/indicadores.csv": {
       "registros": 540,
@@ -121,8 +121,8 @@
     }
   },
   "estadisticas_noticias": {
-    "candidatos": 30404,
-    "duplicados_fusionados": 207,
+    "candidatos": 30556,
+    "duplicados_fusionados": 331,
     "fechas_publicacion_nulas": 30001,
     "excluidos": 0
   },
@@ -144,13 +144,13 @@
       "id": "SRC-TVN",
       "fuente": "TVN · feed RSS",
       "url": "https://www.tvn-2.com/rss/",
-      "fecha_extraccion": "2026-10-08T04:14:30Z",
-      "registros": 196,
-      "cobertura": "196 noticias · publicación 2024-09-20 a 2026-10-08",
+      "fecha_extraccion": "2026-10-08T11:35:53Z",
+      "registros": 224,
+      "cobertura": "224 noticias · publicación 2024-09-20 a 2026-10-08",
       "campos": "titulo, url, fecha_publicacion",
       "licencia": "Solo metadatos; el RSS no implica licencia sobre artículos, videos o imágenes",
       "transformaciones": "Deduplicación por URL normalizada; fechas a UTC",
-      "sha256": "b30ca2ee4c192426bee68e3f1ea4726865b8817b3f5c61bf32b56a744fb1015b"
+      "sha256": "185fd458b976ec5cee2f3d6bb919ae5526c25526c976b50e1f5185686b0e2fe4"
     },
     {
       "id": "SRC-TVN-SITEMAP",
@@ -162,7 +162,7 @@
       "campos": "titulo, url, fecha_deteccion (lastmod)",
       "licencia": "Solo metadatos (titular, URL, fecha); no se redistribuyen artículos ni imágenes",
       "transformaciones": "fecha_deteccion = lastmod del sitemap, NO es la fecha de publicación; titulo cae al slug de la URL si falta image:title; deduplicación por URL",
-      "sha256": "b30ca2ee4c192426bee68e3f1ea4726865b8817b3f5c61bf32b56a744fb1015b"
+      "sha256": "185fd458b976ec5cee2f3d6bb919ae5526c25526c976b50e1f5185686b0e2fe4"
     },
     {
       "id": "SRC-GDELT",
@@ -174,7 +174,7 @@
       "campos": "titulo, url, dominio, idioma, seendate",
       "licencia": "La API no transfiere derechos de los medios enlazados",
       "transformaciones": "seendate → fecha_deteccion (fecha_publicacion nula); ventanas divididas al llegar a 250; deduplicación por URL",
-      "sha256": "b30ca2ee4c192426bee68e3f1ea4726865b8817b3f5c61bf32b56a744fb1015b"
+      "sha256": "185fd458b976ec5cee2f3d6bb919ae5526c25526c976b50e1f5185686b0e2fe4"
     },
     {
       "id": "SRC-WB",
