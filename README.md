@@ -188,4 +188,17 @@ jurado. El espacio personal queda como respaldo.
 3. Variables opcionales: `OLLAMA_HOST`, `LLM_NUM_THREAD` (núcleos físicos, 4 por defecto), `LLM_NUM_CTX` (4096), `LLM_NUM_PREDICT` (768).
 4. `python motor/medir_llm.py --modelo ... --n 4 --min-noticias 2` mide mediana y p95 de latencia y cuántas salidas conservan citas válidas.
 
-Con modelos 7B en una CPU de 4 núcleos sin GPU se midieron 50 a 100 s por grupo (el 1.5B, 12-54 s); falta medir gemma3:4b (TAR-022). La meta de mediana ≤ 15 s no se cumple, así que las fichas finales conviene pregenerarlas antes de la demo.
+Medición de gemma3:4b en una CPU de 4 núcleos sin GPU (i7-1165G7, n=5): mediana 29,7 s, p95 49,7 s, 5,7 tokens/s (TAR-022; falta repetirla en la máquina de la demo). La meta de mediana ≤ 15 s no se cumple en CPU, así que las fichas finales hay que pregenerarlas antes de la demo.
+
+## Demo sin internet (T10)
+
+Todo el flujo corre en local: DuckDB, el modelo de embeddings en `modelos/` (con la caché presente, `motor/embeddings.py` fuerza `HF_HUB_OFFLINE=1`) y Ollama en `localhost`. Verificado en un entorno sin red (`unshare -rn`, solo loopback): `make arrancar`, `make motor`, la app Streamlit y `motor/medir_llm.py` con gemma3:4b funcionaron sin errores.
+
+Preparación (con internet, una sola vez en la máquina de la demo):
+1. `make instalar` y `make arrancar && make motor`: deja las dependencias, `modelos/` y las bases listas.
+2. `ollama pull gemma3:4b`.
+3. `make generar`: pregenera las fichas con borrador citado. Se guardan en la tabla `fichas` de `data/motor.duckdb` (local, no va a git), así que hay que correrlo en esa máquina o copiar ese archivo.
+
+Durante la demo no hace falta red. Fallbacks:
+- Si Ollama no responde, la app muestra las fichas ya generadas y marca "Borrador no generado" en el resto; el motor se abstiene en vez de inventar.
+- Si falta `data/motor.duckdb`, `make arrancar && make motor` lo reconstruye desde el snapshot en un minuto aproximadamente, sin red.

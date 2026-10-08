@@ -128,4 +128,13 @@
 - id: T10
   prueba: Sin internet durante la demo
   esperado: Funcionar con snapshot y fallback documentado; dejar evidencia en Notion
-  estado: Pendiente
+  estado: Pasó
+  fecha: 2026-10-08T09:03-05:00
+  observado: 'Entorno sin red (unshare -rn, solo loopback; verificado: sin acceso a huggingface.co ni
+    8.8.8.8). make arrancar y make motor sin cambios y sin errores; app Streamlit sin excepciones con
+    150 tarjetas; Ollama local con gemma3:4b respondió (n=1, 42 s, JSON y cita válidos).'
+  evidencia: README.md, sección «Demo sin internet (T10)»
+  historial: '2026-10-08T09:03-05:00 · Pasó · Entorno sin red (unshare -rn, solo loopback; verificado:
+    sin acceso a huggingface.co ni 8.8.8.8). make arrancar y make motor sin cambios y sin errores; app
+    Streamlit sin excepciones con 150 tarjetas; Ollama local con gemma3:4b respondió (n=1, 42 s, JSON
+    y cita válidos).'
