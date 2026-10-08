@@ -23,7 +23,7 @@ Provide an interface for editors to generate, view, and review an editorial draf
   - Display the generated draft text with its mock citations.
   - Add a selectbox for the 5 editorial review states.
   - Show a warning that "aprobado como borrador" does not authorize publication.
-  - Evidence: focused suite `145 passed`; LSP clean.
+  - Evidence: focused suite `145 passed`; LSP clean; native review blocked by `Codex error: The usage limit has been reached`. Commit `f7d7745`.
 
 ## Acceptance Criteria
 
