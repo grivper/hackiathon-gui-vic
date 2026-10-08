@@ -83,17 +83,18 @@ def _create_databases(tmp_path, *, with_scores=True):
                 CREATE TABLE puntaje (
                     grupo_id TEXT, tema TEXT, R DOUBLE, I DOUBLE, U DOUBLE, N DOUBLE, E DOUBLE,
                     puntaje DOUBLE, prioridad TEXT, estado_evidencia TEXT,
-                    version_reglas TEXT, motivos TEXT
+                    version_reglas TEXT, motivos TEXT,
+                    contexto_oficial TEXT, evento_usgs_id TEXT
                 )
             """)
             scores = [
-                ("G-NUEVO", "economia", 1.0, 0.8, 0.7, 0.1, 0.2, 85.0, "alto", "insuficiente", "v0.3", "requiere contraste"),
-                ("G-FUENTES", "salud", 1.0, 0.5, 0.2, 1.0, 0.8, 80.0, "alto", "suficiente", "v0.3", "fuentes independientes"),
-                ("G-ALFA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial"),
-                ("G-BETA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial"),
-                ("G-OTROS", "otros", 0.0, 0.0, 1.0, 1.0, 0.0, 95.0, "alto", "suficiente", "v0.3", "excluido"),
+                ("G-NUEVO", "economia", 1.0, 0.8, 0.7, 0.1, 0.2, 85.0, "alto", "insuficiente", "v0.3", "requiere contraste", "Crecimiento del PIB: 5%", None),
+                ("G-FUENTES", "salud", 1.0, 0.5, 0.2, 1.0, 0.8, 80.0, "alto", "suficiente", "v0.3", "fuentes independientes", None, None),
+                ("G-ALFA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial", None, None),
+                ("G-BETA", "educacion", 0.5, 0.5, 0.8, 1.0, 0.5, 70.0, "medio", "parcial", "v0.3", "alcance sectorial", None, None),
+                ("G-OTROS", "otros", 0.0, 0.0, 1.0, 1.0, 0.0, 95.0, "alto", "suficiente", "v0.3", "excluido", None, "usgs-1234"),
             ]
-            motor.executemany("INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", scores)
+            motor.executemany("INSERT INTO puntaje VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", scores)  # noqa: S608
     finally:
         motor.close()
 
@@ -161,7 +162,7 @@ def test_fetch_group_evidence_returns_ordered_metadata_without_substituting_date
     assert rows[3].fecha_deteccion == datetime(2026, 1, 6)
     assert rows[3].similitud_al_centroide is None
     with pytest.raises(FrozenInstanceError):
-        rows[0].titulo = "No modificar"
+        rows[0].titulo = "No modificar"  # type: ignore[misc]
 
 
 def test_fetch_group_evidence_returns_empty_for_an_unknown_group_and_keeps_databases_read_only(tmp_path):
@@ -188,6 +189,8 @@ def test_fetch_inbox_groups_returns_score_metadata_and_exact_score_order(tmp_pat
     assert rows[0].estado_evidencia == "insuficiente"
     assert rows[0].version_reglas == "v0.3"
     assert rows[0].motivos == "requiere contraste"
+    assert rows[0].contexto_oficial == "Crecimiento del PIB: 5%"
+    assert rows[0].evento_usgs_id is None
     assert (rows[0].R, rows[0].I, rows[0].N, rows[0].E) == (1.0, 0.8, 0.1, 0.2)
     assert rows[0].n_noticias == 5
     assert rows[0].n_procedencias == 1

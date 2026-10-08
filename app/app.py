@@ -115,6 +115,24 @@ def evidence_verification_guidance(estado_evidencia: str) -> str:
     )
 
 
+def render_official_context(contexto: str | None, usgs_id: str | None) -> None:
+    """Render the official context panel without conflating history with breaking news."""
+
+    if not contexto and not usgs_id:
+        return
+
+    st.markdown("---")
+    st.markdown("**Contexto oficial (Banco Mundial / USGS)**")
+    st.caption("Esta sección provee una línea base histórica u oficial y no debe confundirse con la noticia en curso.")
+
+    if usgs_id:
+        url = f"https://earthquake.usgs.gov/earthquakes/eventpage/{usgs_id}"
+        st.info(f"**Evento sísmico verificado (USGS):** [{usgs_id}]({url})")
+
+    if contexto:
+        st.info(f"**Indicadores Banco Mundial:** {contexto}")
+
+
 def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Render read-only member metadata, keeping corroboration separate from volume."""
 
@@ -176,6 +194,7 @@ def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> No
             st.warning("Repetición detectada: no aumenta la corroboración.")
         else:
             st.caption("Sin repetición detectada en este grupo.")
+        render_official_context(group.contexto_oficial, group.evento_usgs_id)
         render_group_evidence(group, evidence_rows)
 
 

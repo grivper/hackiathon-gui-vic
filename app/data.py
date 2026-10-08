@@ -37,6 +37,8 @@ class InboxGroup:
     estado_evidencia: str
     version_reglas: str
     motivos: str
+    contexto_oficial: str | None
+    evento_usgs_id: str | None
 
 
 @dataclass(frozen=True)
@@ -95,7 +97,8 @@ def fetch_inbox_groups(
             g.grupo_id, g.titulo_representativo, g.n_noticias, g.n_procedencias,
             g.fecha_max, g.corroboracion, g.es_repeticion, p.tema,
             p.R, p.I, p.U, p.N, p.E, p.puntaje, p.prioridad,
-            p.estado_evidencia, p.version_reglas, p.motivos
+            p.estado_evidencia, p.version_reglas, p.motivos,
+            p.contexto_oficial, p.evento_usgs_id
         FROM grupos AS g
         JOIN puntaje AS p ON p.grupo_id = g.grupo_id
         WHERE p.tema <> 'otros'

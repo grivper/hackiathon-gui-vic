@@ -7,6 +7,7 @@ from app.app import (
     editorial_guidance,
     evidence_date_label,
     evidence_verification_guidance,
+    render_official_context,
 )
 
 
@@ -46,3 +47,27 @@ def test_insufficient_evidence_verification_guidance_requires_investigation():
     assert "procedencias distintas" in guidance
     assert "requiere investigación" in guidance
     assert "no es publicable" in guidance
+
+
+def test_render_official_context_avoids_rendering_when_missing(monkeypatch):
+    from unittest.mock import Mock
+    st_info = Mock()
+    st_markdown = Mock()
+    monkeypatch.setattr("app.app.st.info", st_info)
+    monkeypatch.setattr("app.app.st.markdown", st_markdown)
+    render_official_context(None, None)
+    render_official_context("", "")
+    st_info.assert_not_called()
+    st_markdown.assert_not_called()
+
+
+def test_render_official_context_displays_available_sources(monkeypatch):
+    from unittest.mock import Mock
+    st_info = Mock()
+    st_markdown = Mock()
+    monkeypatch.setattr("app.app.st.info", st_info)
+    monkeypatch.setattr("app.app.st.markdown", st_markdown)
+    render_official_context("PIB: 5%", "usgs-123")
+    st_markdown.assert_any_call("**Contexto oficial (Banco Mundial / USGS)**")
+    st_info.assert_any_call("**Indicadores Banco Mundial:** PIB: 5%")
+    st_info.assert_any_call("**Evento sísmico verificado (USGS):** [usgs-123](https://earthquake.usgs.gov/earthquakes/eventpage/usgs-123)")
