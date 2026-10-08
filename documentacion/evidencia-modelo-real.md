@@ -64,3 +64,13 @@ DRI-02R materialized the previously validated JSONL artifact without rerunning O
 | G-9dd46610ff94 | insuficiente | respuesta, 1 afirmación | 1 / 100% | nuevo |
 
 Independent structural validation confirmed the IDs, unique count, valid review states, and 100% citation coverage for every non-abstention. `G-9dd46610ff94` remains `estado_evidencia=insuficiente`. Focused citation, generation, and acceptance tests: 56 passed in 6.08 s.
+
+## Official demo-machine benchmark: n=10 (TAR-022 / DRI-01R)
+
+This is the official measurement requested by Guille. It is separate from the historical n=3 and n=5 development runs above; it was run on the demo machine with environment overrides explicitly unset.
+
+- Command: `.venv/Scripts/python.exe motor/medir_llm.py --modelo gemma3:4b --n 10`
+- Runtime: Ollama 0.40.1; `gemma3:4b`; exit 0; n=10.
+- Effective options: `num_thread=4`, `num_ctx=4096`, `num_predict=768`, `temperature=0`, `seed=7`.
+- Results: median 18.86863055 s; p95 41.04204075 s; median 9.856653 tok/s; valid JSON 10/10; at least one valid citation 9/10.
+- Decision: the 15-second median target was missed. The required measurement completed successfully, and final fichas will be pre-generated before the demo.

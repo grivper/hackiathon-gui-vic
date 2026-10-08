@@ -238,13 +238,19 @@
   tarea: Instalar Ollama en la máquina de la demo y medir la latencia de gemma3:4b (modelo vigente; meta
     mediana 15 s)
   responsable: Víctor
-  estado: En curso
+  estado: Hecho
   fecha: 2026-10-08T08:57-05:00
-  notas: '2026-10-08T08:57-05:00 · Medición de desarrollo (máquina de Guille, i7-1165G7, 4 núcleos, 15
-    GB, solo CPU, gemma3:4b, n=5): mediana 29,7 s, p95 49,7 s, 5,7 tok/s, JSON válido 5/5, cita válida
-    4/5. Con num_thread=8: mediana 30,7 s, p95 44,8 s (sin mejora). No cumple la meta de 15 s en CPU;
-    pregenerar las fichas finales. Falta medir en la máquina de la demo (la de Víctor): ollama pull gemma3:4b
-    y python motor/medir_llm.py --modelo gemma3:4b --n 5 (idealmente n=10).'
+  notas: '2026-10-08T08:57-05:00 · Medición de desarrollo histórica (máquina de Guille, i7-1165G7, 4
+    núcleos, 15 GB, solo CPU, gemma3:4b, n=5): mediana 29,7 s, p95 49,7 s, 5,7 tok/s, JSON válido 5/5,
+    cita válida 4/5. Con num_thread=8: mediana 30,7 s, p95 44,8 s (sin mejora). No cumple la meta de
+    15 s en CPU; pregenerar las fichas finales.
+
+    Medición oficial completada en la máquina de demo: Ollama 0.40.1; `motor/medir_llm.py --modelo
+    gemma3:4b --n 10` con overrides del entorno explícitamente desactivados; n=10; mediana 18,86863055
+    s; p95 41,04204075 s; mediana 9,856653 tok/s; JSON válido 10/10; al menos una cita válida 9/10;
+    opciones efectivas num_thread=4, num_ctx=4096, num_predict=768, temperature=0, seed=7. La meta de
+    mediana de 15 s no se cumplió, pero Guille completó correctamente la medición requerida; se decide
+    pregenerar antes de la demo. Evidencia: documentacion/evidencia-modelo-real.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-023

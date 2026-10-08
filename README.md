@@ -186,9 +186,9 @@ jurado. El espacio personal queda como respaldo.
 1. Instalá Ollama (https://ollama.com) y bajá un modelo: `ollama pull gemma3:4b` (modelo vigente para la demo).
 2. Con el servidor en marcha: `LLM_MODELO=gemma3:4b make generar`, o `make generar GRUPOS="--grupo G-xxxx"` para grupos concretos (`--forzar` regenera fichas ya revisadas).
 3. Variables opcionales: `OLLAMA_HOST`, `LLM_NUM_THREAD` (núcleos físicos, 4 por defecto), `LLM_NUM_CTX` (4096), `LLM_NUM_PREDICT` (768).
-4. `python motor/medir_llm.py --modelo ... --n 4 --min-noticias 2` mide mediana y p95 de latencia y cuántas salidas conservan citas válidas.
+4. Para el benchmark oficial de la máquina de demo, con los overrides de entorno desactivados, usa `.venv/Scripts/python.exe motor/medir_llm.py --modelo gemma3:4b --n 10`. El comando informa mediana, p95 y cuántas salidas conservan JSON y citas válidas; la evidencia oficial queda en `documentacion/evidencia-modelo-real.md`.
 
-Medición de gemma3:4b en una CPU de 4 núcleos sin GPU (i7-1165G7, n=5): mediana 29,7 s, p95 49,7 s, 5,7 tokens/s (TAR-022; falta repetirla en la máquina de la demo). La meta de mediana ≤ 15 s no se cumple en CPU, así que las fichas finales hay que pregenerarlas antes de la demo.
+La medición oficial de la máquina de demo (Ollama 0.40.1, `gemma3:4b`, n=10) obtuvo mediana 18,86863055 s, p95 41,04204075 s, 9,856653 tok/s, JSON válido 10/10 y al menos una cita válida 9/10 (TAR-022). No alcanzó la meta de mediana ≤ 15 s; por esa decisión, las fichas finales se pregeneran antes de la demo. Las corridas n=3 exploratoria y n=5 de desarrollo permanecen separadas como contexto histórico en la evidencia oficial.
 
 ## Demo sin internet (T10)
 
