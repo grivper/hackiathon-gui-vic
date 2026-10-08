@@ -238,9 +238,13 @@
   tarea: Instalar Ollama en la máquina de la demo y medir la latencia de gemma3:4b (modelo vigente; meta
     mediana 15 s)
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:19-05:00
-  notas: ''
+  estado: En curso
+  fecha: 2026-10-08T08:57-05:00
+  notas: '2026-10-08T08:57-05:00 · Medición de desarrollo (máquina de Guille, i7-1165G7, 4 núcleos, 15
+    GB, solo CPU, gemma3:4b, n=5): mediana 29,7 s, p95 49,7 s, 5,7 tok/s, JSON válido 5/5, cita válida
+    4/5. Con num_thread=8: mediana 30,7 s, p95 44,8 s (sin mejora). No cumple la meta de 15 s en CPU;
+    pregenerar las fichas finales. Falta medir en la máquina de la demo (la de Víctor): ollama pull gemma3:4b
+    y python motor/medir_llm.py --modelo gemma3:4b --n 5 (idealmente n=10).'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-023
