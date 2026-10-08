@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Generator
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 
@@ -52,15 +52,18 @@ class InboxGroup:
     evento_usgs_id: str | None
 
 
+DEFAULT_FICHAS_PATH = Path("data/fichas.jsonl")
+_ABSTENTION_MESSAGE = "No hay evidencia validada en esta ficha para responder a esa consulta."
+_QUERY_STOP_WORDS = frozenset({
+    "como", "con", "cual", "cuales", "cuando", "donde", "este", "esta", "ficha",
+    "grupo", "hay", "las", "los", "para", "paso", "que", "quien", "sobre", "una",
+    "uno", "unos", "unas",
+})
+
+
 @dataclass(frozen=True)
 class GroupFicha:
-    """The real TAR-009 ficha for a group: draft, citations and review state.
-
-    ``estado_revision`` and ``tipo_respuesta`` come from the table's own
-    columns, which are the authoritative, updatable source (see
-    ``persist_ficha_review_state``). The remaining fields are parsed from the
-    ``ficha`` JSON blob produced at generation time.
-    """
+    """A normalized generated ficha and the provenance that governs writes."""
 
     id_caso: str
     estado_revision: str
@@ -70,112 +73,191 @@ class GroupFicha:
     afirmaciones: list[str]
     motivo_abstencion: str | None
     generado_en: datetime | None
+    source: str = "duckdb"
+    persistable: bool = True
+    claim_citations: list[tuple[str, list[str]]] = field(default_factory=list)
+
+
+def _normalize_ficha(
+    payload: object,
+    *,
+    source: str,
+    estado_revision: object | None = None,
+    tipo_respuesta: object | None = None,
+    generado_en: datetime | None = None,
+) -> GroupFicha | None:
+    """Accept only a ficha-shaped record; never manufacture missing content."""
+
+    if not isinstance(payload, dict) or not isinstance(payload.get("id_caso"), str):
+        return None
+    raw_citas = payload.get("citas", [])
+    raw_claims = payload.get("afirmaciones", [])
+    if not isinstance(raw_citas, list) or not isinstance(raw_claims, list):
+        return None
+    citas = [
+        (cita["id_evidencia"], cita["campo"])
+        for cita in raw_citas
+        if isinstance(cita, dict)
+        and isinstance(cita.get("id_evidencia"), str)
+        and isinstance(cita.get("campo"), str)
+    ]
+    valid_citation_ids = {citation_id for citation_id, _ in citas}
+    afirmaciones: list[str] = []
+    claim_citations: list[tuple[str, list[str]]] = []
+    for claim in raw_claims:
+        if not isinstance(claim, dict) or not isinstance(claim.get("texto"), str):
+            continue
+        text = claim["texto"]
+        citation_id = claim.get("id_evidencia")
+        citations_for_claim = (
+            [citation_id]
+            if isinstance(citation_id, str) and citation_id in valid_citation_ids
+            else []
+        )
+        afirmaciones.append(text)
+        claim_citations.append((text, citations_for_claim))
+
+    resolved_state = estado_revision if estado_revision is not None else payload.get("estado_revision")
+    resolved_type = tipo_respuesta if tipo_respuesta is not None else payload.get("tipo_respuesta")
+    if not isinstance(resolved_state, str) or not isinstance(resolved_type, str):
+        return None
+    borrador = payload.get("borrador")
+    motivo = payload.get("motivo_abstencion")
+    if borrador is not None and not isinstance(borrador, str):
+        return None
+    if motivo is not None and not isinstance(motivo, str):
+        return None
+    return GroupFicha(
+        id_caso=payload["id_caso"], estado_revision=resolved_state,
+        tipo_respuesta=resolved_type, borrador=borrador, citas=citas,
+        afirmaciones=afirmaciones, motivo_abstencion=motivo,
+        generado_en=generado_en, source=source, persistable=source == "duckdb",
+        claim_citations=claim_citations,
+    )
+
+
+def _read_jsonl_ficha(fichas_path: str | Path, grupo_id: str) -> GroupFicha | None:
+    """Read one matching committed ficha, treating any malformed JSONL as absent."""
+
+    try:
+        lines = Path(fichas_path).read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return None
+    matched: dict[str, object] | None = None
+    for line in lines:
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(record, dict):
+            return None
+        if record.get("id_caso") == grupo_id:
+            matched = record
+    return _normalize_ficha(matched, source="jsonl") if matched else None
 
 
 def fetch_group_ficha(
-    motor_path: str | Path, signals_path: str | Path, grupo_id: str
+    motor_path: str | Path,
+    signals_path: str | Path,
+    grupo_id: str,
+    *,
+    fichas_path: str | Path = DEFAULT_FICHAS_PATH,
 ) -> GroupFicha | None:
-    """Return the real TAR-009 ficha for ``grupo_id``, or ``None`` if absent.
-
-    Reads the read-only `fichas` table (generated by `motor/generar.py`,
-    TAR-022, pending Ollama). Returns ``None`` both when the table does not
-    exist yet and when no ficha has been generated for this group, so the
-    caller can show an honest "borrador no generado" message either way.
-    ``signals_path`` is accepted for signature symmetry with the other
-    readers; reading `fichas` does not require the signals attachment.
-    """
+    """Return a DuckDB ficha first, then the committed read-only JSONL fallback."""
 
     del signals_path
+    row = None
     try:
         with duckdb.connect(str(motor_path), read_only=True) as connection:
             row = connection.sql(
                 "SELECT id_caso, estado_revision, tipo_respuesta, ficha, generado_en "
-                "FROM fichas WHERE id_caso = ?",
-                params=[grupo_id],
+                "FROM fichas WHERE id_caso = ?", params=[grupo_id]
             ).fetchone()
     except duckdb.CatalogException:
-        return None
-
-    if row is None:
-        return None
-
-    id_caso, estado_revision, tipo_respuesta, ficha_json, generado_en = row
-    payload = json.loads(ficha_json) if ficha_json else {}
-    citas = [
-        (cita["id_evidencia"], cita["campo"]) for cita in payload.get("citas", [])
-    ]
-
-    return GroupFicha(
-        id_caso=id_caso,
-        estado_revision=estado_revision,
-        tipo_respuesta=tipo_respuesta,
-        borrador=payload.get("borrador"),
-        citas=citas,
-        afirmaciones=[
-            str(item.get("texto", "")) if isinstance(item, dict) else str(item)
-            for item in payload.get("afirmaciones", [])
-        ],
-        motivo_abstencion=payload.get("motivo_abstencion"),
-        generado_en=generado_en,
-    )
+        pass
+    if row is not None:
+        id_caso, estado_revision, tipo_respuesta, ficha_json, generado_en = row
+        try:
+            payload = json.loads(ficha_json) if ficha_json else {}
+        except json.JSONDecodeError:
+            return None
+        if isinstance(payload, dict):
+            payload["id_caso"] = id_caso
+        return _normalize_ficha(
+            payload, source="duckdb", estado_revision=estado_revision,
+            tipo_respuesta=tipo_respuesta, generado_en=generado_en,
+        )
+    return _read_jsonl_ficha(fichas_path, grupo_id)
 
 
 def persist_ficha_review_state(
-    motor_path: str | Path, grupo_id: str, new_state: str
-) -> None:
-    """Persist the editor's review decision for a real ficha, if it exists.
-
-    Uses a short-lived read-write connection and never creates the `fichas`
-    table: pipeline generation (TAR-022) remains the only writer of its
-    structural columns, this only updates `estado_revision`.
-    """
+    motor_path: str | Path,
+    grupo_id: str,
+    new_state: str,
+    *,
+    ficha: GroupFicha | None = None,
+) -> bool:
+    """Persist only a DuckDB-backed ficha review state; JSONL fallback is read-only."""
 
     if new_state not in VALID_REVIEW_STATES:
         raise ValueError(f"Estado de revisión inválido: {new_state!r}")
-
+    if ficha is not None and not ficha.persistable:
+        return False
     try:
         with duckdb.connect(str(motor_path), read_only=False) as connection:
-            connection.execute(
-                "UPDATE fichas SET estado_revision = ? WHERE id_caso = ?",
+            updated = connection.execute(
+                "UPDATE fichas SET estado_revision = ? WHERE id_caso = ? RETURNING id_caso",
                 [new_state, grupo_id],
-            )
+            ).fetchone()
     except duckdb.CatalogException:
-        return
+        return False
+    return updated is not None
 
 
 @dataclass(frozen=True)
 class ChatResponse:
-    """A mock or future LLM response with explicit citations."""
+    """A deterministic extractive response with validated citation IDs."""
 
     respuesta: str
     abstencion: bool
     citas: list[str]
 
 
-def ask_group_question(grupo_id: str, question: str) -> ChatResponse:
-    """Mock CU-04: Returns a cited response or abstention.
+def _query_terms(text: str) -> set[str]:
+    import re
+    import unicodedata
 
-    Pending Guille's TAR-009 LLM generation integration.
-    """
+    normalized = unicodedata.normalize("NFKD", text.lower())
+    normalized = "".join(char for char in normalized if not unicodedata.combining(char))
+    return {
+        term for term in re.findall(r"[a-z0-9]+", normalized)
+        if len(term) > 2 and term not in _QUERY_STOP_WORDS
+    }
 
-    question_lower = question.lower()
-    if "cuándo" in question_lower or "cuando" in question_lower or "fecha" in question_lower:
-        return ChatResponse(
-            respuesta="El evento ocurrió a principios de enero de 2026, según reportan múltiples fuentes locales.",
-            abstencion=False,
-            citas=["E-1", "E-2"]
-        )
-    if "quién" in question_lower or "quien" in question_lower:
-        return ChatResponse(
-            respuesta="El anuncio fue realizado por representantes del sector oficial.",
-            abstencion=False,
-            citas=["E-4"]
-        )
-    return ChatResponse(
-        respuesta="No hay evidencia suficiente en este grupo de noticias para responder a esa consulta.",
-        abstencion=True,
-        citas=[]
+
+def ask_group_question(
+    grupo_id: str,
+    question: str,
+    *,
+    motor_path: str | Path | None = None,
+    signals_path: str | Path | None = None,
+    fichas_path: str | Path = DEFAULT_FICHAS_PATH,
+) -> ChatResponse:
+    """Extract a cited claim from this group's ficha or explicitly abstain."""
+
+    if motor_path is None:
+        return ChatResponse(_ABSTENTION_MESSAGE, True, [])
+    ficha = fetch_group_ficha(
+        motor_path, signals_path or "", grupo_id, fichas_path=fichas_path
     )
+    question_terms = _query_terms(question)
+    if ficha is not None and question_terms:
+        for claim, citation_ids in ficha.claim_citations:
+            if citation_ids and question_terms.intersection(_query_terms(claim)):
+                return ChatResponse(claim, False, citation_ids)
+    return ChatResponse(_ABSTENTION_MESSAGE, True, [])
 
 
 @dataclass(frozen=True)
@@ -293,19 +375,18 @@ def fetch_inbox_filter_options(
     of fetching every row, since only the aggregates are needed.
     """
 
-    where_clause = "WHERE p.tema <> 'otros' AND g.fecha_max IS NOT NULL"
-    topics_query = f"""
+    topics_query = """
         SELECT DISTINCT p.tema
         FROM grupos AS g
         JOIN puntaje AS p ON p.grupo_id = g.grupo_id
-        {where_clause}
+        WHERE p.tema <> 'otros' AND g.fecha_max IS NOT NULL
         ORDER BY p.tema
     """
-    bounds_query = f"""
+    bounds_query = """
         SELECT MIN(CAST(g.fecha_max AS DATE)), MAX(CAST(g.fecha_max AS DATE))
         FROM grupos AS g
         JOIN puntaje AS p ON p.grupo_id = g.grupo_id
-        {where_clause}
+        WHERE p.tema <> 'otros' AND g.fecha_max IS NOT NULL
     """
     try:
         with open_inbox_repository(motor_path, signals_path) as connection:
