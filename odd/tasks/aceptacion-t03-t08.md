@@ -16,7 +16,7 @@ Run the acceptance tests of the challenge that the engine can already answer: T0
 - [x] P3 T08 high-priority case exposes components and rule; priority never publishes (estado_revision stays `nuevo`)
 - [x] P4 T05 incompatible claims: both versions, scope and pending review shown
 - [x] P5 T03 old recirculated news: original date shown, not presented as new event
-- [ ] P6 Record T03-T06, T08 in `bitacora/pruebas.yaml`, update TAR-011 notes, full suite, commit(s)
+- [x] P6 Record T03-T06, T08 in `bitacora/pruebas.yaml`, update TAR-011 notes, full suite, commit(s)
 
 ## Evidence
 - P1 T06: GREEN on first run (characterization, no meaningful RED: abstention already existed). 3 tests in `tests/test_aceptacion.py`.
@@ -24,3 +24,4 @@ Run the acceptance tests of the challenge that the engine can already answer: T0
 - P3 T08: GREEN on first run (characterization): components, rules text and priority already exposed; no publication state exists (`app.data.VALID_REVIEW_STATES`); priority does not bypass abstention.
 - P4 T05: RED (draft had both versions and scope but no pending-review line). Fix: `generar._borrador` adds "Revisión pendiente" for `contradiccion`, by code. GREEN; suite 263 passed.
 - P5 T03: RED (draft showed no dates). Fix: `generar._contexto_noticia` writes original publication date, or "detectada ... fecha de publicación no disponible", and flags >30 days between publication and detection as "vuelve a circular, no es un evento nuevo". U already used the original date (agrupar coalesce), confirmed by test. GREEN; suite 266 passed.
+- P6: T03-T06, T08 recorded in bitacora/pruebas.yaml (T03/T04/T05 Corregida, T06/T08 Pasó); TAR-011 stays En curso. Caveat: all runs use ClienteFalso; the real gemma3:4b was not exercised (Ollama not running).
