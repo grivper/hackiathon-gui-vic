@@ -20,29 +20,39 @@ header[data-testid="stHeader"]{display:none}
 
 /* header (bandeja and ficha) */
 .hero{background:#15171c;color:#f4f1ea;border-bottom:4px solid #a3162f;
-  padding:36px 40px;margin:0 -4rem 24px;display:flex;flex-wrap:wrap;gap:32px;
-  justify-content:space-between;align-items:flex-end}
+  width:100vw;margin:-1rem 0 24px calc(50% - 50vw);
+  padding:36px calc(50vw - 640px + 40px);display:flex;flex-wrap:wrap;gap:32px;
+  justify-content:space-between;align-items:flex-end;box-sizing:border-box}
 .hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#e5a3ae}
 .hero h1{font-family:'Newsreader',serif;font-size:56px;line-height:1.02;margin:8px 0;color:#f4f1ea;letter-spacing:-1px;padding:0;font-weight:600}
 .kpi{display:inline-block;margin-left:36px}
 .kpi b{display:block;font-family:'Newsreader',serif;font-size:52px;line-height:1;font-weight:600}
 .kpi span{font-size:13px;color:#c9c5b9}
-.hero.ficha{flex-direction:column;align-items:flex-start;gap:12px;padding:20px 40px 36px}
+.hero.ficha{flex-direction:column;align-items:flex-start;gap:12px;padding:20px calc(50vw - 640px + 40px) 36px}
 .hero.ficha .top{width:100%;display:flex;justify-content:flex-end;min-height:44px;align-items:center}
 .hero.ficha .meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .hero.ficha .tema{color:#f0a7b2}
 .hero.ficha .rid{font-size:13px;color:#c9c5b9}
 .hero.ficha h1{font-size:44px;line-height:1.1;letter-spacing:-.5px;max-width:980px;margin:0;text-wrap:balance}
 
-.section-title{font-family:'Newsreader',serif;font-size:28px;font-weight:600;margin:24px 0 2px}
+.title-row{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin:4px 0 2px}
+.title-row h2{font-family:'Newsreader',serif;font-size:28px;font-weight:600;margin:0;padding:0}
+
+/* filter bar */
+div[class*="st-key-filtros"]{background:#fbfaf6;border:1px solid #ddd8cb;border-radius:14px;padding:16px 18px}
+
+/* bandeja row card */
+div[class*="st-key-row-"]{background:#fff;border:1px solid #ddd8cb;border-radius:16px;padding:22px 24px;
+  margin-top:14px;transition:box-shadow .15s,transform .15s}
+div[class*="st-key-row-"]:hover{box-shadow:0 8px 24px rgba(21,23,28,.10);transform:translateY(-1px)}
+.row-main{display:flex;gap:24px;align-items:center}
+.row-main .rank{flex:none}
 
 /* bandeja row */
-.card{display:flex;flex-wrap:wrap;gap:20px 28px;align-items:center;background:#fff;
-  border:1px solid #ddd8cb;border-radius:16px;padding:22px 24px;margin-top:14px}
 .rank{font-family:'Newsreader',serif;font-size:44px;font-weight:600;color:#a3162f;width:48px;line-height:1}
 .tema{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a3162f}
 .meta{font-size:13px;color:#5a5648}
-.card h3{font-family:'Newsreader',serif;font-size:24px;line-height:1.25;font-weight:600;margin:6px 0 10px;padding:0;text-wrap:balance}
+.row-main h3{font-family:'Newsreader',serif;font-size:24px;line-height:1.25;font-weight:600;margin:6px 0 10px;padding:0;text-wrap:balance}
 .chip{display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:#ebe7da;
   color:#3b392f;font-size:13px;font-weight:600;margin:0 8px 6px 0}
 .chip.warn{background:#fbe9bf;color:#5e4300}
@@ -53,7 +63,7 @@ header[data-testid="stHeader"]{display:none}
 .bar i{display:block;height:100%;background:#a3162f}
 
 /* ficha */
-.alert{display:flex;gap:14px;align-items:flex-start;background:#fbe9bf;color:#4f3800;border-radius:14px;padding:18px 20px}
+.alert{display:flex;gap:14px;align-items:flex-start;margin-bottom:6px;background:#fbe9bf;color:#4f3800;border-radius:14px;padding:18px 20px}
 .alert b{font-size:17px;display:block}
 .alert span{font-size:15px}
 .sec,div[class*="st-key-sec-"]{background:#fff;border:1px solid #ddd8cb;border-radius:16px;padding:24px}
@@ -68,11 +78,13 @@ div[data-testid="stColumn"]>div[data-testid="stVerticalBlock"]{gap:1.1rem}
   border-radius:12px;padding:14px 16px;font-size:15px;line-height:1.5;margin:12px 0}
 .info a{color:#17335a;font-weight:600}
 
-.evid{border-top:1px solid #e6e1d3;padding-top:18px;margin-top:14px}
+div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-radius:14px;padding:20px}
+.id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:#5a5648;margin:0 0 14px}
+.evid-h{font-family:'Newsreader',Georgia,serif;font-size:21px;line-height:1.3;font-weight:600;margin:0 0 10px;padding:0;text-wrap:balance}
 .evid h3{font-family:'Newsreader',Georgia,serif;font-size:21px;line-height:1.3;font-weight:600;margin:0 0 10px;padding:0}
 .evid .id{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#5a5648;margin-bottom:6px}
-.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 24px;
-  border-top:1px solid #e6e1d3;padding-top:14px;margin:14px 0 8px}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px 24px;
+  border-top:1px solid #e6e1d3;padding-top:14px;margin:4px 0 0}
 .kv .k{font-size:12px;font-weight:600;color:#5a5648}
 .kv .v{font-size:15px}
 .kv .v.na{color:#5a5648}
@@ -108,7 +120,7 @@ div[data-testid="stColumn"]>div[data-testid="stVerticalBlock"]{gap:1.1rem}
 .stButton>button:hover,.stLinkButton>a:hover{background:#a3162f;color:#fff}
 .stButton>button p,.stLinkButton>a p{color:inherit}
 .st-key-volver{position:relative;z-index:5;margin-bottom:-76px}
-.st-key-volver button{background:transparent;color:#f4f1ea;padding:0 4px;margin-left:36px}
+.st-key-volver button{background:transparent;color:#f4f1ea;padding:0 4px;margin-left:-61px}
 .st-key-volver button:hover{background:transparent;color:#f0a7b2}
 div[data-baseweb="select"]>div,.stDateInput input{background:#fff;border:1px solid #cfc9b9;border-radius:10px;min-height:44px}
 div[data-testid="stExpander"]{border:1px solid #ddd8cb;border-radius:14px;background:#fbfaf6;margin-top:8px}
@@ -163,35 +175,39 @@ def hero_html(total: int, altas: int, evidencia: int) -> str:
     )
 
 
-def section_title_html(title: str, note: str) -> str:
-    return f'<div class="section-title">{e(title)}</div><div class="meta">{e(note)}</div>'
-
-
 def chips_html(chips: Iterable[tuple[str, str]]) -> str:
     """``chips`` is a list of (text, css modifier)."""
 
     return "".join(f'<span class="chip {e(kind)}">{e(text)}</span>' for text, kind in chips)
 
 
-def score_card_html(
-    rank: int,
-    tema: str,
-    fecha: str,
-    titulo: str,
-    chips: Iterable[tuple[str, str]],
-    puntaje: float,
+def row_content_html(
+    rank: int, tema: str, fecha: str, titulo: str, chips: Iterable[tuple[str, str]]
 ) -> str:
-    """Ranked bandeja row (the open-ficha button is a native widget beside it)."""
+    """Left side of a bandeja row (rank, topic, date, headline, chips)."""
 
     return (
-        '<div class="card">'
+        '<div class="row-main">'
         f'<div class="rank">{int(rank)}</div>'
-        '<div style="flex:1 1 380px;min-width:0">'
+        '<div style="min-width:0">'
         f'<span class="tema">{e(tema_label(tema))}</span> <span class="meta">· {e(fecha)}</span>'
-        f"<h3>{e(titulo)}</h3>{chips_html(chips)}</div>"
-        f'<div class="score">Atención<b>{float(puntaje):.1f}</b>'
+        f"<h3>{e(titulo)}</h3>{chips_html(chips)}</div></div>"
+    )
+
+
+def score_block_html(puntaje: float, label: str = "Atención") -> str:
+    """Score with its 0-100 bar, used on the bandeja row."""
+
+    return (
+        f'<div class="score">{e(label)}<b>{float(puntaje):.1f}</b>'
         f'<div class="bar"><i style="width:{_fmt_pct(puntaje)}"></i></div></div>'
-        "</div>"
+    )
+
+
+def title_row_html(title: str, note: str) -> str:
+    return (
+        f'<div class="title-row"><h2 class="serif">{e(title)}</h2>'
+        f'<div class="meta">{e(note)}</div></div>'
     )
 
 
@@ -205,9 +221,27 @@ def ficha_header_html(tema: str, grupo_id: str, titulo: str) -> str:
     )
 
 
+_ICON_WARN = (
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M12 3l10 18H2L12 3z"></path><path d="M12 10v5M12 18v.5"></path></svg>'
+)
+_ICON_INFO = (
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8v.5"></path></svg>'
+)
+_ICON_FILE = (
+    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5a5648" '
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"></path>'
+    '<path d="M14 3v5h5"></path></svg>'
+)
+
+
 def alert_html(title: str, subtitle: str = "") -> str:
     sub = f"<span>{e(subtitle)}</span>" if subtitle else ""
-    return f'<div class="alert"><div><b>{e(title)}</b>{sub}</div></div>'
+    return f'<div class="alert">{_ICON_WARN}<div><b>{e(title)}</b>{sub}</div></div>'
 
 
 def heading_html(title: str) -> str:
@@ -274,13 +308,13 @@ def info_html(label: str, text: str, href: str | None = None, link_text: str | N
     body = e(text)
     if href:
         body += f'<a href="{e(href)}">{e(link_text or href)}</a>'
-    return f'<div class="info"><div>{prefix}{body}</div></div>'
+    return f'<div class="info">{_ICON_INFO}<div>{prefix}{body}</div></div>'
 
 
 def empty_draft_html() -> str:
     return (
-        '<div class="empty">Borrador no generado para este grupo '
-        "(ejecutar <code>make generar</code>).</div>"
+        f'<div class="empty">{_ICON_FILE}<div>Borrador no generado para este grupo '
+        "(ejecutar <code>make generar</code>).</div></div>"
     )
 
 
@@ -289,10 +323,8 @@ def evidence_head_html(titulo: str, id_noticia: str, campo: str | None = None) -
 
     campo_txt = f" · Campo citado disponible: {e(campo)}" if campo else ""
     return (
-        '<div class="evid">'
-        f"<h3>{e(titulo)}</h3>"
+        f'<div class="evid-h">{e(titulo)}</div>'
         f'<div class="id">ID de evidencia: {e(id_noticia)}{campo_txt}</div>'
-        "</div>"
     )
 
 

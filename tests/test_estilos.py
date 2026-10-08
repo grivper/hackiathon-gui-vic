@@ -15,7 +15,8 @@ from app.estilos import (
     evidence_kv_html,
     hero_html,
     info_html,
-    score_card_html,
+    row_content_html,
+    score_block_html,
 )
 
 
@@ -29,13 +30,12 @@ def test_hero_escapes_nothing_dynamic_but_shows_the_three_kpis():
 
 
 def test_score_card_escapes_dynamic_text():
-    html_out = score_card_html(
+    html_out = row_content_html(
         rank=1,
         tema="<b>tema</b>",
         fecha="01/01/2026",
         titulo="<script>alert(1)</script>",
         chips=[("Evidencia <i>x</i>", "warn")],
-        puntaje=55.0,
     )
 
     assert "<script>" not in html_out
@@ -46,8 +46,9 @@ def test_score_card_escapes_dynamic_text():
 
 
 def test_score_bar_width_is_clamped_to_0_100():
-    assert "width:100%" in score_card_html(1, "t", "f", "x", [], 250.0)
-    assert "width:0%" in score_card_html(1, "t", "f", "x", [], -5.0)
+    assert "width:100%" in score_block_html(250.0)
+    assert "width:0%" in score_block_html(-5.0)
+    assert "Atención<b>90.0</b>" in score_block_html(90.0)
 
 
 def test_component_bars_use_the_real_0_to_1_scale():
@@ -120,7 +121,9 @@ def test_info_html_escapes_text_label_and_link():
 def test_info_html_without_label_or_link_is_just_the_text():
     out = info_html("", "Por verificar: algo")
 
-    assert out == '<div class="info"><div>Por verificar: algo</div></div>'
+    assert out.startswith('<div class="info"><svg')
+    assert out.endswith("<div>Por verificar: algo</div></div>")
+    assert "<b>" not in out
 
 
 def test_empty_draft_html_keeps_the_exact_message():
@@ -153,5 +156,5 @@ def test_css_styles_expanders_chat_and_empty_states():
 def test_tema_label_uses_accented_names_and_falls_back_readably():
     assert tema_label("servicios_publicos") == "Servicios públicos"
     assert tema_label("tema_nuevo") == "Tema nuevo"
-    assert "Servicios públicos" in score_card_html(1, "servicios_publicos", "f", "x", [], 1.0)
+    assert "Servicios públicos" in row_content_html(1, "servicios_publicos", "f", "x", [])
     assert "Servicios públicos" in ficha_header_html("servicios_publicos", "G-1", "x")

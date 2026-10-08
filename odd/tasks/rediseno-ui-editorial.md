@@ -32,3 +32,6 @@ The exported mockups show the structure the user actually wants: a compact inbox
 - Bug found and fixed: R/I/U/N/E are stored 0-1, not 0-100. The previous pass rendered every bar at ~1% width.
 - Topic ids get a human label (`servicios_publicos` -> "Servicios públicos").
 - pytest: 344 passed (incl. new AppTest navigation tests). Dry-run OK. Verified in Chrome at 1440px: both pages match the mockups.
+
+## Pass 3: match Bandeja_referencia.html / Ficha_referencia.html (user chose the two-page structure)
+Full-bleed dark header (100vw), cream filter bar, title + note on one row, each inbox row is one white card with the button inside it, evidence card is one boxed unit (title, id, source button, grid), alert/info/empty icons as inline SVG. Content stays capped at 1280px centred, as in the mockups.

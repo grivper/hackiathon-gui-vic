@@ -196,7 +196,8 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
             return
 
         for row in evidence_rows:
-            st.markdown(
+            evidence_box = st.container(key=f"evid-{group.grupo_id}-{row.id_noticia}")
+            evidence_box.markdown(
                 estilos.evidence_head_html(
                     row.titulo or "Titular no disponible",
                     str(row.id_noticia),
@@ -205,7 +206,7 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
                 unsafe_allow_html=True,
             )
             if row.url:
-                st.link_button("Abrir fuente original", row.url)
+                evidence_box.link_button("Abrir fuente original", row.url)
             details = [
                 ("Medio/origen", row.medio or "No disponible"),
                 ("Procedencia", row.procedencia or "No disponible"),
@@ -219,9 +220,13 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
                 details.append(
                     ("Similitud con el grupo", f"{row.similitud_al_centroide:.0%}")
                 )
-            st.markdown(estilos.evidence_kv_html(details), unsafe_allow_html=True)
+            evidence_box.markdown(
+                estilos.evidence_kv_html(details), unsafe_allow_html=True
+            )
             if row.similitud_al_centroide is not None:
-                st.caption("La similitud es una referencia para revisar la agrupación.")
+                evidence_box.caption(
+                    "La similitud es una referencia para revisar la agrupación."
+                )
 
 
 def render_group_chat(group: InboxGroup) -> None:
@@ -371,21 +376,22 @@ def _display_chips(group: InboxGroup) -> list[tuple[str, str]]:
 def render_bandeja_row(group: InboxGroup, rank: int) -> None:
     """One ranked inbox row with the button that opens its ficha."""
 
-    row_column, button_column = st.columns([5, 1], vertical_alignment="center")
-    row_column.markdown(
-        estilos.score_card_html(
-            rank=rank,
-            tema=group.tema,
-            fecha=evidence_date_label(_group_date(group)),
-            titulo=group.titulo_representativo,
-            chips=_display_chips(group),
-            puntaje=group.puntaje,
-        ),
-        unsafe_allow_html=True,
-    )
-    if button_column.button("Abrir ficha →", key=f"abrir_{group.grupo_id}"):
-        st.session_state["ficha_id"] = group.grupo_id
-        st.rerun()
+    with st.container(key=f"row-{group.grupo_id}"):
+        content, score, action = st.columns([6, 2, 1.5], vertical_alignment="center")
+        content.markdown(
+            estilos.row_content_html(
+                rank=rank,
+                tema=group.tema,
+                fecha=evidence_date_label(_group_date(group)),
+                titulo=group.titulo_representativo,
+                chips=_display_chips(group),
+            ),
+            unsafe_allow_html=True,
+        )
+        score.markdown(estilos.score_block_html(group.puntaje), unsafe_allow_html=True)
+        if action.button("Abrir ficha →", key=f"abrir_{group.grupo_id}"):
+            st.session_state["ficha_id"] = group.grupo_id
+            st.rerun()
 
 
 def render_ficha(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
@@ -511,17 +517,18 @@ def main() -> None:
         st.session_state["ficha_id"] = None  # the record no longer exists
         hero_slot.markdown(estilos.hero_html(0, 0, 0), unsafe_allow_html=True)
 
-    topic_column, start_column, end_column = st.columns(3)
-    with topic_column:
-        selected_topic = st.selectbox("Tema", ["Todos", *topics], key="filtro_tema")
-    with start_column:
-        start_date = st.date_input(
-            "Desde", value=min_date, min_value=min_date, max_value=max_date, key="filtro_desde"
-        )
-    with end_column:
-        end_date = st.date_input(
-            "Hasta", value=max_date, min_value=min_date, max_value=max_date, key="filtro_hasta"
-        )
+    with st.container(key="filtros"):
+        topic_column, start_column, end_column = st.columns([2, 1, 1])
+        with topic_column:
+            selected_topic = st.selectbox("Tema", ["Todos", *topics], key="filtro_tema")
+        with start_column:
+            start_date = st.date_input(
+                "Desde", value=min_date, min_value=min_date, max_value=max_date, key="filtro_desde"
+            )
+        with end_column:
+            end_date = st.date_input(
+                "Hasta", value=max_date, min_value=min_date, max_value=max_date, key="filtro_hasta"
+            )
 
     if start_date > end_date:
         st.warning("La fecha inicial debe ser anterior o igual a la fecha final.")
@@ -549,7 +556,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
     st.markdown(
-        estilos.section_title_html(
+        estilos.title_row_html(
             "Bandeja de revisión",
             "Orden: mayor puntaje, luego urgencia (U) y finalmente identificador.",
         ),
