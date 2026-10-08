@@ -23,7 +23,7 @@ Render an official context panel inside each priority-inbox group card. It displ
   - Extract and render the World Bank indicator text and the USGS event link in `render_group_card`.
   - Ensure missing context is handled gracefully (omitted or shown as unavailable).
   - Run focused tests and verify Streamlit UI.
-  - Evidence: full suite `142 passed`; LSP diagnostics clean.
+  - Evidence: full suite `142 passed`; LSP diagnostics clean; native review blocked by `Codex error: The usage limit has been reached`. Commit `204d6bc`.
 
 ## Acceptance Criteria
 
