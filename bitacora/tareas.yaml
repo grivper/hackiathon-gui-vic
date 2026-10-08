@@ -156,8 +156,10 @@
   tarea: Preparar y ensayar el pitch desde Notion con demo offline
   responsable: Víctor
   estado: Hecho
-  fecha: 2026-10-08T16:45-05:00
-  notas: Pitch de 3 minutos preparado e incluido en bitacora/paginas/presentacion.md.
+  fecha: 2026-10-08T13:39-05:00
+  notas: 'Pitch de 3 minutos preparado e incluido en bitacora/paginas/presentacion.md.
+
+    2026-10-08T13:39-05:00 · Pitch de 3 minutos preparado e incluido en bitacora/paginas/presentacion.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-013
