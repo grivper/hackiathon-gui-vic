@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
+import app.app as app_module
 from app.app import (
     database_fingerprint,
     editorial_guidance,
@@ -390,3 +391,111 @@ def test_render_group_chat_keeps_the_input_below_every_message(monkeypatch):
 
     assert calls.index("container") < calls.index("chat_input")
     assert "enter_box" in calls
+
+
+# --------------------------------------------------------------------------- chat: example questions and fixed-height history
+
+def _ficha_with_claims(claims):
+    return GroupFicha(
+        id_caso="G-1", estado_revision="nuevo", tipo_respuesta="respuesta",
+        borrador="x", citas=[], afirmaciones=[c for c, _ in claims],
+        motivo_abstencion=None, generado_en=None, claim_citations=claims,
+    )
+
+
+def test_suggest_questions_are_answerable_and_come_from_the_real_claims(monkeypatch):
+    from app.data import suggest_questions
+
+    ficha = _ficha_with_claims(
+        [
+            ("EEUU dona equipos por $500,000 para habilitar albergues", ["N-1"]),
+            ("El Canal de Panamá inaugura la temporada de cruceros", ["N-2"]),
+            ("Claim sin cita", []),
+        ]
+    )
+
+    questions = suggest_questions(ficha, limit=3)
+
+    assert 1 <= len(questions) <= 2  # the uncited claim is never used
+    monkeypatch.setattr("app.data.fetch_group_ficha", lambda *a, **k: ficha)
+    for question in questions:
+        answer = data_module_ask(question)
+        assert answer.abstencion is False and answer.citas
+
+
+def data_module_ask(question):
+    from app.data import ask_group_question
+
+    return ask_group_question("G-1", question, motor_path="m", signals_path="s")
+
+
+def test_suggest_questions_returns_nothing_without_ficha_or_cited_claims():
+    from app.data import suggest_questions
+
+    assert suggest_questions(None) == []
+    assert suggest_questions(_ficha_with_claims([("Sin cita", [])])) == []
+
+
+def test_render_group_chat_always_uses_a_fixed_height_history_box(monkeypatch):
+    seen = []
+
+    def fake_container(*args, **kwargs):
+        seen.append(kwargs.get("height"))
+        return MagicMock()
+
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", fake_container)
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.caption", Mock())
+    monkeypatch.setattr("app.app.st.markdown", Mock())
+    monkeypatch.setattr("app.app.st.button", Mock(return_value=False))
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.session_state", {})
+
+    render_group_chat(_GROUP)
+
+    assert seen == [app_module.CHAT_HISTORY_HEIGHT]
+
+
+def test_render_group_chat_shows_example_questions_only_while_the_history_is_empty(monkeypatch):
+    markdown = Mock()
+    button = Mock(return_value=False)
+    ficha = _ficha_with_claims([("EEUU dona equipos para albergues", ["N-1"])])
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", lambda *a, **k: MagicMock())
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.caption", Mock())
+    monkeypatch.setattr("app.app.st.markdown", markdown)
+    monkeypatch.setattr("app.app.st.button", button)
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=ficha))
+
+    monkeypatch.setattr("app.app.st.session_state", {})
+    render_group_chat(_GROUP)
+    assert button.call_count >= 1  # one button per example question
+
+    button.reset_mock()
+    monkeypatch.setattr(
+        "app.app.st.session_state",
+        {"chat_G-1": [{"role": "user", "content": "q"}]},
+    )
+    render_group_chat(_GROUP)
+    button.assert_not_called()
+
+
+def test_render_group_chat_without_ficha_explains_why_there_are_no_examples(monkeypatch):
+    caption = Mock()
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", lambda *a, **k: MagicMock())
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.caption", caption)
+    monkeypatch.setattr("app.app.st.markdown", Mock())
+    monkeypatch.setattr("app.app.st.button", Mock(return_value=False))
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.session_state", {})
+
+    render_group_chat(_GROUP)
+
+    assert any("borrador" in str(c).lower() for c in caption.call_args_list)

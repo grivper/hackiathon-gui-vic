@@ -46,3 +46,6 @@ Full-bleed dark header (100vw), cream filter bar, title + note on one row, each 
 
 ## Pass 6: "Abrir fuente original" blank after click (user screenshot)
 After the click the link button showed an empty dark pill: its text took a dark colour in a state the CSS did not cover (visited/focus/active). Button colours are now pinned in every state (`:link`, `:visited`, `:focus`, `:active`, `:hover`) with `!important` on the text. Not reproducible in the automation Chrome (it renders correctly there), so verified by computed colours after a real click plus a CSS regression test; `:visited` itself cannot be forced.
+
+## Pass 7: chat with fixed height + example questions
+The chat history now lives in a fixed-height scrollable box (`CHAT_HISTORY_HEIGHT`, 380px) so the expander never grows. While the history is empty the box shows example questions built from the ficha's own cited claims (`suggest_questions` in app/data.py), as buttons that send the question. Each example is answerable by construction (it shares a term with a cited claim). Without a ficha it says there is no draft yet instead of inventing examples. Verified in Chrome with 12 messages: box stays 378px, scrolled to the newest message, input stays put.

@@ -20,6 +20,7 @@ EvidenceRow = data_module.EvidenceRow
 InboxGroup = data_module.InboxGroup
 ScoreUnavailableError = data_module.ScoreUnavailableError
 ask_group_question = data_module.ask_group_question
+suggest_questions = data_module.suggest_questions
 fetch_group_evidence = data_module.fetch_group_evidence
 fetch_group_ficha = data_module.fetch_group_ficha
 fetch_inbox_filter_options = data_module.fetch_inbox_filter_options
@@ -229,6 +230,9 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
                 )
 
 
+CHAT_HISTORY_HEIGHT = 380  # px; the history always scrolls inside a box of this height
+
+
 def render_group_chat(group: InboxGroup) -> None:
     """Render a chat interface for cited CU-04 queries per group."""
 
@@ -244,10 +248,28 @@ def render_group_chat(group: InboxGroup) -> None:
 
         # The history lives in a container created before the input, so new
         # messages are drawn above the input instead of below it.
-        history = st.container()
-        question = st.chat_input("Escribí tu consulta acá...", key=f"input_{group.grupo_id}")
+        pending_key = f"pregunta_pendiente_{group.grupo_id}"
+        history = st.container(height=CHAT_HISTORY_HEIGHT)
+        typed = st.chat_input("Escribí tu consulta acá...", key=f"input_{group.grupo_id}")
+        question = typed or st.session_state.pop(pending_key, None)
 
         with history:
+            if not st.session_state[chat_key] and not question:
+                ficha = fetch_group_ficha(
+                    MOTOR_PATH, SIGNALS_PATH, group.grupo_id, fichas_path=FICHAS_PATH
+                )
+                examples = suggest_questions(ficha)
+                if examples:
+                    st.caption("Ejemplos de preguntas que se pueden hacer:")
+                    for number, example in enumerate(examples):
+                        if st.button(example, key=f"ejemplo_{group.grupo_id}_{number}"):
+                            st.session_state[pending_key] = example
+                            st.rerun()
+                else:
+                    st.caption(
+                        "Todavía no hay borrador para este grupo: el chat solo responde "
+                        "sobre fichas generadas (make generar)."
+                    )
             for msg in st.session_state[chat_key]:
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
