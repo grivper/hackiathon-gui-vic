@@ -256,9 +256,11 @@
 - id: TAR-023
   tarea: Escribir las 40 consultas de desarrollo del benchmark
   responsable: Víctor
-  estado: Pendiente
+  estado: Hecho
   fecha: 2026-10-06T23:19-05:00
-  notas: ''
+  notas: >-
+    DRI-B01: 40 consultas JSONL; RED por benchmark ausente; GREEN del
+    test de esquema (1 passed). Commit pendiente de parent.
   tipo: Tarea
   epica: EPI-005
 - id: TAR-024
@@ -280,7 +282,9 @@
   tipo: Tarea
   epica: EPI-005
 - id: TAR-026
-  tarea: Redactar las páginas de Notion Inicio, Riesgos y Presentación (bitacora/paginas)
+  tarea: >-
+    Redactar las páginas de Notion Inicio, Riesgos y Presentación
+    (bitacora/paginas)
   responsable: Víctor
   estado: Pendiente
   fecha: 2026-10-06T23:21-05:00
@@ -288,8 +292,9 @@
   tipo: Tarea
   epica: EPI-005
 - id: TAR-027
-  tarea: Crear datos sintéticos para las pruebas T03, T05 y T07 y registrar los resultados con bitacora.py
-    prueba
+  tarea: >-
+    Crear datos sintéticos para las pruebas T03, T05 y T07 y registrar
+    los resultados con bitacora.py prueba
   responsable: Víctor
   estado: Pendiente
   fecha: 2026-10-06T23:21-05:00
@@ -297,7 +302,9 @@
   tipo: Tarea
   epica: EPI-005
 - id: TAR-028
-  tarea: 'Interfaz: conectar la interfaz a las tablas de data/motor.duckdb (contrato en documentacion/interfaz-brief.md)'
+  tarea: >-
+    Interfaz: conectar la interfaz a las tablas de data/motor.duckdb
+    (contrato en documentacion/interfaz-brief.md)
   responsable: Víctor
   estado: Pendiente
   fecha: 2026-10-06T23:21-05:00
@@ -305,34 +312,44 @@
   tipo: Tarea
   epica: EPI-004
 - id: TAR-029
-  tarea: 'Ensayar la carga de un paquete de datos simulado: copiar a data/processed y data/manifest.json,
-    correr make db y make motor, y revisar data/reporte_calidad.md'
+  tarea: >-
+    Ensayar la carga de un paquete de datos simulado: copiar a
+    data/processed y data/manifest.json, correr make db y make motor,
+    y revisar data/reporte_calidad.md
   responsable: Guille
   estado: Pendiente
   fecha: 2026-10-06T23:30-05:00
-  notas: Ensayo antes del jueves. El paquete oficial se carga por comando (el reto acepta carga por lote).
-    Verificar columnas y fechas del contrato (sección 7) y que las filas inválidas vayan a rechazados
-    sin frenar la carga. Si el formato difiere, ajustar motor/cargar_db.py.
+  notas: >-
+    Ensayo antes del jueves. El paquete oficial se carga por comando
+    (el reto acepta carga por lote). Verificar columnas y fechas del
+    contrato (sección 7); las filas inválidas van a rechazados sin frenar
+    la carga. Si el formato difiere, ajustar motor/cargar_db.py.
   tipo: Tarea
   epica: EPI-002
 - id: TAR-030
-  tarea: 'Opcional, solo si sobra tiempo: pantalla ''Cargar paquete'' en la interfaz que dispare make
-    db y make motor'
+  tarea: >-
+    Opcional, solo si sobra tiempo: pantalla 'Cargar paquete' en la
+    interfaz que dispare make db y make motor
   responsable: Víctor
   estado: Pendiente
   fecha: 2026-10-06T23:30-05:00
-  notas: 'No es requisito del reto. Riesgo: si falla en la demo, falla frente al jurado. Hacerla después
-    de bandeja, ficha, consulta y borrador. Depende del ensayo de carga por comando.'
+  notas: >-
+    No es requisito del reto. Riesgo: si falla en la demo, falla frente
+    al jurado. Hacerla después de bandeja, ficha, consulta y borrador.
+    Depende del ensayo de carga por comando.
   tipo: Tarea
   epica: EPI-004
 - id: TAR-031
-  tarea: 'Subir el recall de la clasificación: ajustar umbral_score y umbral_margen y re-evaluar con make
-    evaluar'
+  tarea: >-
+    Subir el recall de la clasificación: ajustar umbral_score y
+    umbral_margen y re-evaluar con make evaluar
   responsable: Guille
   estado: Hecho
   fecha: 2026-10-07T22:31-05:00
-  notas: 'Macro-F1 embeddings 0,258 y 90% de titulares en ''otros'' (data/evaluacion_clasificacion.md).
-    Medir cada cambio con make evaluar; coordinar con TAR-015 (Víctor, semillas en motor/temas.yaml) para
-    no pisar el mismo archivo. Muestra chica (93): no sobreajustar.'
+  notas: >-
+    Macro-F1 embeddings 0,258 y 90% de titulares en 'otros'
+    (data/evaluacion_clasificacion.md). Medir cada cambio con make evaluar;
+    coordinar con TAR-015 (Víctor, semillas en motor/temas.yaml) para no
+    pisar el mismo archivo. Muestra chica (93): no sobreajustar.
   tipo: Tarea
   epica: EPI-003
