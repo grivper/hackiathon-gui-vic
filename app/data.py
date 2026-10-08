@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import duckdb
@@ -37,6 +37,20 @@ class InboxGroup:
     estado_evidencia: str
     version_reglas: str
     motivos: str
+
+
+@dataclass(frozen=True)
+class EvidenceRow:
+    """A read-only group member and its source metadata."""
+
+    id_noticia: str
+    titulo: str | None
+    url: str | None
+    medio: str | None
+    procedencia: str | None
+    fecha_publicacion: datetime | None
+    fecha_deteccion: datetime | None
+    similitud_al_centroide: float | None
 
 
 @contextmanager
@@ -101,6 +115,33 @@ def fetch_inbox_groups(
         ) from error
 
     return [InboxGroup(*row) for row in rows]
+
+
+def fetch_group_evidence(
+    motor_path: str | Path, signals_path: str | Path, grupo_id: str
+) -> list[EvidenceRow]:
+    """Return group members in chronological editorial order.
+
+    Publication dates remain null when the source does not provide one; detection
+    dates are a separate metadata field and only order otherwise-undated rows.
+    """
+
+    query = """
+        SELECT
+            n.id_noticia, n.titulo, n.url, n.medio, gn.procedencia,
+            n.fecha_publicacion, n.fecha_deteccion, gn.similitud_al_centroide
+        FROM grupo_noticias AS gn
+        JOIN senales.noticias AS n ON n.id_noticia = gn.id_noticia
+        WHERE gn.grupo_id = ?
+        ORDER BY
+            n.fecha_publicacion ASC NULLS LAST,
+            n.fecha_deteccion ASC NULLS LAST,
+            n.id_noticia ASC
+    """
+    with open_inbox_repository(motor_path, signals_path) as connection:
+        rows = connection.sql(query, params=[grupo_id]).fetchall()
+
+    return [EvidenceRow(*row) for row in rows]
 
 
 def fetch_inbox_filter_options(

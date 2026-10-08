@@ -1,11 +1,18 @@
 from __future__ import annotations
 
+from dataclasses import FrozenInstanceError
 from datetime import date, datetime
 
 import duckdb
 import pytest
 
-from app.data import ScoreUnavailableError, fetch_inbox_groups, open_inbox_repository
+from app.data import (
+    EvidenceRow,
+    ScoreUnavailableError,
+    fetch_group_evidence,
+    fetch_inbox_groups,
+    open_inbox_repository,
+)
 
 
 def _create_databases(tmp_path, *, with_scores=True):
@@ -91,8 +98,81 @@ def _create_databases(tmp_path, *, with_scores=True):
         motor.close()
 
     signals = duckdb.connect(str(signals_path))
-    signals.close()
+    try:
+        signals.execute("""
+            CREATE TABLE noticias (
+                id_noticia TEXT,
+                titulo TEXT,
+                url TEXT,
+                medio TEXT,
+                fecha_publicacion TIMESTAMP,
+                fecha_deteccion TIMESTAMP,
+                origen TEXT
+            )
+        """)
+        signals.executemany(
+            "INSERT INTO noticias VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [
+                ("E-3", "Titular sin publicación", "https://example.com/3", "medio-c", None, datetime(2026, 1, 6), "sitemap"),
+                ("E-2", "Titular del mismo día", "https://example.com/2", "medio-b", datetime(2026, 1, 4), datetime(2026, 1, 5), "rss"),
+                ("E-1", "Titular temprano", "https://example.com/1", "medio-a", datetime(2026, 1, 3), datetime(2026, 1, 4), "rss"),
+                ("E-4", "Titular del mismo día B", "https://example.com/4", "medio-d", datetime(2026, 1, 4), datetime(2026, 1, 4), "gdelt"),
+            ],
+        )
+    finally:
+        signals.close()
+    motor = duckdb.connect(str(motor_path))
+    try:
+        motor.executemany(
+            "INSERT INTO grupo_noticias VALUES (?, ?, ?, ?)",
+            [
+                ("G-EVID", "E-3", "agencia:EFE", None),
+                ("G-EVID", "E-2", "medio-b", 0.82),
+                ("G-EVID", "E-1", "medio-a", 0.91),
+                ("G-EVID", "E-4", "medio-d", 0.82),
+                ("G-OTRO", "E-1", "medio-a", 0.91),
+            ],
+        )
+    finally:
+        motor.close()
     return motor_path, signals_path
+
+
+def test_fetch_group_evidence_returns_ordered_metadata_without_substituting_dates(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    rows = fetch_group_evidence(motor_path, signals_path, "G-EVID")
+
+    assert [row.id_noticia for row in rows] == ["E-1", "E-4", "E-2", "E-3"]
+    assert rows[0] == EvidenceRow(
+        id_noticia="E-1",
+        titulo="Titular temprano",
+        url="https://example.com/1",
+        medio="medio-a",
+        procedencia="medio-a",
+        fecha_publicacion=datetime(2026, 1, 3),
+        fecha_deteccion=datetime(2026, 1, 4),
+        similitud_al_centroide=0.91,
+    )
+    assert [row.procedencia for row in rows[1:3]] == ["medio-d", "medio-b"]
+    assert rows[1].fecha_publicacion == datetime(2026, 1, 4)
+    assert rows[1].fecha_deteccion == datetime(2026, 1, 4)
+    assert rows[3].fecha_publicacion is None
+    assert rows[3].fecha_deteccion == datetime(2026, 1, 6)
+    assert rows[3].similitud_al_centroide is None
+    with pytest.raises(FrozenInstanceError):
+        rows[0].titulo = "No modificar"
+
+
+def test_fetch_group_evidence_returns_empty_for_an_unknown_group_and_keeps_databases_read_only(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    assert fetch_group_evidence(motor_path, signals_path, "G-DESCONOCIDO") == []
+    with (
+        open_inbox_repository(motor_path, signals_path) as connection,
+        pytest.raises(duckdb.InvalidInputException),
+    ):
+        connection.execute("INSERT INTO senales.noticias VALUES ('NUEVA', '', '', '', NULL, NULL, '')")
 
 
 def test_fetch_inbox_groups_returns_score_metadata_and_exact_score_order(tmp_path):
