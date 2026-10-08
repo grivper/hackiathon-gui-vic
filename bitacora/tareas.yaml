@@ -142,11 +142,12 @@
 - id: TAR-013
   tarea: Recapturar el RSS de TVN cada día hasta el jueves (mínimo 3 capturas más)
   responsable: Guille
-  estado: En curso
-  fecha: 2026-10-07T23:17-05:00
+  estado: Hecho
+  fecha: 2026-10-08T06:37-05:00
   notas: 'El RSS no guarda historial: cada captura trae ~150 ítems recientes. Comando: python ingesta/descargar_snapshot.py
-    --solo tvn. Las capturas se acumulan y se deduplican. Capturas hechas: 2 (2026-10-07, 2026-10-08;
-    +43 noticias la segunda). Falta 1 más antes del jueves.'
+    --solo tvn. Las capturas se acumulan y se deduplican. Capturas hechas: 3 (2026-10-07, 2026-10-08;
+    +43 noticias la segunda, +28 la tercera). Snapshot: 30225 noticias, manifest 81640bd328e6. Cerrada
+    al jueves 2026-10-08.'
   tipo: Tarea
   epica: EPI-002
 - id: TAR-014
