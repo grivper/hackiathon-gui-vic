@@ -39,6 +39,11 @@ en las dos máquinas significa los mismos datos. Los registros con fecha inváli
 la tabla `rechazados` y no frenan la carga (prueba T01). Solo una persona regenera el snapshot (`make datos`) y
 lo commitea; la otra solo hace `git pull`.
 
+Para el paquete oficial, el contrato (sección 7) excluye lo que esté fuera de [2024-01-01, 2025-10-01). Por defecto
+la carga no filtra por fecha (el RSS de desarrollo solo trae noticias recientes). Para aplicar el rango:
+`python motor/cargar_db.py --rango 2024-01-01 2025-10-01`. Las noticias fuera de rango van a la tabla `excluidos`
+(las de fecha vacía se conservan) y con este flag la base siempre se reconstruye.
+
 ## Motor: clasificación por tema y agrupación de eventos
 
 ```

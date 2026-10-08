@@ -109,3 +109,63 @@ def test_archivo_de_entrada_faltante_es_fatal(tmp_path):
     codigo = cargar_db.main(["--data-dir", str(data_dir), "--db", str(db_path)])
     assert codigo != 0
     assert not db_path.exists()
+
+
+NOTICIAS_RANGO_CSV = (
+    "id_noticia,titulo,url,medio,idioma,fecha_publicacion,fecha_deteccion,fecha_extraccion,tema,origen,alcance_texto\n"
+    "R-ANTES,Antes,https://e.com/1,e.com,es,2023-12-31T23:59:59Z,,2026-01-05T10:00:00Z,,tvn_rss,t\n"
+    "R-INICIO,Inicio,https://e.com/2,e.com,es,2024-01-01T00:00:00Z,,2026-01-05T10:00:00Z,,tvn_rss,t\n"
+    "R-DENTRO,Dentro,https://e.com/3,e.com,es,2025-02-10T08:00:00-05:00,,2026-01-05T10:00:00Z,,tvn_rss,t\n"
+    "R-FIN,Fin,https://e.com/4,e.com,es,2025-10-01T00:00:00Z,,2026-01-05T10:00:00Z,,tvn_rss,t\n"
+    "R-NULA,Sin fecha,https://e.com/5,e.com,es,,,2026-01-05T10:00:00Z,,tvn_rss,t\n"
+)
+
+
+def test_rango_envia_fuera_de_rango_a_excluidos(tmp_path):
+    data_dir = preparar_data_dir(tmp_path)
+    (data_dir / "processed" / "noticias.csv").write_text(NOTICIAS_RANGO_CSV, encoding="utf-8")
+    db_path = tmp_path / "senales.duckdb"
+
+    codigo = cargar_db.main([
+        "--data-dir", str(data_dir), "--db", str(db_path), "--rango", "2024-01-01", "2025-10-01",
+    ])
+    assert codigo == 0
+
+    con = duckdb.connect(str(db_path), read_only=True)
+    try:
+        ids = [r[0] for r in con.execute("SELECT id_noticia FROM noticias ORDER BY id_noticia").fetchall()]
+        # [desde, hasta): el inicio entra, el fin sale; la fecha nula se conserva (no se inventa).
+        assert ids == ["R-DENTRO", "R-INICIO", "R-NULA"]
+        excl = con.execute("SELECT titulo, url, motivo FROM excluidos ORDER BY titulo").fetchall()
+        assert [e[0] for e in excl] == ["Antes", "Fin"]
+        assert all("fuera de rango" in e[2] for e in excl)
+    finally:
+        con.close()
+
+
+def test_sin_rango_no_filtra_y_rango_invalido_es_fatal(tmp_path):
+    data_dir = preparar_data_dir(tmp_path)
+    (data_dir / "processed" / "noticias.csv").write_text(NOTICIAS_RANGO_CSV, encoding="utf-8")
+    db_path = tmp_path / "senales.duckdb"
+    assert cargar_db.main(["--data-dir", str(data_dir), "--db", str(db_path)]) == 0
+    con = duckdb.connect(str(db_path), read_only=True)
+    try:
+        assert con.execute("SELECT count(*) FROM noticias").fetchone()[0] == 5
+    finally:
+        con.close()
+
+    with pytest.raises(SystemExit):
+        cargar_db.main(["--data-dir", str(data_dir), "--db", str(db_path), "--rango", "2025-10-01", "2024-01-01"])
+
+
+def test_rango_reconstruye_aunque_el_manifest_no_cambie(tmp_path):
+    data_dir = preparar_data_dir(tmp_path)
+    (data_dir / "processed" / "noticias.csv").write_text(NOTICIAS_RANGO_CSV, encoding="utf-8")
+    db_path = tmp_path / "senales.duckdb"
+    assert cargar_db.main(["--data-dir", str(data_dir), "--db", str(db_path)]) == 0
+    assert cargar_db.main(["--data-dir", str(data_dir), "--db", str(db_path), "--rango", "2024-01-01", "2025-10-01"]) == 0
+    con = duckdb.connect(str(db_path), read_only=True)
+    try:
+        assert con.execute("SELECT count(*) FROM noticias").fetchone()[0] == 3
+    finally:
+        con.close()

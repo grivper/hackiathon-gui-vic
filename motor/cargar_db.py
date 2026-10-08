@@ -134,6 +134,26 @@ def validar_y_cargar(
     return buenas
 
 
+def separar_fuera_de_rango(
+    filas: list[dict], desde: datetime, hasta: datetime
+) -> tuple[list[dict], list[dict]]:
+    """Separa noticias con fecha_publicacion fuera de [desde, hasta). Fecha nula se conserva (no se inventa)."""
+    dentro: list[dict] = []
+    fuera: list[dict] = []
+    motivo = f"fuera de rango [{desde.date()}, {hasta.date()})"
+    for fila in filas:
+        fecha = fila.get("fecha_publicacion")
+        if fecha is not None and not (desde <= fecha < hasta):
+            fuera.append({
+                "origen": fila.get("origen"), "_archivo": "noticias.csv", "titulo": fila.get("titulo"),
+                "url": fila.get("url"), "fecha_publicacion": fecha,
+                "fecha_deteccion": fila.get("fecha_deteccion"), "motivo": motivo,
+            })
+        else:
+            dentro.append(fila)
+    return dentro, fuera
+
+
 def deduplicar_por_id(
     filas: list[dict], tabla: str, id_campo: str, rechazados: list[dict]
 ) -> tuple[list[dict], int]:
@@ -351,7 +371,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--forzar", action="store_true", help="reconstruye aunque el manifest no haya cambiado")
     parser.add_argument("--data-dir", default="data", help="directorio con processed/ y manifest.json")
     parser.add_argument("--db", default="data/senales.duckdb", help="ruta de la base DuckDB a generar")
+    parser.add_argument(
+        "--rango", nargs=2, metavar=("DESDE", "HASTA"), default=None,
+        help="solo noticias con fecha_publicacion en [DESDE, HASTA) (YYYY-MM-DD, UTC); el resto va a `excluidos`. "
+             "Por defecto no filtra (contrato seccion 7: [2024-01-01, 2025-10-01))",
+    )
     args = parser.parse_args(argv)
+
+    rango = None
+    if args.rango:
+        desde, err_d = parse_fecha(args.rango[0])
+        hasta, err_h = parse_fecha(args.rango[1])
+        if err_d or err_h or desde is None or hasta is None:
+            parser.error("--rango espera dos fechas ISO-8601 (YYYY-MM-DD)")
+        if desde >= hasta:
+            parser.error("--rango: DESDE debe ser anterior a HASTA")
+        rango = (desde, hasta)
 
     data_dir = Path(args.data_dir)
     db_path = Path(args.db)
@@ -372,7 +407,8 @@ def main(argv: list[str] | None = None) -> int:
 
     hash_manifest = manifest_sha256(ruta_manifest)
 
-    if not args.forzar and sin_cambios(db_path, hash_manifest):
+    # Con --rango el resultado depende de algo más que el manifest: siempre reconstruye.
+    if not args.forzar and rango is None and sin_cambios(db_path, hash_manifest):
         print(f"sin cambios: {db_path} ya refleja el manifest actual ({hash_manifest[:12]}...)")
         return 0
 
@@ -385,6 +421,10 @@ def main(argv: list[str] | None = None) -> int:
         filas_noticias_crudas, "noticias", NOTICIAS_OBLIGATORIAS, NOTICIAS_FECHAS, "id_noticia", rechazados
     )
     noticias, duplicados_id = deduplicar_por_id(noticias, "noticias", "id_noticia", rechazados)
+
+    excluidos_por_rango: list[dict] = []
+    if rango:
+        noticias, excluidos_por_rango = separar_fuera_de_rango(noticias, *rango)
 
     if not noticias:
         print("Error fatal: la tabla noticias quedó vacía tras la validación.", file=sys.stderr)
@@ -410,6 +450,8 @@ def main(argv: list[str] | None = None) -> int:
     excluidos = validar_y_cargar(
         filas_excluidos_crudas, "excluidos", (), EXCLUIDOS_FECHAS, None, rechazados
     )
+
+    excluidos = excluidos + excluidos_por_rango
 
     # Chequeo defensivo: no deberían quedar duplicados de clave primaria tras la deduplicación.
     for filas, id_campo, nombre in (
