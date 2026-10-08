@@ -63,8 +63,14 @@ def test_cargar_temas_lee_los_6_temas_y_parametros():
         assert tema["descripcion"] in tema["texto"]
 
 
-def test_cargar_temas_lee_grupos_de_contraste():
-    _, _, contraste = clasificar.cargar_temas(RUTA_TEMAS)
+def test_cargar_temas_lee_grupos_de_contraste(tmp_path):
+    # Fuerza usar_contraste: true en una copia: valida los bloques aunque el real los desactive.
+    ruta = tmp_path / "temas.yaml"
+    ruta.write_text(
+        RUTA_TEMAS.read_text(encoding="utf-8").replace("usar_contraste: false", "usar_contraste: true"),
+        encoding="utf-8",
+    )
+    _, _, contraste = clasificar.cargar_temas(ruta)
     nombres = {c["nombre"] for c in contraste}
     assert {"deportes", "sucesos_policiales", "politica_general", "salud", "educacion"} <= nombres
     for grupo in contraste:
@@ -364,3 +370,17 @@ def test_embeddings_reales_acuerdan_80pct_con_etiquetas_dev_mini():
     acuerdo = aciertos / len(esperados)
     print(f"\nAcuerdo con etiquetas_mini.csv (desarrollador, no evaluaci\u00f3n): {aciertos}/{len(esperados)} ({100*acuerdo:.1f}%)")
     assert acuerdo >= 0.8
+
+
+def test_cargar_temas_respeta_usar_contraste_false(tmp_path):
+    """TAR-031: `usar_contraste: false` desactiva los grupos de contraste (sin ellos el
+    vecino mas cercano siempre es un tema y solo abstienen los umbrales)."""
+    texto = RUTA_TEMAS.read_text(encoding="utf-8")
+    ruta = tmp_path / "temas.yaml"
+    ruta.write_text(texto.replace("usar_contraste: false", "usar_contraste: true"), encoding="utf-8")
+    assert clasificar.cargar_temas(ruta)[2]  # con true hay grupos de contraste
+    ruta.write_text(texto, encoding="utf-8")
+    parametros, temas, contraste = clasificar.cargar_temas(ruta)
+    assert parametros["usar_contraste"] is False
+    assert temas
+    assert contraste == []

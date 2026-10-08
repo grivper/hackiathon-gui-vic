@@ -62,6 +62,8 @@ def cargar_temas(ruta: Path) -> tuple[dict, list[dict], list[dict]]:
     parametros = datos.get("parametros", {})
     temas = _grupos_desde(datos, "temas")
     grupos_contraste = _grupos_desde(datos, "contraste")
+    if parametros.get("usar_contraste", True) is False:
+        grupos_contraste = []
     return parametros, temas, grupos_contraste
 
 
