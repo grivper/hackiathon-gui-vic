@@ -134,3 +134,34 @@ def test_T04_el_codigo_agrega_pais_anio_y_unidad_aunque_el_modelo_los_omita(dbs)
     linea = next(l for l in ficha["borrador"].splitlines() if "IND-PAN-FP.CPI.TOTL.ZG-2024" in l)
     assert "Panamá" in linea and "2024" in linea and "%" in linea
     assert "dato anual" in linea
+
+
+# --------------------------------------------------------------------------- T08
+
+def test_T08_caso_de_prioridad_alta_expone_componentes_y_regla(dbs):
+    """T08: exponer componentes y regla; la prioridad no habilita publicación."""
+    cliente = llm.ClienteFalso([_salida(_a("Según tvn-pa.com, la inflación cayó 0,3 % en junio."))])
+    ficha = _ficha(dbs, cliente)
+    assert ficha["prioridad"] == "alto" and ficha["puntaje"] == 96.0
+    assert ficha["componentes"] == {"R": 1.0, "I": 1.0, "U": 1.0, "N": 1.0, "E": 0.6}
+    assert ficha["version_reglas"] == "v0.3"
+    assert "R=1.0" in ficha["motivos_puntaje"] and "E=0.6" in ficha["motivos_puntaje"]
+
+
+def test_T08_la_prioridad_alta_no_publica_ni_aprueba_sola(dbs):
+    from app import data  # noqa: PLC0415
+
+    cliente = llm.ClienteFalso([_salida(_a("Según tvn-pa.com, la inflación cayó 0,3 % en junio."))])
+    ficha = _ficha(dbs, cliente)
+    assert ficha["estado_revision"] == "nuevo"
+    assert not any("public" in e.lower() for e in data.VALID_REVIEW_STATES), "no existe un estado de publicación"
+
+
+def test_T08_la_prioridad_alta_no_evita_la_abstencion_sin_evidencia(dbs):
+    motor, _ = dbs
+    con = duckdb.connect(str(motor))
+    con.execute("UPDATE puntaje SET prioridad = 'alto', puntaje = 99 WHERE grupo_id = 'G-VACIO'")
+    con.close()
+    ficha = _ficha(dbs, llm.ClienteFalso([]), grupo="G-VACIO")
+    assert ficha["prioridad"] == "alto" and ficha["tipo_respuesta"] == "abstencion"
+    assert ficha["estado_revision"] == "requiere evidencia"

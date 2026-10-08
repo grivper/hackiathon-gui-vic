@@ -13,7 +13,7 @@ Run the acceptance tests of the challenge that the engine can already answer: T0
 ## Tasks
 - [x] P1 T06 query without answer: abstention, no invented figure or citation (test-first; may already be GREEN)
 - [x] P2 T04 annual World Bank figure keeps country, year and unit, not described as today's figure
-- [ ] P3 T08 high-priority case exposes components and rule; priority never publishes (estado_revision stays `nuevo`)
+- [x] P3 T08 high-priority case exposes components and rule; priority never publishes (estado_revision stays `nuevo`)
 - [ ] P4 T05 incompatible claims: both versions, scope and pending review shown
 - [ ] P5 T03 old recirculated news: original date shown, not presented as new event
 - [ ] P6 Record T03-T06, T08 in `bitacora/pruebas.yaml`, update TAR-011 notes, full suite, commit(s)
@@ -21,3 +21,4 @@ Run the acceptance tests of the challenge that the engine can already answer: T0
 ## Evidence
 - P1 T06: GREEN on first run (characterization, no meaningful RED: abstention already existed). 3 tests in `tests/test_aceptacion.py`.
 - P2 T04: RED on `test_T04_el_codigo_agrega_pais_anio_y_unidad_aunque_el_modelo_los_omita` (draft depended on the model writing year/unit; country only appeared inside the evidence id). Fix: `evidencia` now carries `pais_iso3`; `generar._borrador` appends country, year, unit and "dato anual" for indicator citations, by code. GREEN; full suite 258 passed.
+- P3 T08: GREEN on first run (characterization): components, rules text and priority already exposed; no publication state exists (`app.data.VALID_REVIEW_STATES`); priority does not bypass abstention.
