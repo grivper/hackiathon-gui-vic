@@ -60,8 +60,25 @@ def _generacion(r: llm.Respuesta | None) -> dict:
     }
 
 
-def _borrador(afirmaciones: list[dict], versiones: list, vacios: list, alcance: str) -> str:
-    lineas = [f"- {a['texto']} [{a['id_evidencia']} · {a['campo']}]" for a in afirmaciones]
+PAISES = {"PAN": "Panamá"}
+
+
+def _contexto_dato(campos: dict) -> str:
+    """País, año y unidad de un indicador anual, escritos por código (CU-02, T04)."""
+    pais = PAISES.get(campos.get("pais_iso3"), campos.get("pais_iso3") or "país no indicado")
+    unidad = campos.get("unidad") or "unidad no indicada"
+    return f" ({pais} · {campos.get('anio')} · {unidad}; dato anual, no una medición de hoy)"
+
+
+def _borrador(
+    afirmaciones: list[dict], versiones: list, vacios: list, alcance: str, items: dict[str, dict] | None = None
+) -> str:
+    items = items or {}
+    lineas = []
+    for a in afirmaciones:
+        item = items.get(a["id_evidencia"])
+        contexto = _contexto_dato(item["campos"]) if item and item.get("tipo") == "indicador" else ""
+        lineas.append(f"- {a['texto']} [{a['id_evidencia']} · {a['campo']}]{contexto}")
     if versiones:
         lineas.append("Versiones: " + "; ".join(str(v) for v in versiones))
     if vacios:
@@ -122,7 +139,9 @@ def generar_ficha(
         "tipo_respuesta": v["tipo_respuesta"], "motivo_abstencion": None,
         "vacios": v["vacios"], "versiones": v["versiones"], "alcance": alcance,
         "descartadas": v["descartadas"], "cobertura_citas": v["cobertura"],
-        "borrador": _borrador(v["afirmaciones"], v["versiones"], v["vacios"], alcance),
+        "borrador": _borrador(
+            v["afirmaciones"], v["versiones"], v["vacios"], alcance, {i["id_evidencia"]: i for i in paquete["items"]}
+        ),
         "estado_revision": ESTADO_NUEVO, "generacion": _generacion(r),
     }
 
