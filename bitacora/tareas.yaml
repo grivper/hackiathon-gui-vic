@@ -331,9 +331,12 @@
     Crear datos sintéticos para las pruebas T03, T05 y T07 y registrar
     los resultados con bitacora.py prueba
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:21-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T16:50-05:00
+  notas: >-
+    Completado implícitamente durante la implementación del motor. Los datos
+    sintéticos están en tests/test_aceptacion.py y tests/test_prompt.py; los
+    resultados ya constan en bitacora/pruebas.yaml como Pasó/Corregida.
   tipo: Tarea
   epica: EPI-005
 - id: TAR-028
