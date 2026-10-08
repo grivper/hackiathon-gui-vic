@@ -9,8 +9,10 @@ import pytest
 from app.data import (
     EvidenceRow,
     ScoreUnavailableError,
+    ask_group_question,
     fetch_group_evidence,
     fetch_inbox_groups,
+    generate_group_draft,
     open_inbox_repository,
 )
 
@@ -75,9 +77,9 @@ def _create_databases(tmp_path, *, with_scores=True):
                 motor.execute(
                     "INSERT INTO grupo_noticias VALUES (?, ?, ?, ?)",
                     [group_id, news_id, "medio", 0.9],
-                )
+                )  # noqa: S608
                 classifications.append((news_id, "embeddings", topic, 0.8, None, None, "modelo", None))
-        motor.executemany("INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?, ?)", classifications)
+        motor.executemany("INSERT INTO clasificacion VALUES (?, ?, ?, ?, ?, ?, ?, ?)", classifications)  # noqa: S608
         if with_scores:
             motor.execute("""
                 CREATE TABLE puntaje (
@@ -163,6 +165,19 @@ def test_fetch_group_evidence_returns_ordered_metadata_without_substituting_date
     assert rows[3].similitud_al_centroide is None
     with pytest.raises(FrozenInstanceError):
         rows[0].titulo = "No modificar"  # type: ignore[misc]
+
+
+def test_ask_group_question_returns_abstention_when_unrelated():
+    response = ask_group_question("G-EVID", "irrelevant")
+    assert response.abstencion is True
+    assert not response.citas
+
+
+def test_generate_group_draft_starts_in_nuevo_state():
+    draft = generate_group_draft("G-1")
+    assert draft.estado_revision == "nuevo"
+    assert "E-1" in draft.citas
+    assert len(draft.afirmaciones) > 0
 
 
 def test_fetch_group_evidence_returns_empty_for_an_unknown_group_and_keeps_databases_read_only(tmp_path):

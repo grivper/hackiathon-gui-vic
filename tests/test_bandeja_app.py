@@ -8,9 +8,10 @@ from app.app import (
     evidence_date_label,
     evidence_verification_guidance,
     render_group_chat,
+    render_group_draft,
     render_official_context,
 )
-from app.data import InboxGroup
+from app.data import DraftResponse, InboxGroup
 
 
 def test_database_fingerprint_changes_when_either_database_changes(tmp_path):
@@ -78,7 +79,51 @@ def test_render_official_context_displays_available_sources(monkeypatch):
     )
 
 
-def test_render_group_chat_initializes_empty_session_state_and_renders_input(monkeypatch):
+def test_render_group_draft_exposes_the_five_mandatory_states_when_generated(monkeypatch):
+    from unittest.mock import MagicMock, Mock
+
+    st_expander = MagicMock()
+    st_caption = Mock()
+    st_button = Mock(return_value=False)
+    st_markdown = Mock()
+    st_selectbox = Mock(return_value="nuevo")
+    session_state = {
+        "draft_G-1": DraftResponse(borrador="...", afirmaciones=[], citas=[], estado_revision="nuevo"),
+        "draft_state_G-1": "nuevo",
+    }
+
+    monkeypatch.setattr("app.app.st.expander", st_expander)
+    monkeypatch.setattr("app.app.st.caption", st_caption)
+    monkeypatch.setattr("app.app.st.button", st_button)
+    monkeypatch.setattr("app.app.st.markdown", st_markdown)
+    monkeypatch.setattr("app.app.st.selectbox", st_selectbox)
+    monkeypatch.setattr("app.app.st.session_state", session_state)
+    monkeypatch.setattr("app.app.st.popover", MagicMock())
+
+    group = InboxGroup(
+        grupo_id="G-1",
+        titulo_representativo="",
+        n_noticias=1,
+        n_procedencias=1,
+        fecha_max=date(2026, 1, 1),
+        corroboracion=1,
+        es_repeticion=False,
+        tema="otros",
+        R=0, I=0, U=0, N=0, E=0, puntaje=0, prioridad="bajo",
+        estado_evidencia="insuficiente", version_reglas="v0.3",
+        motivos="", contexto_oficial=None, evento_usgs_id=None
+    )
+
+    render_group_draft(group)
+
+    st_selectbox.assert_called_once()
+    assert st_selectbox.call_args[0][1] == [
+        "nuevo",
+        "en revisión",
+        "requiere evidencia",
+        "aprobado como borrador",
+        "descartado"
+    ]
     from unittest.mock import MagicMock, Mock
 
     st_expander = MagicMock()

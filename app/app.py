@@ -16,6 +16,7 @@ from app.data import (
     fetch_group_evidence,
     fetch_inbox_filter_options,
     fetch_inbox_groups,
+    generate_group_draft,
 )
 
 
@@ -208,6 +209,66 @@ def render_group_chat(group: InboxGroup) -> None:
                     st.caption(f"Citas: {', '.join(response.citas)}")
 
 
+def render_group_draft(group: InboxGroup) -> None:
+    """Render an editorial draft interface with mandatory review states."""
+
+    with st.expander("Borrador y revisión (IA)", expanded=False):
+        st.caption(
+            "Generá un borrador citable basado exclusivamente en la evidencia del grupo. "
+            "Aprobar el borrador no lo publica automáticamente."
+        )
+
+        draft_key = f"draft_{group.grupo_id}"
+        state_key = f"draft_state_{group.grupo_id}"
+
+        if st.button("Generar borrador", key=f"btn_draft_{group.grupo_id}"):
+            with st.spinner("Redactando borrador con citas..."):
+                response = generate_group_draft(group.grupo_id)
+                st.session_state[draft_key] = response
+                st.session_state[state_key] = response.estado_revision
+
+        if draft_key in st.session_state:
+            draft = st.session_state[draft_key]
+
+            st.markdown(draft.borrador)
+            if draft.afirmaciones:
+                with st.popover("Ver afirmaciones base"):
+                    for a in draft.afirmaciones:
+                        st.markdown(f"- {a}")
+            if draft.citas:
+                st.caption(f"Citas empleadas: {', '.join(draft.citas)}")
+
+            st.markdown("---")
+            st.markdown("**Revisión editorial**")
+            current_state = st.session_state.get(state_key, "nuevo")
+
+            # The exact 5 states mandated by the brief
+            valid_states = [
+                "nuevo",
+                "en revisión",
+                "requiere evidencia",
+                "aprobado como borrador",
+                "descartado"
+            ]
+            try:
+                index = valid_states.index(current_state)
+            except ValueError:
+                index = 0
+
+            new_state = st.selectbox(
+                "Estado del borrador",
+                valid_states,
+                index=index,
+                key=f"select_{group.grupo_id}"
+            )
+            st.session_state[state_key] = new_state
+
+            if new_state == "aprobado como borrador":
+                st.success("Borrador aprobado. (Nota: Esto no publica el artículo en el CMS).")
+            elif new_state == "requiere evidencia":
+                st.warning("Se requiere más investigación o evidencia de otras fuentes.")
+
+
 def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Render score, evidence, corroboration, and repetition as distinct facts."""
 
@@ -239,6 +300,7 @@ def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> No
         render_official_context(group.contexto_oficial, group.evento_usgs_id)
         render_group_evidence(group, evidence_rows)
         render_group_chat(group)
+        render_group_draft(group)
 
 
 def main() -> None:

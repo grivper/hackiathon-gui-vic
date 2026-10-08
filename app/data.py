@@ -42,6 +42,37 @@ class InboxGroup:
 
 
 @dataclass(frozen=True)
+class DraftResponse:
+    """A mock or future LLM editorial draft with citations and review state."""
+
+    borrador: str
+    afirmaciones: list[str]
+    citas: list[str]
+    estado_revision: str
+
+
+def generate_group_draft(grupo_id: str) -> DraftResponse:
+    """Mock TAR-009: Returns a draft pending Guille's LLM pipeline.
+
+    Starts in the 'nuevo' state.
+    """
+
+    return DraftResponse(
+        borrador=(
+            "El evento ocurrió a principios de enero de 2026, según reportan múltiples "
+            "fuentes locales [E-1, E-2]. El anuncio oficial destacó el alcance sectorial "
+            "y fue replicado por otras agencias [E-4]."
+        ),
+        afirmaciones=[
+            "El evento ocurrió a principios de enero de 2026.",
+            "El anuncio oficial destacó el alcance sectorial."
+        ],
+        citas=["E-1", "E-2", "E-4"],
+        estado_revision="nuevo"
+    )
+
+
+@dataclass(frozen=True)
 class ChatResponse:
     """A mock or future LLM response with explicit citations."""
 
