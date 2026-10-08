@@ -243,3 +243,35 @@ def test_T03_la_fecha_del_evento_es_la_de_publicacion_y_el_puntaje_de_urgencia_b
     ref = datetime(2026, 10, 8)
     assert puntuar.componente_U(ref - timedelta(days=850), ref, reglas) < puntuar.componente_U(ref - timedelta(hours=2), ref, reglas)
     assert puntuar.componente_U(ref - timedelta(days=850), ref, reglas) == reglas["u_tramos"][-1]["score"]
+
+
+def test_T05_el_prompt_trae_un_ejemplo_de_contradiccion_con_versiones(dbs):
+    """Un modelo chico imita los ejemplos: el prompt debe mostrar también cómo declarar una contradicción."""
+    cliente = llm.ClienteFalso([_contradiccion()])
+    _ficha(dbs, cliente)
+    sistema = cliente.llamadas[0][0]
+    assert '"tipo_respuesta": "contradiccion"' in sistema
+    assert '"versiones": ["' in sistema
+    assert "opuest" in sistema.lower()
+
+
+def test_T05_dos_versiones_declaradas_por_el_modelo_cuentan_como_contradiccion(dbs):
+    """Con el modelo real llenó `versiones` pero dijo `respuesta`: el código no se fía de la etiqueta."""
+    salida = _contradiccion()
+    salida["tipo_respuesta"] = "respuesta"
+    ficha = _ficha(dbs, llm.ClienteFalso([salida]))
+    assert ficha["tipo_respuesta"] == "contradiccion"
+    assert "revisión pendiente" in ficha["borrador"].lower()
+
+
+def test_T05_una_sola_version_o_ninguna_no_inventa_contradicciones(dbs):
+    salida = _salida(_a("Según tvn-pa.com, la inflación cayó 0,3 % en junio."), versiones=["tvn-pa.com: cayó 0,3 %"])
+    assert _ficha(dbs, llm.ClienteFalso([salida]))["tipo_respuesta"] == "respuesta"
+
+
+def test_el_prompt_cabe_en_la_ventana_de_2048_tokens_con_margen(dbs):
+    """El modelo real se cortó a mitad del JSON cuando el prompt creció: con este fixture el sistema mide ~2.730 caracteres (antes de T05 ~2.325); tope 2.800."""
+    cliente = llm.ClienteFalso([_contradiccion()])
+    _ficha(dbs, cliente)
+    sistema, usuario, _ = cliente.llamadas[0]
+    assert len(sistema) <= 2800, len(sistema)

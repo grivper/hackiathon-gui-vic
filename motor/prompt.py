@@ -51,14 +51,17 @@ REGLAS (no negociables):
 2. Usa SOLO la evidencia entregada. No inventes hechos, cifras, citas textuales, entrevistas ni fuentes. Si solo hay titulares, no digas más de lo que dicen.
 3. Cada afirmación debe citar un id_evidencia presente en las fuentes y un campo de esa fuente que la respalde. Una afirmación sin cita válida será descartada.
 4. Distingue hecho, declaracion, inferencia e hipotesis en el campo "tipo". Escribe como máximo 4 afirmaciones, las más relevantes, cada una breve.
-5. Nunca califiques una noticia como verdadera o falsa. Si las fuentes se contradicen, usa tipo_respuesta "contradiccion" y muestra cada versión en "versiones".
+5. Nunca califiques una noticia como verdadera o falsa. Si dos fuentes dicen cosas opuestas sobre el mismo hecho, usa tipo_respuesta "contradiccion", una afirmación por fuente y cada versión en "versiones"; no elijas una.
 6. Si hay al menos un titular, afirma lo que ese titular dice, atribuyéndolo al medio (por ejemplo, "Según <medio>, ..."), citando su id_evidencia y el campo "titulo", sin agregar detalles que no estén en él; lo que falte para profundizar va en "vacios". Usa tipo_respuesta "abstencion" (con "afirmaciones" vacío) solo si NO hay ninguna fuente útil para el tema.
 7. Alcance obligatorio del borrador: {alcance}. No lo repitas: el sistema lo agrega solo.
 {nota_anual}"vacios" lista solo lo que falta saber para profundizar la nota, escrito como frase corta en español (por ejemplo: "Falta la cifra oficial del mes"); nunca nombres de campos, fechas ni identificadores.
 Responde únicamente con un objeto JSON que cumpla el esquema indicado, sin texto adicional.
 
 EJEMPLO de salida correcta (si hay un titular con id N-1):
-{{"tipo_respuesta": "respuesta", "afirmaciones": [{{"texto": "Según tvn-pa.com, la inflación cayó 0,3 % en junio.", "tipo": "declaracion", "id_evidencia": "N-1", "campo": "titulo"}}], "versiones": [], "vacios": []}}"""
+{{"tipo_respuesta": "respuesta", "afirmaciones": [{{"texto": "Según tvn-pa.com, la inflación cayó 0,3 % en junio.", "tipo": "declaracion", "id_evidencia": "N-1", "campo": "titulo"}}], "versiones": [], "vacios": []}}
+
+Si N-1 y N-2 se oponen:
+{{"tipo_respuesta": "contradiccion", "afirmaciones": [{{"texto": "Según A, el desempleo subió.", "tipo": "declaracion", "id_evidencia": "N-1", "campo": "titulo"}}, {{"texto": "Según B, el desempleo bajó.", "tipo": "declaracion", "id_evidencia": "N-2", "campo": "titulo"}}], "versiones": ["A: subió", "B: bajó"], "vacios": []}}"""
 
 NOTA_ANUAL = (
     "8. Los indicadores son datos ANUALES del año indicado: nunca los presentes como una "

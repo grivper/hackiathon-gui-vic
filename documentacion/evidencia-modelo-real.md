@@ -42,3 +42,11 @@ Alcance: basado únicamente en titular/metadatos
 Findings:
 - T06 passes with the real model: no evidence -> abstention by code, without calling the model (0 s); the unrelated headline is only restated and attributed to its outlet, with no invented figure.
 - T05 does NOT fully pass with the real model: it showed both claims attributed to each outlet and chose neither, but it answered `respuesta` (not `contradiccion`), left `versiones` empty, and so the draft carries no `Revisión pendiente` line. The flag only appears when the model declares the contradiction (covered with the fake client). Open decision: detect the conflict by code or reinforce the prompt.
+
+## Run C: T05 fix, re-run with the real model
+
+Changes: prompt rule 5 and a compact contradiction example (system prompt about +400 characters); `generar` treats two or more `versiones` as a contradiction even if the model labels the answer `respuesta`.
+
+- First attempt (longer example, +770 characters): `versiones` was filled but the label stayed `respuesta`, and the real group G-99f6cccc1c81 broke with `json_invalido`: output was cut at 224 tokens because prompt plus output filled the 2048-token window. Fix: shorter prompt, and a test that caps its size.
+- Final run: G-CONTRA -> `contradiccion`, two versions, `Revisión pendiente` line present (43 s). Three real groups where the outlets agree (G-99f6cccc1c81, G-c7e0cc7bcfce, G-43855276bc71) stay `respuesta` with no versions (50-78 s). No truncation.
+- Limit: one contradiction case and three controls, n=4; not a benchmark.
