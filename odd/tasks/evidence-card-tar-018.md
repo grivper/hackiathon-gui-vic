@@ -22,7 +22,7 @@ Add a read-only evidence detail to each priority-inbox group so an editor can in
   - Test pure presentation rules for dates and verification guidance.
   - Add the Streamlit evidence expander and wire it to each group.
   - Run focused and full verification, update TAR-018, and record the work-unit commit.
-  - Evidence: RED observed by the writer; focused suite `10 passed`; full suite `140 passed`; independent AppTest rendered 50 groups and 50 evidence expanders with no exceptions; LSP diagnostics clean. Commit recorded below after creation.
+  - Evidence: RED observed by the writer; focused suite `10 passed`; full suite `140 passed`; independent AppTest rendered 50 groups and 50 evidence expanders with no exceptions; LSP diagnostics clean; commit `382cb56`.
 
 ## Acceptance criteria
 
