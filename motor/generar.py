@@ -71,7 +71,8 @@ def _contexto_dato(campos: dict) -> str:
 
 
 def _borrador(
-    afirmaciones: list[dict], versiones: list, vacios: list, alcance: str, items: dict[str, dict] | None = None
+    afirmaciones: list[dict], versiones: list, vacios: list, alcance: str, items: dict[str, dict] | None = None,
+    tipo_respuesta: str = "respuesta",
 ) -> str:
     items = items or {}
     lineas = []
@@ -81,6 +82,8 @@ def _borrador(
         lineas.append(f"- {a['texto']} [{a['id_evidencia']} · {a['campo']}]{contexto}")
     if versiones:
         lineas.append("Versiones: " + "; ".join(str(v) for v in versiones))
+    if tipo_respuesta == "contradiccion":
+        lineas.append("Revisión pendiente: las fuentes no coinciden; una persona debe revisarlas antes de usar este borrador.")
     if vacios:
         lineas.append("Vacíos: " + "; ".join(str(v) for v in vacios))
     lineas.append(f"Alcance: {alcance}")
@@ -140,7 +143,8 @@ def generar_ficha(
         "vacios": v["vacios"], "versiones": v["versiones"], "alcance": alcance,
         "descartadas": v["descartadas"], "cobertura_citas": v["cobertura"],
         "borrador": _borrador(
-            v["afirmaciones"], v["versiones"], v["vacios"], alcance, {i["id_evidencia"]: i for i in paquete["items"]}
+            v["afirmaciones"], v["versiones"], v["vacios"], alcance, {i["id_evidencia"]: i for i in paquete["items"]},
+            v["tipo_respuesta"],
         ),
         "estado_revision": ESTADO_NUEVO, "generacion": _generacion(r),
     }

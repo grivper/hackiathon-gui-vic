@@ -165,3 +165,33 @@ def test_T08_la_prioridad_alta_no_evita_la_abstencion_sin_evidencia(dbs):
     ficha = _ficha(dbs, llm.ClienteFalso([]), grupo="G-VACIO")
     assert ficha["prioridad"] == "alto" and ficha["tipo_respuesta"] == "abstencion"
     assert ficha["estado_revision"] == "requiere evidencia"
+
+
+# --------------------------------------------------------------------------- T05
+
+def _contradiccion():
+    return _salida(
+        _a("Según tvn-pa.com, la inflación cayó 0,3 % en junio.", id_="N-a"),
+        _a("Según critica.com.pa, los precios bajan en Panamá.", id_="N-b"),
+        tipo="contradiccion",
+        versiones=["tvn-pa.com: la inflación cae 0,3 % en junio", "critica.com.pa: los precios bajan sin cifra"],
+    )
+
+
+def test_T05_afirmaciones_incompatibles_muestran_ambas_versiones_alcance_y_revision(dbs):
+    """T05: mostrar ambas, su alcance y la revisión pendiente; no escoger arbitrariamente."""
+    ficha = _ficha(dbs, llm.ClienteFalso([_contradiccion()]))
+    assert ficha["tipo_respuesta"] == "contradiccion"
+    b = ficha["borrador"]
+    assert "tvn-pa.com" in b and "critica.com.pa" in b
+    assert len(ficha["versiones"]) == 2
+    assert "Alcance:" in b and "titular/metadatos" in b
+    assert "revisión pendiente" in b.lower(), "la ficha debe decir que la contradicción espera revisión humana"
+    assert ficha["estado_revision"] == "nuevo"
+    assert {c["id_evidencia"] for c in ficha["citas"]} == {"N-a", "N-b"}
+
+
+def test_T05_no_califica_ninguna_version_como_verdadera_o_falsa(dbs):
+    ficha = _ficha(dbs, llm.ClienteFalso([_contradiccion()]))
+    texto = ficha["borrador"].lower()
+    assert "verdader" not in texto and "falso" not in texto
