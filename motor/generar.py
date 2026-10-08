@@ -155,6 +155,9 @@ def generar_ficha(
         vacios = v["vacios"] or ["Ninguna afirmación del modelo quedó sustentada por la evidencia."]
         return _abstencion(base, motivo, vacios, alcance, r, v["descartadas"])
 
+    # Un modelo chico llenó `versiones` pero dijo `respuesta` (T05 con gemma3:4b): dos o más
+    # versiones declaradas son una contradicción, sin importar la etiqueta.
+    tipo = "contradiccion" if v["tipo_respuesta"] == "respuesta" and len(v["versiones"]) >= 2 else v["tipo_respuesta"]
     citas_usadas: list[dict] = []
     for a in v["afirmaciones"]:
         cita = {"id_evidencia": a["id_evidencia"], "campo": a["campo"]}
@@ -162,12 +165,12 @@ def generar_ficha(
             citas_usadas.append(cita)
     return {
         **base, "afirmaciones": v["afirmaciones"], "citas": citas_usadas,
-        "tipo_respuesta": v["tipo_respuesta"], "motivo_abstencion": None,
+        "tipo_respuesta": tipo, "motivo_abstencion": None,
         "vacios": v["vacios"], "versiones": v["versiones"], "alcance": alcance,
         "descartadas": v["descartadas"], "cobertura_citas": v["cobertura"],
         "borrador": _borrador(
             v["afirmaciones"], v["versiones"], v["vacios"], alcance, {i["id_evidencia"]: i for i in paquete["items"]},
-            v["tipo_respuesta"],
+            tipo,
         ),
         "estado_revision": ESTADO_NUEVO, "generacion": _generacion(r),
     }

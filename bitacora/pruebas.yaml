@@ -56,24 +56,28 @@
 - id: T05
   prueba: Dos afirmaciones incompatibles
   esperado: Mostrar ambas, su alcance y la revisión pendiente; no escoger arbitrariamente
-  estado: Falló
-  fecha: 2026-10-08T07:21-05:00
+  estado: Corregida
+  fecha: 2026-10-08T07:38-05:00
   entrada: 'Modelo real gemma3:4b: dos titulares de medios distintos sobre la inflación (cae 0,3 % vs
     sube 1,2 %)'
-  observado: 'Con el modelo real mostró ambas afirmaciones atribuidas a cada medio y no escogió ninguna,
-    pero respondió ''respuesta'' y no ''contradiccion'': versiones vacías y sin la línea ''Revisión pendiente''.
-    La bandera solo aparece si el modelo declara la contradicción (con el cliente falso sí). Pendiente:
-    detectar el conflicto por código o reforzar el prompt.'
-  evidencia: documentacion/evidencia-modelo-real.md
-  correccion: generar._borrador agrega 'Revisión pendiente' cuando tipo_respuesta es contradiccion; el
-    estado de revisión queda 'nuevo' y ninguna versión se califica de verdadera o falsa.
+  observado: 'Falló con el modelo real: dijo ''respuesta'' en una contradicción, sin versiones ni línea
+    de revisión pendiente.'
+  evidencia: documentacion/evidencia-modelo-real.md (corrida C)
+  correccion: 'Prompt con regla 5 más clara y un ejemplo corto de contradicción; generar.py trata 2 o
+    más ''versiones'' como contradicción aunque el modelo diga ''respuesta''. Un primer intento con un
+    ejemplo largo desbordó la ventana de 2048 tokens (JSON cortado) y se acortó; hay un test que limita
+    el tamaño del prompt. Con gemma3:4b: el caso de contradicción da ''contradiccion'' con revisión pendiente
+    y 3 grupos reales que concuerdan siguen como ''respuesta''.'
   historial: '2026-10-08T06:50-05:00 · Corregida · Falló: el borrador mostraba ambas versiones y el alcance,
     pero no decía que la contradicción espera revisión humana.
 
     2026-10-08T07:21-05:00 · Falló · Con el modelo real mostró ambas afirmaciones atribuidas a cada medio
     y no escogió ninguna, pero respondió ''respuesta'' y no ''contradiccion'': versiones vacías y sin
     la línea ''Revisión pendiente''. La bandera solo aparece si el modelo declara la contradicción (con
-    el cliente falso sí). Pendiente: detectar el conflicto por código o reforzar el prompt.'
+    el cliente falso sí). Pendiente: detectar el conflicto por código o reforzar el prompt.
+
+    2026-10-08T07:38-05:00 · Corregida · Falló con el modelo real: dijo ''respuesta'' en una contradicción,
+    sin versiones ni línea de revisión pendiente.'
 - id: T06
   prueba: Consulta sin respuesta en el corpus
   esperado: Abstención explícita; ninguna cifra o cita inventada
