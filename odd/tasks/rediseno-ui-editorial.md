@@ -43,3 +43,6 @@ Full-bleed dark header (100vw), cream filter bar, title + note on one row, each 
 
 ## Pass 5: chat order (user screenshot)
 `st.chat_input` was called between the history loop and the new-message render, so Streamlit drew the first messages above the input and every new Q&A below it. Messages now go into a container created before the input. Regression test added (container is created before the input). Verified in Chrome with two consecutive questions: all four messages above the input.
+
+## Pass 6: "Abrir fuente original" blank after click (user screenshot)
+After the click the link button showed an empty dark pill: its text took a dark colour in a state the CSS did not cover (visited/focus/active). Button colours are now pinned in every state (`:link`, `:visited`, `:focus`, `:active`, `:hover`) with `!important` on the text. Not reproducible in the automation Chrome (it renders correctly there), so verified by computed colours after a real click plus a CSS regression test; `:visited` itself cannot be forced.

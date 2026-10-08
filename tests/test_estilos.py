@@ -158,3 +158,9 @@ def test_tema_label_uses_accented_names_and_falls_back_readably():
     assert tema_label("tema_nuevo") == "Tema nuevo"
     assert "Servicios públicos" in row_content_html(1, "servicios_publicos", "f", "x", [])
     assert "Servicios públicos" in ficha_header_html("servicios_publicos", "G-1", "x")
+
+
+def test_css_keeps_button_text_visible_in_every_state():
+    for state in (":visited", ":focus:not(:active)", ":active", ":hover"):
+        assert state in CSS
+    assert "color:#f4f1ea !important" in CSS

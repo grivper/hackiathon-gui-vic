@@ -121,9 +121,13 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .rules{font-size:12px;color:#5a5648}
 
 /* widgets */
-.stButton>button,.stLinkButton>a{border-radius:999px;background:#15171c;color:#f4f1ea;border:0;min-height:44px;font-weight:600;padding:0 20px}
-.stButton>button:hover,.stLinkButton>a:hover{background:#a3162f;color:#fff}
-.stButton>button p,.stLinkButton>a p{color:inherit}
+/* Buttons keep light text in EVERY state (link, visited, focus, active); Streamlit otherwise recolours them. */
+.stButton>button,.stLinkButton>a,.stLinkButton>a:link,.stLinkButton>a:visited,
+.stButton>button:focus,.stButton>button:focus:not(:active),.stLinkButton>a:focus,.stLinkButton>a:focus:not(:active){
+  border-radius:999px;background:#15171c;color:#f4f1ea !important;border:0;min-height:44px;font-weight:600;padding:0 20px;text-decoration:none}
+.stButton>button:hover,.stButton>button:active,.stLinkButton>a:hover,.stLinkButton>a:active,
+.stButton>button:focus-visible,.stLinkButton>a:focus-visible{background:#a3162f;color:#fff !important}
+.stButton>button *,.stLinkButton>a *{color:inherit !important}
 .st-key-volver-abajo{margin-top:8px}
 div[data-baseweb="select"]>div,.stDateInput input{background:#fff;border:1px solid #cfc9b9;border-radius:10px;min-height:44px}
 div[data-testid="stExpander"]{border:1px solid #ddd8cb;border-radius:14px;background:#fbfaf6;margin-top:8px}
