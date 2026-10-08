@@ -18,3 +18,4 @@ modelos/
 data/embeddings/
 data/motor.duckdb
 data/motor.duckdb.tmp
+data/_descartado/

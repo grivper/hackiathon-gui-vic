@@ -72,6 +72,19 @@ fuentes y genera los archivos del contrato de la sección 7 en `data/`.
 El RSS solo trae noticias recientes: conviene ejecutar `python ingesta/descargar_snapshot.py --solo tvn`
 varias veces durante el reto; las capturas se acumulan y se deduplican.
 Para otro período de GDELT: `--solo gdelt --desde 2025-07-01 --hasta 2025-09-30`.
+
+GDELT a veces responde con HTTP 200 y un texto de "limit requests" en lugar de JSON. El script reintenta con
+pausas crecientes y omite las ventanas ya descargadas, así que una corrida cortada se reanuda repitiendo el
+mismo comando **con fechas fijas** (`--desde` y `--hasta`); sin ellas la ventana depende de la hora actual.
+
+### Reproducibilidad: `data/raw/` no está en git
+
+`make procesar` (y el paso final de cada descarga) procesa **todo** lo que haya en `data/raw/`, que no se
+sube a git. El snapshot que se commitea es `data/processed/` + `data/manifest.json`; por eso solo una persona
+lo regenera. Antes de reprocesar, revisa que `data/raw/` no tenga descargas parciales o de prueba: muévelas a
+`data/_descartado/` (ignorada por git y no leída por el procesamiento). Con `raw/` limpio, `make procesar`
+regenera los mismos archivos byte a byte; solo cambia `fecha_corte_utc` en el manifest.
+
 ### Historial de TVN por sitemaps
 
 El RSS solo trae ~150 ítems recientes y GDELT solo cubre ~90 días (y devuelve 429 con facilidad). Para el

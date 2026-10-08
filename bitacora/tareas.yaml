@@ -74,9 +74,9 @@
 - id: TAR-005
   tarea: Script de descarga de fuentes y generación de manifest.json
   responsable: Guille
-  estado: En curso
-  fecha: 2026-10-06T21:38-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T00:12-05:00
+  notas: 'Manifest con version, fecha de corte, consultas, cantidades, licencias por fuente, SHA-256 y transformaciones (seccion 7). make procesar es reproducible: con data/raw limpio regenera processed/ identico byte a byte (solo cambia fecha_corte_utc). GDELT: reintento ante el texto de limite y reanudacion con fechas fijas (TAR-014). raw/ no esta en git: mover descargas parciales a data/_descartado/ antes de reprocesar (ver README).'
   tipo: Tarea
   epica: EPI-002
 - id: TAR-006
@@ -151,11 +151,11 @@
   notas: '2026-10-07: 429 persistente desde la IP de casa, incluso con consultas aisladas y 90 s de espera.
     Ya hay 30154 noticias de TVN por sitemaps, así que GDELT solo aporta variedad de medios. Opciones:
     otra red (datos del celular) o horas después. Comando: python ingesta/descargar_snapshot.py --solo
-    gdelt. 2026-10-08: DESCARTADA (opcional). Probado desde casa y desde datos del celular: GDELT
-    sigue limitando la IP (1 de cada 3 ventanas responde; el resto devuelve texto de limite con HTTP
-    200). Se corrigio el script para reintentar y reanudar (fix/gdelt-reintento), pero la descarga
-    completa llevaria mas de una hora con resultado incierto y solo suma variedad de medios. No hay
-    datos de GDELT en el snapshot.'
+    gdelt. 2026-10-08: DESCARTADA (opcional). Probado desde casa y desde datos del celular: GDELT sigue
+    limitando la IP (1 de cada 3 ventanas responde; el resto devuelve texto de limite con HTTP 200). Se
+    corrigio el script para reintentar y reanudar (fix/gdelt-reintento), pero la descarga completa llevaria
+    mas de una hora con resultado incierto y solo suma variedad de medios. No hay datos de GDELT en el
+    snapshot.'
   estado: Bloqueada
   tipo: Tarea
   epica: EPI-002
