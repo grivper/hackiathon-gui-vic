@@ -2,7 +2,14 @@ from __future__ import annotations
 
 from app.estilos import (
     CSS,
+    alert_html,
+    aside_html,
+    chips_html,
     component_bars_html,
+    ficha_header_html,
+    heading_html,
+    section_html,
+    tema_label,
     empty_draft_html,
     evidence_head_html,
     evidence_kv_html,
@@ -43,13 +50,56 @@ def test_score_bar_width_is_clamped_to_0_100():
     assert "width:0%" in score_card_html(1, "t", "f", "x", [], -5.0)
 
 
-def test_component_bars_render_all_five_with_value_and_clamp():
-    html_out = component_bars_html({"R": 30.0, "I": 0.0, "U": 150.0, "N": 10.0, "E": 0.0})
+def test_component_bars_use_the_real_0_to_1_scale():
+    out = component_bars_html({"R": 1.0, "I": 0.5, "U": 0.25, "N": 2.0, "E": 0.0})
 
     for letter in "RIUNE":
-        assert f"<b>{letter}</b>" in html_out
-    assert "width:100%" in html_out
-    assert "30.0" in html_out
+        assert f"<b>{letter}</b>" in out
+    assert "width:100%" in out  # R=1.0 fills the bar (and N=2.0 is clamped)
+    assert "width:50%" in out
+    assert "width:25%" in out
+    assert "width:0%" in out
+    assert ">1.0<" in out and ">0.0<" in out
+
+
+def test_component_bars_highlight_a_low_E_only():
+    low = component_bars_html({"R": 1, "I": 1, "U": 1, "N": 1, "E": 0.0})
+    high = component_bars_html({"R": 1, "I": 1, "U": 1, "N": 1, "E": 1.0})
+
+    assert 'class="comp e low"' in low
+    assert 'class="comp e low"' not in high
+    assert 'class="comp r low"' not in low
+
+
+def test_aside_shows_score_tiles_components_and_rules_version_escaped():
+    out = aside_html(
+        puntaje=90.0,
+        prioridad="<alto>",
+        estado_evidencia="insuficiente",
+        componentes={"R": 1, "I": 1, "U": 1, "N": 1, "E": 0},
+        version_reglas="v0.3<",
+    )
+
+    assert ">90.0<" in out
+    assert "<alto>" not in out
+    assert "Insuficiente" in out
+    assert "Reglas v0.3&lt;" in out
+    assert "Componentes R / I / U / N / E" in out
+
+
+def test_ficha_header_alert_section_and_heading_escape_dynamic_text():
+    header = ficha_header_html("<t>", "G-1<", "<script>x</script>")
+    assert "<script>" not in header and "Registro editorial G-1&lt;" in header
+    assert "Volver" not in header  # the back button is a native widget
+
+    alert = alert_html("Prioridad <i>", "No es publicable.")
+    assert "<i>" not in alert and "&lt;i&gt;" in alert and "No es publicable." in alert
+
+    section = section_html("Resumen", "<i>cuerpo</i>")
+    assert "<i>" not in section and "&lt;i&gt;cuerpo" in section
+
+    assert "<script>" not in heading_html("<script>")
+    assert chips_html([("<b>", "")]).count("&lt;b&gt;") == 1
 
 
 def test_css_defines_the_design_tokens():
@@ -81,10 +131,11 @@ def test_empty_draft_html_keeps_the_exact_message():
 
 
 def test_evidence_head_escapes_title_and_id():
-    out = evidence_head_html("<script>x</script>", "N-1<")
+    out = evidence_head_html("<script>x</script>", "N-1<", "titulo")
 
     assert "<script>" not in out
     assert "ID de evidencia: N-1&lt;" in out
+    assert "Campo citado disponible: titulo" in out
 
 
 def test_evidence_kv_marks_missing_values_and_escapes():
@@ -97,3 +148,10 @@ def test_evidence_kv_marks_missing_values_and_escapes():
 def test_css_styles_expanders_chat_and_empty_states():
     for selector in ('stExpander', 'stChatInput', 'stChatMessage', ".kv", ".empty", ".info"):
         assert selector in CSS
+
+
+def test_tema_label_uses_accented_names_and_falls_back_readably():
+    assert tema_label("servicios_publicos") == "Servicios públicos"
+    assert tema_label("tema_nuevo") == "Tema nuevo"
+    assert "Servicios públicos" in score_card_html(1, "servicios_publicos", "f", "x", [], 1.0)
+    assert "Servicios públicos" in ficha_header_html("servicios_publicos", "G-1", "x")

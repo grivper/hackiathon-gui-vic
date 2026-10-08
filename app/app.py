@@ -142,7 +142,6 @@ def render_official_context(contexto: str | None, usgs_id: str | None) -> None:
     if not contexto and not usgs_id:
         return
 
-    st.markdown("---")
     st.markdown("**Contexto oficial (Banco Mundial / USGS)**")
     st.caption("Esta sección provee una línea base histórica u oficial y no debe confundirse con la noticia en curso.")
 
@@ -165,13 +164,31 @@ def render_official_context(contexto: str | None, usgs_id: str | None) -> None:
 def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Render read-only member metadata, keeping corroboration separate from volume."""
 
-    with st.expander("Detalle de evidencia", expanded=False):
-        st.caption(
-            f"{group.n_noticias} artículos agrupados. La corroboración considera "
-            f"{group.corroboracion} procedencias distintas, no repeticiones del mismo origen."
+    with st.container(key=f"sec-evidencia-{group.grupo_id}"):
+        st.markdown(estilos.heading_html("Evidencia y procedencias"), unsafe_allow_html=True)
+        st.markdown(
+            estilos.chips_html(
+                [
+                    (f"{group.n_noticias} artículos agrupados", ""),
+                    (
+                        f"{group.corroboracion} procedencias distintas (no repeticiones)",
+                        "",
+                    ),
+                ]
+            ),
+            unsafe_allow_html=True,
         )
         st.markdown(
-            estilos.info_html("", evidence_verification_guidance(group.estado_evidencia)),
+            estilos.note_html(
+                "Basado únicamente en titular/metadatos. "
+                "La confirmación editorial sigue pendiente."
+            ),
+            unsafe_allow_html=True,
+        )
+        guidance = evidence_verification_guidance(group.estado_evidencia)
+        label, _, rest = guidance.partition(":")
+        st.markdown(
+            estilos.info_html(f"{label}:", rest.strip() and f" {rest.strip()}"),
             unsafe_allow_html=True,
         )
         if not evidence_rows:
@@ -181,14 +198,16 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
         for row in evidence_rows:
             st.markdown(
                 estilos.evidence_head_html(
-                    row.titulo or "Titular no disponible", str(row.id_noticia)
+                    row.titulo or "Titular no disponible",
+                    str(row.id_noticia),
+                    "titulo" if row.titulo else None,
                 ),
                 unsafe_allow_html=True,
             )
             if row.url:
-                st.link_button("Abrir fuente", row.url)
+                st.link_button("Abrir fuente original", row.url)
             details = [
-                ("Medio", row.medio or "No disponible"),
+                ("Medio/origen", row.medio or "No disponible"),
                 ("Procedencia", row.procedencia or "No disponible"),
                 (
                     "Fecha de publicación/original",
@@ -208,7 +227,7 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
 def render_group_chat(group: InboxGroup) -> None:
     """Render a chat interface for cited CU-04 queries per group."""
 
-    with st.expander("Consulta sobre evidencia validada", expanded=False):
+    with st.expander("Consulta sobre evidencia validada", expanded=True):
         st.caption(
             "La respuesta es extractiva: solo recupera afirmaciones y citas "
             "validadas de la ficha."
@@ -272,7 +291,11 @@ def render_group_draft(group: InboxGroup) -> None:
     widget's session state.
     """
 
-    with st.expander("Borrador y revisión (IA)", expanded=False):
+    with st.expander("Paquete generado y revisión humana", expanded=True):
+        st.caption(
+            "Información generada: el borrador no equivale a información verificada "
+            "ni autoriza publicación."
+        )
         st.caption("Aprobar el borrador no lo publica automáticamente.")
 
         ficha = fetch_group_ficha(
@@ -337,62 +360,118 @@ def render_group_draft(group: InboxGroup) -> None:
             st.warning("Se requiere más investigación o evidencia de otras fuentes.")
 
 
-def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow], rank: int = 1) -> None:
-    """Render score, evidence, corroboration, and repetition as distinct facts."""
+def _display_chips(group: InboxGroup) -> list[tuple[str, str]]:
+    evidence_kind = "warn" if group.estado_evidencia == "insuficiente" else ""
+    return [
+        (f"Evidencia {group.estado_evidencia} · {group.n_noticias} registros", evidence_kind),
+        (f"{group.corroboracion} procedencias distintas", ""),
+    ]
 
-    group_date = _group_date(group)
-    with st.container(border=True):
-        priority_kind = "danger" if group.prioridad.lower() == "alto" else ""
-        evidence_kind = "warn" if group.estado_evidencia == "insuficiente" else ""
-        st.markdown(
-            estilos.score_card_html(
-                rank=rank,
-                tema=group.tema,
-                fecha=evidence_date_label(group_date),
-                titulo=group.titulo_representativo,
-                chips=[
-                    (f"Prioridad {group.prioridad}", priority_kind),
-                    (f"Evidencia {group.estado_evidencia}", evidence_kind),
-                    (f"{group.n_noticias} artículos agrupados", ""),
-                    (f"{group.corroboracion} procedencias distintas (corroboración)", ""),
-                ],
-                puntaje=group.puntaje,
-            ),
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            estilos.component_bars_html(
-                {"R": group.R, "I": group.I, "U": group.U, "N": group.N, "E": group.E}
-            ),
-            unsafe_allow_html=True,
-        )
-        st.caption(
-            f"Reglas: {group.version_reglas} · Componentes R/I/U/N/E: "
-            f"{group.R:.1f}/{group.I:.1f}/{group.U:.1f}/{group.N:.1f}/{group.E:.1f}"
-        )
-        st.caption(f"Motivos: {group.motivos}")
-        guidance = editorial_guidance(group.prioridad, group.estado_evidencia)
+
+def render_bandeja_row(group: InboxGroup, rank: int) -> None:
+    """One ranked inbox row with the button that opens its ficha."""
+
+    row_column, button_column = st.columns([5, 1], vertical_alignment="center")
+    row_column.markdown(
+        estilos.score_card_html(
+            rank=rank,
+            tema=group.tema,
+            fecha=evidence_date_label(_group_date(group)),
+            titulo=group.titulo_representativo,
+            chips=_display_chips(group),
+            puntaje=group.puntaje,
+        ),
+        unsafe_allow_html=True,
+    )
+    if button_column.button("Abrir ficha →", key=f"abrir_{group.grupo_id}"):
+        st.session_state["ficha_id"] = group.grupo_id
+        st.rerun()
+
+
+def render_ficha(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
+    """Full-page ficha: score, evidence, official context, query and draft."""
+
+    if st.button("← Volver a la bandeja", key="volver"):
+        st.session_state["ficha_id"] = None
+        st.rerun()
+    st.markdown(
+        estilos.ficha_header_html(group.tema, group.grupo_id, group.titulo_representativo),
+        unsafe_allow_html=True,
+    )
+    main_column, side_column = st.columns([2, 1], gap="large")
+    with main_column:
         if group.estado_evidencia == "insuficiente":
-            st.warning(guidance)
+            st.markdown(
+                estilos.alert_html(
+                    f"Prioridad {group.prioridad.capitalize()}: requiere investigación",
+                    "No es publicable.",
+                ),
+                unsafe_allow_html=True,
+            )
         else:
-            st.caption(guidance)
-        if group.es_repeticion:
-            st.warning("Repetición detectada: no aumenta la corroboración.")
-        else:
-            st.caption("Sin repetición detectada en este grupo.")
-        render_official_context(group.contexto_oficial, group.evento_usgs_id)
+            st.markdown(
+                estilos.alert_html(
+                    editorial_guidance(group.prioridad, group.estado_evidencia)
+                ),
+                unsafe_allow_html=True,
+            )
+        repetition = (
+            "Repetición detectada: no aumenta la corroboración."
+            if group.es_repeticion
+            else "Sin repetición detectada en este grupo."
+        )
+        st.markdown(
+            estilos.section_html(
+                "Resumen del reporte", f"{group.motivos}\n\n{repetition}"
+            ),
+            unsafe_allow_html=True,
+        )
         render_group_evidence(group, evidence_rows)
-        render_group_chat(group)
-        render_group_draft(group)
+        with st.container(key=f"sec-contexto-{group.grupo_id}"):
+            if group.contexto_oficial or group.evento_usgs_id:
+                render_official_context(group.contexto_oficial, group.evento_usgs_id)
+            else:
+                st.markdown(estilos.heading_html("Contexto oficial"), unsafe_allow_html=True)
+                st.markdown(
+                    '<div class="muted">Sin contexto oficial disponible para este registro.</div>',
+                    unsafe_allow_html=True,
+                )
+        with st.container(key=f"sec-consulta-{group.grupo_id}"):
+            st.markdown(estilos.heading_html("Consulta"), unsafe_allow_html=True)
+            render_group_chat(group)
+            render_group_draft(group)
+    with side_column:
+        st.markdown(
+            estilos.aside_html(
+                puntaje=group.puntaje,
+                prioridad=group.prioridad,
+                estado_evidencia=group.estado_evidencia,
+                componentes={
+                    "R": group.R, "I": group.I, "U": group.U, "N": group.N, "E": group.E
+                },
+                version_reglas=group.version_reglas,
+            ),
+            unsafe_allow_html=True,
+        )
+
+
+FILTER_KEYS = ("filtro_tema", "filtro_desde", "filtro_hasta")
 
 
 def main() -> None:
-    """Render the Spanish editorial inbox and its explicit data states."""
+    """Render the Spanish editorial inbox (or one ficha) and its data states."""
 
     st.set_page_config(page_title="Bandeja editorial", layout="wide")
     st.markdown(estilos.CSS, unsafe_allow_html=True)
+    # Widgets that are not rendered on a run lose their state; keep the filters
+    # alive while the ficha page is open so "Volver" restores them.
+    for key in FILTER_KEYS:
+        if key in st.session_state:
+            st.session_state[key] = st.session_state[key]
+    ficha_id = st.session_state.get("ficha_id")
     hero_slot = st.empty()
-    hero_slot.markdown(estilos.hero_html(0, 0, 0), unsafe_allow_html=True)
+    if not ficha_id:
+        hero_slot.markdown(estilos.hero_html(0, 0, 0), unsafe_allow_html=True)
 
     try:
         fingerprint = database_fingerprint(MOTOR_PATH, SIGNALS_PATH, FICHAS_PATH)
@@ -409,13 +488,40 @@ def main() -> None:
     if min_date is None or max_date is None:
         st.info("No hay grupos disponibles para revisión.")
         return
+
+    if ficha_id:
+        try:
+            every_group = load_inbox(
+                str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, None, min_date, max_date
+            )
+        except ScoreUnavailableError:
+            st.warning("Puntaje no disponible. Ejecute el motor de puntaje antes de consultar la bandeja.")
+            return
+        selected = next((g for g in every_group if g.grupo_id == ficha_id), None)
+        if selected is not None:
+            try:
+                evidence_rows = load_group_evidence(
+                    str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, selected.grupo_id
+                )
+            except duckdb.Error:
+                evidence_rows = []
+                st.warning("No se pudo cargar la evidencia de este grupo.")
+            render_ficha(selected, evidence_rows)
+            return
+        st.session_state["ficha_id"] = None  # the record no longer exists
+        hero_slot.markdown(estilos.hero_html(0, 0, 0), unsafe_allow_html=True)
+
     topic_column, start_column, end_column = st.columns(3)
     with topic_column:
-        selected_topic = st.selectbox("Tema", ["Todos", *topics])
+        selected_topic = st.selectbox("Tema", ["Todos", *topics], key="filtro_tema")
     with start_column:
-        start_date = st.date_input("Desde", value=min_date, min_value=min_date, max_value=max_date)
+        start_date = st.date_input(
+            "Desde", value=min_date, min_value=min_date, max_value=max_date, key="filtro_desde"
+        )
     with end_column:
-        end_date = st.date_input("Hasta", value=max_date, min_value=min_date, max_value=max_date)
+        end_date = st.date_input(
+            "Hasta", value=max_date, min_value=min_date, max_value=max_date, key="filtro_hasta"
+        )
 
     if start_date > end_date:
         st.warning("La fecha inicial debe ser anterior o igual a la fecha final.")
@@ -444,20 +550,13 @@ def main() -> None:
     )
     st.markdown(
         estilos.section_title_html(
-            "Bandeja editorial",
+            "Bandeja de revisión",
             "Orden: mayor puntaje, luego urgencia (U) y finalmente identificador.",
         ),
         unsafe_allow_html=True,
     )
     for rank, group in enumerate(groups, 1):
-        try:
-            evidence_rows = load_group_evidence(
-                str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, group.grupo_id
-            )
-        except duckdb.Error:
-            evidence_rows = []
-            st.warning("No se pudo cargar la evidencia de este grupo.")
-        render_group_card(group, evidence_rows, rank)
+        render_bandeja_row(group, rank)
 
 
 if __name__ == "__main__":

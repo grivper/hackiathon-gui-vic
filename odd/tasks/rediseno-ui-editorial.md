@@ -23,3 +23,12 @@ Style-only pass inside the expanders: `.info` replaces blue `st.info` (verificat
 - Existing tests that asserted `st.info` for these two spots now assert the HTML via `st.markdown` (implementation detail, same text).
 - pytest: 338 passed; dry-run OK; AppTest: no exceptions, 51 evidence cards, 50 empty-draft states.
 - Not checked: real browser (chat input / sub-expander contrast, theme) .
+
+## Correction: the design has two pages (Bandeja-html.zip / Ficha-html.zip)
+The exported mockups show the structure the user actually wants: a compact inbox row with an "Abrir ficha" button, and a separate full ficha page. Annex v2's "no ficha page" statement is superseded.
+- Bandeja: ranked rows (rank, tema, fecha, titular, chips, "Atención" score + bar) and a native button per row.
+- Ficha: dark header with "Volver a la bandeja", alert, Resumen, Evidencia y procedencias, Contexto oficial, Consulta (two expanders), and the aside (score 72px, Prioridad/Evidencia tiles, R/I/U/N/E, Reglas).
+- Navigation uses `st.session_state["ficha_id"]`; filter keys are re-asserted each run so "Volver" restores them.
+- Bug found and fixed: R/I/U/N/E are stored 0-1, not 0-100. The previous pass rendered every bar at ~1% width.
+- Topic ids get a human label (`servicios_publicos` -> "Servicios públicos").
+- pytest: 344 passed (incl. new AppTest navigation tests). Dry-run OK. Verified in Chrome at 1440px: both pages match the mockups.
