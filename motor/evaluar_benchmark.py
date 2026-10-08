@@ -8,17 +8,22 @@ las 40 consultas curadas. No corrige debilidades que el benchmark exponga (eso e
 decisión aparte) y no toca `data/benchmark.jsonl`.
 
 Limitaciones conocidas y explicitadas en el reporte:
-  - El chat (`ask_group_question`) es determinista y extractivo: nunca produce un tipo
-    de respuesta "contradiccion". Todo registro con `expected_response_type ==
-    "contradiccion"` se cuenta aparte como `contradiccion_no_soportada`, nunca oculto
-    dentro de una tasa de acierto que no podría alcanzar.
+  - El chat (`ask_group_question`) ahora soporta un tercer tipo de respuesta
+    observado, "contradiccion", cuando la ficha expone al menos 2 afirmaciones
+    citadas y el chat lista todas las versiones sin elegir ganadora (odd/tasks/
+    chat-contradiccion.md, C1). `type_ok` para un registro esperado
+    `contradiccion` exige que el tipo observado también sea `contradiccion`.
   - `forbidden_claims` es texto libre: no se puede chequear automáticamente. Queda
     listado para revisión manual humana, nunca verificado por este script.
 
 Lee:
   - data/benchmark.jsonl (--benchmark): 40 registros, ver tests/test_benchmark_schema.py.
-  - data/motor.duckdb (--motor), data/senales.duckdb (--senales), data/fichas.jsonl
-    (--fichas): solo lectura, pasados tal cual a `ask_group_question`.
+  - data/motor.duckdb (--motor), data/senales.duckdb (--senales): solo lectura.
+  - data/fichas.jsonl (--fichas): fichas reales, pasadas a `ask_group_question` para
+    todo registro sin `synthetic: true`.
+  - data/fichas_sinteticas.jsonl (--fichas-sinteticas): fichas sintéticas de los 6
+    grupos `SYN-*-CONTRADICTION`, pasadas solo para registros con `synthetic: true`.
+    Nunca se usan como camino por defecto de la app real.
 
 Escribe un reporte markdown (por defecto documentacion/evidencia-benchmark.md).
 Siempre termina con código 0 (es una medición), salvo que falte algún archivo de
@@ -41,6 +46,7 @@ RUTA_BENCHMARK_DEFECTO = "data/benchmark.jsonl"
 RUTA_MOTOR_DEFECTO = "data/motor.duckdb"
 RUTA_SENALES_DEFECTO = "data/senales.duckdb"
 RUTA_FICHAS_DEFECTO = "data/fichas.jsonl"
+RUTA_FICHAS_SINTETICAS_DEFECTO = "data/fichas_sinteticas.jsonl"
 RUTA_SALIDA_DEFECTO = "documentacion/evidencia-benchmark.md"
 
 
@@ -59,17 +65,24 @@ def evaluate_records(
     motor_path,
     signals_path,
     fichas_path,
+    fichas_sinteticas_path=None,
 ) -> list[dict]:
     """Corre cada registro contra `ask` (por defecto `ask_group_question`) y anota el
-    resultado. `ask` es inyectable para pruebas sin Ollama ni DuckDB reales."""
+    resultado. `ask` es inyectable para pruebas sin Ollama ni DuckDB reales.
+
+    Un registro con `synthetic: true` lee `fichas_sinteticas_path` (los 6 grupos
+    `SYN-*-CONTRADICTION`, que no existen en ninguna ficha real); todo otro registro
+    lee `fichas_path` como antes."""
     results = []
     for record in records:
+        is_synthetic = bool(record.get("synthetic"))
+        ruta_fichas = fichas_sinteticas_path if is_synthetic else fichas_path
         response = ask(
             record.get("target_group_id") or "",
             record["question"],
             motor_path=motor_path,
             signals_path=signals_path,
-            fichas_path=fichas_path,
+            fichas_path=ruta_fichas,
         )
         results.append(score_record(record, response))
     return results
@@ -79,17 +92,20 @@ def evaluate_records(
 
 def score_record(record: dict, response) -> dict:
     """Anota un único registro contra la respuesta observada del chat. No decide
-    pasar/fallar nada; solo describe lo que pasó."""
-    expected = record["expected_response_type"]
-    observed = "abstencion" if response.abstencion else "respuesta"
+    pasar/fallar nada; solo describe lo que pasó.
 
-    contradiccion_no_soportada = expected == "contradiccion"
-    if contradiccion_no_soportada:
-        # No existe un tipo de respuesta "contradiccion" en el chat: nunca puede ser
-        # type_ok, y se cuenta aparte en vez de mezclarse con los demás fallos.
-        type_ok = False
+    `observed_response_type` es de 3 vías: "contradiccion" cuando el chat marcó
+    `response.contradiccion`, si no "abstencion" cuando se abstuvo, si no
+    "respuesta". `type_ok` compara ese observado contra `expected_response_type`
+    directamente, sin casos especiales."""
+    expected = record["expected_response_type"]
+    if response.contradiccion:
+        observed = "contradiccion"
+    elif response.abstencion:
+        observed = "abstencion"
     else:
-        type_ok = observed == expected
+        observed = "respuesta"
+    type_ok = observed == expected
 
     required_ids = record.get("required_evidence_ids") or []
     if required_ids:
@@ -106,7 +122,6 @@ def score_record(record: dict, response) -> dict:
         "expected_response_type": expected,
         "observed_response_type": observed,
         "type_ok": type_ok,
-        "contradiccion_no_soportada": contradiccion_no_soportada,
         "required_evidence_recall": required_evidence_recall,
         "abstention_clean": abstention_clean,
         "forbidden_claims": record.get("forbidden_claims") or [],
@@ -139,19 +154,22 @@ def summarize(records: list[dict], results: list[dict]) -> dict:
             for nombre, items in grupos.items()
         }
 
-    recall_respuesta = [
-        r["required_evidence_recall"]
-        for r in results
-        if r["expected_response_type"] == "respuesta" and r["required_evidence_recall"] is not None
-    ]
+    def _mean_recall(expected_type: str) -> float:
+        values = [
+            r["required_evidence_recall"]
+            for r in results
+            if r["expected_response_type"] == expected_type and r["required_evidence_recall"] is not None
+        ]
+        return _mean(values)
+
     abstenciones = [r for r in results if r["abstention_clean"] is not None]
 
     return {
         "total": total,
         "overall_type_ok_rate": _rate([r["type_ok"] for r in results]),
-        "mean_recall_respuesta": _mean(recall_respuesta),
+        "mean_recall_respuesta": _mean_recall("respuesta"),
+        "mean_recall_contradiccion": _mean_recall("contradiccion"),
         "abstention_clean_rate": _rate([r["abstention_clean"] for r in abstenciones]),
-        "contradiccion_no_soportada_count": sum(1 for r in results if r["contradiccion_no_soportada"]),
         "failing_ids": [r["id"] for r in results if not r["type_ok"]],
         "by_expected_response_type": _group_by("expected_response_type"),
         "by_case": _group_by("case"),
@@ -171,13 +189,19 @@ def render_report(records: list[dict], results: list[dict], summary: dict, *, ma
         f"{100 * summary['mean_recall_respuesta']:.1f}%",
         f"- Tasa de abstención limpia (sin citas) sobre las respuestas observadas como "
         f"abstención: {100 * summary['abstention_clean_rate']:.1f}%",
-        f"- Casos `contradiccion` (sin soporte posible en el chat actual): "
-        f"{summary['contradiccion_no_soportada_count']}",
+        f"- Recall promedio de evidencia requerida (casos `contradiccion`, ambas "
+        f"versiones citadas): {100 * summary['mean_recall_contradiccion']:.1f}%",
         "",
         "**Estas métricas son medidas automáticas y deterministas/extractivas del chat "
         "actual** (`app.data.ask_group_question`); no evalúan calidad editorial ni "
         "verifican `forbidden_claims`, que requieren revisión humana (ver sección al "
         "final).",
+        "",
+        "**Alcance de los datos sintéticos:** los 16 registros `synthetic` (10 abstenciones "
+        "y 6 contradicciones) no usan las fichas reales. Las contradicciones se evalúan "
+        "contra `data/fichas_sinteticas.jsonl`, por lo que miden que el mecanismo funciona, "
+        "no la calidad sobre datos reales (ninguna de las 5 fichas reales es una "
+        "contradicción).",
         "",
         "## Resumen por tipo de respuesta esperado",
         "",
@@ -237,6 +261,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--motor", default=RUTA_MOTOR_DEFECTO, help="base DuckDB del motor")
     parser.add_argument("--senales", default=RUTA_SENALES_DEFECTO, help="base DuckDB de señales")
     parser.add_argument("--fichas", default=RUTA_FICHAS_DEFECTO, help="JSONL de fichas")
+    parser.add_argument(
+        "--fichas-sinteticas", default=RUTA_FICHAS_SINTETICAS_DEFECTO,
+        help="JSONL de fichas sintéticas usado solo para registros con synthetic: true",
+    )
     parser.add_argument("--salida", default=RUTA_SALIDA_DEFECTO, help="ruta del reporte markdown de salida")
     args = parser.parse_args(argv)
 
@@ -244,6 +272,7 @@ def main(argv: list[str] | None = None) -> int:
     ruta_motor = Path(args.motor)
     ruta_senales = Path(args.senales)
     ruta_fichas = Path(args.fichas)
+    ruta_fichas_sinteticas = Path(args.fichas_sinteticas)
     ruta_salida = Path(args.salida)
 
     for ruta, nombre in (
@@ -251,6 +280,7 @@ def main(argv: list[str] | None = None) -> int:
         (ruta_motor, "motor"),
         (ruta_senales, "señales"),
         (ruta_fichas, "fichas"),
+        (ruta_fichas_sinteticas, "fichas sintéticas"),
     ):
         if not ruta.exists():
             print(f"Error fatal: no existe el archivo de {nombre} {ruta}", file=sys.stderr)
@@ -262,6 +292,7 @@ def main(argv: list[str] | None = None) -> int:
         motor_path=ruta_motor,
         signals_path=ruta_senales,
         fichas_path=ruta_fichas,
+        fichas_sinteticas_path=ruta_fichas_sinteticas,
     )
     summary = summarize(records, results)
     manifest_hash = records[0].get("snapshot_manifest_sha256", "") if records else ""
@@ -273,6 +304,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Benchmark evaluado: {summary['total']} registros -> {ruta_salida}")
     print(f"  acierto de tipo global: {100 * summary['overall_type_ok_rate']:.1f}%")
     print(f"  recall promedio (respuesta): {100 * summary['mean_recall_respuesta']:.1f}%")
+    print(f"  recall promedio (contradiccion): {100 * summary['mean_recall_contradiccion']:.1f}%")
     print(f"  abstención limpia: {100 * summary['abstention_clean_rate']:.1f}%")
     if summary["failing_ids"]:
         print(f"  registros con type_ok=False: {', '.join(summary['failing_ids'])}")

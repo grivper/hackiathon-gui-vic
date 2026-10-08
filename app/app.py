@@ -234,8 +234,14 @@ def render_group_chat(group: InboxGroup) -> None:
                         "Abstención: no hay evidencia validada suficiente para responder "
                         "esta consulta; requiere investigación."
                     )
-                elif response.citas:
-                    st.caption(f"Citas verificadas: {', '.join(response.citas)}")
+                else:
+                    if response.contradiccion:
+                        st.warning(
+                            "Contradicción detectada entre las fuentes citadas; "
+                            "revisión pendiente."
+                        )
+                    if response.citas:
+                        st.caption(f"Citas verificadas: {', '.join(response.citas)}")
 
 
 def render_group_draft(group: InboxGroup) -> None:

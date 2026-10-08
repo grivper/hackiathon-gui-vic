@@ -2,19 +2,21 @@
 
 - Manifiesto de datos (snapshot): `81640bd328e6882032a4afb3fabc3ebc7a1d38d6c4d5f3676928d6debf3ec0e7`
 - Registros evaluados: 40
-- Acierto global de tipo de respuesta (type_ok): 67.5%
+- Acierto global de tipo de respuesta (type_ok): 82.5%
 - Recall promedio de evidencia requerida (casos `respuesta`): 27.1%
 - Tasa de abstención limpia (sin citas) sobre las respuestas observadas como abstención: 100.0%
-- Casos `contradiccion` (sin soporte posible en el chat actual): 6
+- Recall promedio de evidencia requerida (casos `contradiccion`, ambas versiones citadas): 100.0%
 
 **Estas métricas son medidas automáticas y deterministas/extractivas del chat actual** (`app.data.ask_group_question`); no evalúan calidad editorial ni verifican `forbidden_claims`, que requieren revisión humana (ver sección al final).
+
+**Alcance de los datos sintéticos:** los 16 registros `synthetic` (10 abstenciones y 6 contradicciones) no usan las fichas reales. Las contradicciones se evalúan contra `data/fichas_sinteticas.jsonl`, por lo que miden que el mecanismo funciona, no la calidad sobre datos reales (ninguna de las 5 fichas reales es una contradicción).
 
 ## Resumen por tipo de respuesta esperado
 
 | tipo esperado | n | acierto de tipo |
 |---|---|---|
 | abstencion | 10 | 100.0% |
-| contradiccion | 6 | 0.0% |
+| contradiccion | 6 | 100.0% |
 | respuesta | 24 | 70.8% |
 
 ## Resumen por caso (`case`)
@@ -23,7 +25,7 @@
 |---|---|---|
 | abstention | 6 | 100.0% |
 | adversarial | 4 | 100.0% |
-| contradiction | 6 | 0.0% |
+| contradiction | 6 | 100.0% |
 | official_context | 6 | 100.0% |
 | supported | 18 | 61.1% |
 
@@ -61,12 +63,12 @@
 | TAR023-028 | abstention | abstencion | abstencion | sí | 0% | sí |
 | TAR023-029 | abstention | abstencion | abstencion | sí | 0% | sí |
 | TAR023-030 | abstention | abstencion | abstencion | sí | 0% | sí |
-| TAR023-031 | contradiction | contradiccion | abstencion | no | 0% | sí |
-| TAR023-032 | contradiction | contradiccion | abstencion | no | 0% | sí |
-| TAR023-033 | contradiction | contradiccion | abstencion | no | 0% | sí |
-| TAR023-034 | contradiction | contradiccion | abstencion | no | 0% | sí |
-| TAR023-035 | contradiction | contradiccion | abstencion | no | 0% | sí |
-| TAR023-036 | contradiction | contradiccion | abstencion | no | 0% | sí |
+| TAR023-031 | contradiction | contradiccion | contradiccion | sí | 100% | n/a |
+| TAR023-032 | contradiction | contradiccion | contradiccion | sí | 100% | n/a |
+| TAR023-033 | contradiction | contradiccion | contradiccion | sí | 100% | n/a |
+| TAR023-034 | contradiction | contradiccion | contradiccion | sí | 100% | n/a |
+| TAR023-035 | contradiction | contradiccion | contradiccion | sí | 100% | n/a |
+| TAR023-036 | contradiction | contradiccion | contradiccion | sí | 100% | n/a |
 | TAR023-037 | adversarial | abstencion | abstencion | sí | 0% | sí |
 | TAR023-038 | adversarial | abstencion | abstencion | sí | 0% | sí |
 | TAR023-039 | adversarial | abstencion | abstencion | sí | 0% | sí |
@@ -199,4 +201,4 @@
 
 ## Registros con type_ok=False
 
-TAR023-007, TAR023-008, TAR023-009, TAR023-011, TAR023-016, TAR023-017, TAR023-018, TAR023-031, TAR023-032, TAR023-033, TAR023-034, TAR023-035, TAR023-036
+TAR023-007, TAR023-008, TAR023-009, TAR023-011, TAR023-016, TAR023-017, TAR023-018

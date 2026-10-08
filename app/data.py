@@ -54,6 +54,10 @@ class InboxGroup:
 
 DEFAULT_FICHAS_PATH = Path("data/fichas.jsonl")
 _ABSTENTION_MESSAGE = "No hay evidencia validada en esta ficha para responder a esa consulta."
+_CONTRADICTION_PENDING_REVIEW_LINE = (
+    "Revisión pendiente: las fuentes no coinciden; no se elige una versión. "
+    "Una persona debe revisarlas."
+)
 _QUERY_STOP_WORDS = frozenset({
     "como", "con", "cual", "cuales", "cuando", "donde", "este", "esta", "ficha",
     "grupo", "hay", "las", "los", "para", "paso", "que", "quien", "sobre", "una",
@@ -223,6 +227,7 @@ class ChatResponse:
     respuesta: str
     abstencion: bool
     citas: list[str]
+    contradiccion: bool = False
 
 
 def _query_terms(text: str) -> set[str]:
@@ -235,6 +240,33 @@ def _query_terms(text: str) -> set[str]:
         term for term in re.findall(r"[a-z0-9]+", normalized)
         if len(term) > 2 and term not in _QUERY_STOP_WORDS
     }
+
+
+def _answer_contradiction(ficha: GroupFicha) -> ChatResponse | None:
+    """Expose every cited version of a contradictory ficha without picking a winner.
+
+    Returns ``None`` when fewer than 2 claims carry a citation, so callers fall back
+    to the existing extractive behavior for that edge case.
+    """
+
+    cited_claims = [
+        (claim, citation_ids) for claim, citation_ids in ficha.claim_citations if citation_ids
+    ]
+    if len(cited_claims) < 2:
+        return None
+
+    lines = [
+        f"- {claim} [{', '.join(citation_ids)}]" for claim, citation_ids in cited_claims
+    ]
+    lines.append(_CONTRADICTION_PENDING_REVIEW_LINE)
+
+    all_citations: list[str] = []
+    for _, citation_ids in cited_claims:
+        for citation_id in citation_ids:
+            if citation_id not in all_citations:
+                all_citations.append(citation_id)
+
+    return ChatResponse("\n".join(lines), False, all_citations, True)
 
 
 def ask_group_question(
@@ -252,6 +284,10 @@ def ask_group_question(
     ficha = fetch_group_ficha(
         motor_path, signals_path or "", grupo_id, fichas_path=fichas_path
     )
+    if ficha is not None and ficha.tipo_respuesta == "contradiccion":
+        contradiction_response = _answer_contradiction(ficha)
+        if contradiction_response is not None:
+            return contradiction_response
     question_terms = _query_terms(question)
     if ficha is not None and question_terms:
         for claim, citation_ids in ficha.claim_citations:
