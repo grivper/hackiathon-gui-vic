@@ -50,3 +50,17 @@ Changes: prompt rule 5 and a compact contradiction example (system prompt about 
 - First attempt (longer example, +770 characters): `versiones` was filled but the label stayed `respuesta`, and the real group G-99f6cccc1c81 broke with `json_invalido`: output was cut at 224 tokens because prompt plus output filled the 2048-token window. Fix: shorter prompt, and a test that caps its size.
 - Final run: G-CONTRA -> `contradiccion`, two versions, `Revisión pendiente` line present (43 s). Three real groups where the outlets agree (G-99f6cccc1c81, G-c7e0cc7bcfce, G-43855276bc71) stay `respuesta` with no versions (50-78 s). No truncation.
 - Limit: one contradiction case and three controls, n=4; not a benchmark.
+
+## Run D: five final demo fichas (TAR-024 reconciliation)
+
+DRI-02R materialized the previously validated JSONL artifact without rerunning Ollama or mutating DuckDB. The artifact contains exactly five unique records: `G-c7e0cc7bcfce`, `G-99f6cccc1c81`, `G-58502841e2c7`, `G-49282420d812`, and `G-9dd46610ff94`.
+
+| grupo | evidencia | resultado | citas/cobertura | revisión |
+|---|---|---|---|---|
+| G-c7e0cc7bcfce | parcial | respuesta, 4 afirmaciones | 4 / 100% | nuevo |
+| G-99f6cccc1c81 | parcial | respuesta, 4 afirmaciones | 4 / 100% | nuevo |
+| G-58502841e2c7 | parcial | respuesta, 1 afirmación | 1 / 100% | nuevo |
+| G-49282420d812 | suficiente | respuesta, 2 afirmaciones | 2 / 100% | nuevo |
+| G-9dd46610ff94 | insuficiente | respuesta, 1 afirmación | 1 / 100% | nuevo |
+
+Independent structural validation confirmed the IDs, unique count, valid review states, and 100% citation coverage for every non-abstention. `G-9dd46610ff94` remains `estado_evidencia=insuficiente`. Focused citation, generation, and acceptance tests: 56 passed in 6.08 s.
