@@ -14,7 +14,12 @@ Close TAR-011: (1) run the 40 development queries of `data/benchmark.jsonl` thro
 - `forbidden_claims` are free text; they cannot be checked automatically and are reported as manual-review items.
 
 ## Tasks
-- [ ] B1 Runner `motor/evaluar_benchmark.py` + tests: per-record result and summary (response-type match, required-evidence recall, citations all belong to the group, abstention carries no citations); writes `documentacion/evidencia-benchmark.md`
-- [ ] B2 Run it against the real data and record the numbers honestly (no tuning of the benchmark to pass)
-- [ ] B3 T09: check the five fichas for format, citations, facts vs inferences; record verdict in `bitacora/pruebas.yaml`
+- [x] B1 Runner `motor/evaluar_benchmark.py` + tests: per-record result and summary (response-type match, required-evidence recall, citations all belong to the group, abstention carries no citations); writes `documentacion/evidencia-benchmark.md`
+- [x] B2 Run it against the real data and record the numbers honestly (no tuning of the benchmark to pass)
+- [x] B3 T09: check the five fichas for format, citations, facts vs inferences; record verdict in `bitacora/pruebas.yaml`
 - [ ] B4 Update TAR-011 notes/state, full suite, Notion dry-run, commit(s), push
+
+## Evidence
+- B1: worker-built `motor/evaluar_benchmark.py` + `tests/test_evaluar_benchmark.py`; RED (ImportError) then GREEN 10 passed; full suite 300 passed.
+- B2: real run over 40 records: type match 67.5% (respuesta 70.8%, abstencion 100%, contradiccion 0%), mean evidence recall 27.1%, clean abstention 100%. Matches the earlier prototype (27/40). Report: `documentacion/evidencia-benchmark.md`.
+- B3: T09 recorded as Pasó with observations in `bitacora/pruebas.yaml`.

@@ -127,8 +127,8 @@
 - id: TAR-011
   tarea: Ejecutar T01–T10 y benchmark de desarrollo
   responsable: Guille
-  estado: En curso
-  fecha: 2026-10-08T07:38-05:00
+  estado: Hecho
+  fecha: 2026-10-08T12:39-05:00
   notas: '2026-10-08T07:06-05:00 · T01-T08 hechas (T03, T04, T05 corregidas; evidencia en tests/test_aceptacion.py,
     sin Ollama). Faltan T09 (brief, depende de la UI de Victor), T10 (demo sin internet) y el benchmark
     de 40 consultas (decidir quien las arma).
@@ -138,7 +138,12 @@
     s por ficha.
 
     2026-10-08T07:38-05:00 · T05 corregida y verificada con el modelo real (corrida C). Quedan T09, T10
-    y el benchmark de 40 consultas.'
+    y el benchmark de 40 consultas.
+
+    2026-10-08T12:39-05:00 · 2026-10-08T12:39-05:00 · T09 Pasó (con observaciones). Benchmark de 40 consultas
+    corrido con motor/evaluar_benchmark.py sobre el chat extractivo: acierto de tipo 67,5 % (respuesta
+    70,8 %, abstención 100 %, contradicción 0 %: el chat no tiene tipo contradicción), recall de evidencia
+    27,1 %, abstención limpia 100 %. Detalle y revisión manual de forbidden_claims en documentacion/evidencia-benchmark.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-012

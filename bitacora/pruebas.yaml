@@ -124,7 +124,21 @@
 - id: T09
   prueba: Brief editorial
   esperado: Formato útil, citas pertinentes y distinción de hechos e inferencias
-  estado: Pendiente
+  estado: Pasó
+  fecha: 2026-10-08T12:39-05:00
+  entrada: Las 5 fichas finales de data/fichas.jsonl (borrador por afirmación citada)
+  observado: 'Formato útil: viñetas con cita [id · campo], fecha de detección y línea de Alcance; cobertura
+    de citas 1.0 en las 5; citas pertinentes. Hechos frente a inferencias: las 5 solo traen afirmaciones
+    atribuidas a un medio (Según X), sin inferencias propias, pero el borrador no lo declara de forma
+    explícita. Observaciones: G-58502841e2c7 menciona datos oficiales USGS en el alcance sin citarlos;
+    G-99f6cccc1c81 junta una cifra mensual con la anual de 2024 (rotulada como dato anual).'
+  evidencia: data/fichas.jsonl; odd/tasks/benchmark-t09.md
+  historial: '2026-10-08T12:39-05:00 · Pasó · Formato útil: viñetas con cita [id · campo], fecha de detección
+    y línea de Alcance; cobertura de citas 1.0 en las 5; citas pertinentes. Hechos frente a inferencias:
+    las 5 solo traen afirmaciones atribuidas a un medio (Según X), sin inferencias propias, pero el borrador
+    no lo declara de forma explícita. Observaciones: G-58502841e2c7 menciona datos oficiales USGS en el
+    alcance sin citarlos; G-99f6cccc1c81 junta una cifra mensual con la anual de 2024 (rotulada como dato
+    anual).'
 - id: T10
   prueba: Sin internet durante la demo
   esperado: Funcionar con snapshot y fallback documentado; dejar evidencia en Notion
