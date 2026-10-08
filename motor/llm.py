@@ -44,8 +44,10 @@ class ClienteOllama:
         temperature: float = 0,
         seed: int = 7,
         timeout: float = 600,
+        think: bool = False,
     ):
         self.modelo = modelo
+        self.think = think
         self.host = host.rstrip("/")
         self.timeout = timeout
         self.opciones = {
@@ -56,6 +58,7 @@ class ClienteOllama:
     def generar(self, sistema: str, usuario: str, esquema: dict) -> Respuesta:
         cuerpo = {
             "model": self.modelo, "stream": False, "format": esquema, "options": self.opciones,
+            "think": self.think,
             "messages": [{"role": "system", "content": sistema}, {"role": "user", "content": usuario}],
         }
         base = Respuesta(modelo=self.modelo, opciones=dict(self.opciones))
@@ -117,7 +120,7 @@ class ClienteFalso:
 
 
 def cliente_desde_entorno() -> ClienteOllama:
-    """Configura el cliente con LLM_MODELO, OLLAMA_HOST, LLM_NUM_THREAD, LLM_NUM_CTX, LLM_NUM_PREDICT."""
+    """Configura el cliente con LLM_MODELO, OLLAMA_HOST, LLM_NUM_THREAD, LLM_NUM_CTX, LLM_NUM_PREDICT, LLM_THINK."""
     env = os.environ
     return ClienteOllama(
         modelo=env.get("LLM_MODELO", MODELO_DEFECTO),
@@ -125,4 +128,5 @@ def cliente_desde_entorno() -> ClienteOllama:
         num_thread=int(env.get("LLM_NUM_THREAD", 4)),
         num_ctx=int(env.get("LLM_NUM_CTX", 4096)),
         num_predict=int(env.get("LLM_NUM_PREDICT", 768)),
+        think=env.get("LLM_THINK", "0").lower() in ("1", "true", "si", "sí"),
     )

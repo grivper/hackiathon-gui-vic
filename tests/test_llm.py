@@ -125,3 +125,17 @@ def test_medir_reporta_mediana_p95_y_validez_de_citas():
     assert res["salidas_validas"] == 3  # JSON con esquema correcto
     assert res["con_cita_valida"] == 2  # la tercera pierde su única afirmación (cifra inventada)
     assert res["tokens_por_segundo_mediana"] == 10.0
+
+
+def test_ollama_desactiva_el_razonamiento_por_defecto(servidor):
+    servidor["respuesta"] = _ok('{"x": "hola"}')
+    llm.ClienteOllama("m", host=servidor["host"]).generar("s", "u", ESQUEMA)
+    assert servidor["recibido"]["think"] is False  # los tokens de razonamiento no deben comerse el tope de salida
+
+
+def test_el_razonamiento_se_puede_activar_por_entorno(servidor, monkeypatch):
+    servidor["respuesta"] = _ok('{"x": "hola"}')
+    monkeypatch.setenv("LLM_THINK", "1")
+    monkeypatch.setenv("OLLAMA_HOST", servidor["host"])
+    llm.cliente_desde_entorno().generar("s", "u", ESQUEMA)
+    assert servidor["recibido"]["think"] is True

@@ -28,8 +28,7 @@ Turn an event group into a traceable draft: retrieve evidence in code, let a loc
 - [x] G7 Real run with Ollama when available, docs (interfaz-brief contract for `fichas`), bitacora TAR-009, commits
 
 ## Open decisions
-- Resolved: Ollama 0.40.0 installed without root in `~/.local/ollama` (binary + `models/`; start with `OLLAMA_MODELS=~/.local/ollama/models ~/.local/ollama/bin/ollama serve`). Models: qwen2.5:3b-instruct-q4_K_M and qwen2.5:7b-instruct-q4_K_M.
-- Model choice (Qwen2.5 7B vs Llama 3.1 8B) depends on Victor's latency measurement (TAR-022).
+- Resolved: Gemma 3 4B is the chosen local model for the final generation (DEC-008). It was the only model capable of maintaining 5/5 valid citations without crashing the 16 GB RAM laptop, provided it runs with `think=false` and bounded context (`LLM_NUM_CTX=2048`, `LLM_NUM_PREDICT=384`). Qwen3-8B, Qwen3-4B, and Gemma3n E2B were discarded due to sustained memory pressure or hallucinating citations.
 
 ## Evidence
 - G1: RED (collection error, module missing) then GREEN (8 passed); full suite 138 passed. Real data check: economia group returns 3 news + 4 World Bank indicators (latest non-null year, 2024); the USGS-linked group returns 2 news + event us6000ril5. Indicators are annual: the prompt/validator must keep year and unit visible (CU-02).
