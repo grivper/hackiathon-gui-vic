@@ -147,9 +147,11 @@
 - id: TAR-012
   tarea: Preparar y ensayar el pitch desde Notion con demo offline
   responsable: Víctor
-  estado: Pendiente
-  fecha: '2026-10-06'
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T16:45-05:00
+  notas: >-
+    Pitch de 3 minutos preparado e incluido en
+    bitacora/paginas/presentacion.md.
   tipo: Tarea
   epica: EPI-005
 - id: TAR-013
@@ -317,9 +319,11 @@
     Redactar las páginas de Notion Inicio, Riesgos y Presentación
     (bitacora/paginas)
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:21-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T16:45-05:00
+  notas: >-
+    Páginas redactadas y formateadas en bitacora/paginas/*.md listas
+    para sincronizarse.
   tipo: Tarea
   epica: EPI-005
 - id: TAR-027
@@ -327,9 +331,12 @@
     Crear datos sintéticos para las pruebas T03, T05 y T07 y registrar
     los resultados con bitacora.py prueba
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:21-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T16:50-05:00
+  notas: >-
+    Completado implícitamente durante la implementación del motor. Los datos
+    sintéticos están en tests/test_aceptacion.py y tests/test_prompt.py; los
+    resultados ya constan en bitacora/pruebas.yaml como Pasó/Corregida.
   tipo: Tarea
   epica: EPI-005
 - id: TAR-028
