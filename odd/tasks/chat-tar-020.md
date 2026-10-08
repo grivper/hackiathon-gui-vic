@@ -20,7 +20,7 @@ Provide a Streamlit chat interface inside the priority-inbox group card. Editors
 - [x] **CH-02 — Render the chat interface**
   - Add `st.chat_input` and `st.chat_message` inside a "Consulta" expander for the group card.
   - Maintain `st.session_state` chat history keyed by `grupo_id`.
-  - Evidence: tests pass `143 passed`; LSP clean.
+  - Evidence: tests pass `143 passed`; LSP clean; native review blocked by `Codex error: The usage limit has been reached`. Commit `bfea715`.
 
 ## Acceptance Criteria
 
