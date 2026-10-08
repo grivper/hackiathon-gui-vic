@@ -40,3 +40,6 @@ Full-bleed dark header (100vw), cream filter bar, title + note on one row, each 
 - Cause of the strip: the page scrollbar gutter (about 10px) stayed paper-coloured next to the full-bleed dark header; below ~1360px the header padding also went negative, clipping the text and adding a horizontal scrollbar.
 - Fix: hide the scroll gutter (wheel/touch/keys still scroll), `max()` padding, container padding 40px so header text and content align, no horizontal overflow.
 - "Volver a la bandeja" is now a solid cream pill at the top-left of the header, plus a second one at the end of the ficha. Verified in Chrome at 1100px and 1440px; clicking it returns to the inbox.
+
+## Pass 5: chat order (user screenshot)
+`st.chat_input` was called between the history loop and the new-message render, so Streamlit drew the first messages above the input and every new Q&A below it. Messages now go into a container created before the input. Regression test added (container is created before the input). Verified in Chrome with two consecutive questions: all four messages above the input.

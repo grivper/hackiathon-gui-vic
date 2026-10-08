@@ -355,3 +355,38 @@ def test_render_group_chat_unsupported_question_abstains_without_citations(monke
 
     assert any("abstención" in str(call).lower() for call in widgets["warning"].call_args_list)
     assert not any("Citas" in str(call) for call in widgets["caption"].call_args_list)
+
+
+def test_render_group_chat_keeps_the_input_below_every_message(monkeypatch):
+    """Messages must go into a container created BEFORE the input, otherwise Streamlit
+    draws the new question and answer under the input and the history above it."""
+
+    calls = []
+    history_box = MagicMock()
+    history_box.__enter__ = Mock(side_effect=lambda: calls.append("enter_box"))
+    history_box.__exit__ = Mock(return_value=False)
+
+    def fake_container(*args, **kwargs):
+        calls.append("container")
+        return history_box
+
+    def fake_chat_input(*args, **kwargs):
+        calls.append("chat_input")
+        return "¿Qué pasó?"
+
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", fake_container)
+    monkeypatch.setattr("app.app.st.chat_input", fake_chat_input)
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.spinner", MagicMock())
+    monkeypatch.setattr("app.app.st.session_state", {})
+    for name in ("caption", "warning", "markdown"):
+        monkeypatch.setattr(f"app.app.st.{name}", Mock())
+    monkeypatch.setattr(
+        "app.app.ask_group_question", Mock(return_value=ChatResponse("Hecho.", False, []))
+    )
+
+    render_group_chat(_GROUP)
+
+    assert calls.index("container") < calls.index("chat_input")
+    assert "enter_box" in calls

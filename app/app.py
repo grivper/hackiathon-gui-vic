@@ -242,49 +242,55 @@ def render_group_chat(group: InboxGroup) -> None:
         if chat_key not in st.session_state:
             st.session_state[chat_key] = []
 
-        for msg in st.session_state[chat_key]:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-                if msg.get("citas"):
-                    st.caption(f"Citas: {', '.join(msg['citas'])}")
+        # The history lives in a container created before the input, so new
+        # messages are drawn above the input instead of below it.
+        history = st.container()
+        question = st.chat_input("Escribí tu consulta acá...", key=f"input_{group.grupo_id}")
 
-        if question := st.chat_input("Escribí tu consulta acá...", key=f"input_{group.grupo_id}"):
-            # Immediate render of user question
-            st.session_state[chat_key].append({"role": "user", "content": question})
-            with st.chat_message("user"):
-                st.markdown(question)
+        with history:
+            for msg in st.session_state[chat_key]:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+                    if msg.get("citas"):
+                        st.caption(f"Citas: {', '.join(msg['citas'])}")
 
-            with st.spinner("Buscando en la evidencia validada..."):
-                response = ask_group_question(
-                    group.grupo_id,
-                    question,
-                    motor_path=MOTOR_PATH,
-                    signals_path=SIGNALS_PATH,
-                    fichas_path=FICHAS_PATH,
+            if question:
+                st.session_state[chat_key].append({"role": "user", "content": question})
+                with st.chat_message("user"):
+                    st.markdown(question)
+
+                with st.spinner("Buscando en la evidencia validada..."):
+                    response = ask_group_question(
+                        group.grupo_id,
+                        question,
+                        motor_path=MOTOR_PATH,
+                        signals_path=SIGNALS_PATH,
+                        fichas_path=FICHAS_PATH,
+                    )
+
+                st.session_state[chat_key].append(
+                    {
+                        "role": "assistant",
+                        "content": response.respuesta,
+                        "citas": response.citas,
+                    }
                 )
 
-            msg_data = {
-                "role": "assistant",
-                "content": response.respuesta,
-                "citas": response.citas
-            }
-            st.session_state[chat_key].append(msg_data)
-
-            with st.chat_message("assistant"):
-                st.markdown(response.respuesta)
-                if response.abstencion:
-                    st.warning(
-                        "Abstención: no hay evidencia validada suficiente para responder "
-                        "esta consulta; requiere investigación."
-                    )
-                else:
-                    if response.contradiccion:
+                with st.chat_message("assistant"):
+                    st.markdown(response.respuesta)
+                    if response.abstencion:
                         st.warning(
-                            "Contradicción detectada entre las fuentes citadas; "
-                            "revisión pendiente."
+                            "Abstención: no hay evidencia validada suficiente para responder "
+                            "esta consulta; requiere investigación."
                         )
-                    if response.citas:
-                        st.caption(f"Citas verificadas: {', '.join(response.citas)}")
+                    else:
+                        if response.contradiccion:
+                            st.warning(
+                                "Contradicción detectada entre las fuentes citadas; "
+                                "revisión pendiente."
+                            )
+                        if response.citas:
+                            st.caption(f"Citas verificadas: {', '.join(response.citas)}")
 
 
 def render_group_draft(group: InboxGroup) -> None:
