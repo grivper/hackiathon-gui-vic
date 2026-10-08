@@ -124,10 +124,14 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .stButton>button,.stLinkButton>a{border-radius:999px;background:#15171c;color:#f4f1ea;border:0;min-height:44px;font-weight:600;padding:0 20px}
 .stButton>button:hover,.stLinkButton>a:hover{background:#a3162f;color:#fff}
 .stButton>button p,.stLinkButton>a p{color:inherit}
+/* back button on the dark header: ghost style */
 .st-key-volver{position:relative;z-index:5;margin-bottom:-88px;width:fit-content}
-.st-key-volver button,.st-key-volver-abajo button{background:#f4f1ea;color:#15171c;padding:0 20px;white-space:nowrap}
-.st-key-volver button:hover,.st-key-volver-abajo button:hover{background:#a3162f;color:#fff}
-.st-key-volver button p,.st-key-volver-abajo button p{white-space:nowrap;color:inherit}
+.st-key-volver button{background:transparent;color:#f4f1ea;border:1px solid rgba(244,241,234,.38);
+  border-radius:999px;min-height:44px;padding:0 18px;font-size:15px;font-weight:600;margin-bottom:14px;
+  white-space:nowrap;transition:background .15s,border-color .15s}
+.st-key-volver button p{color:inherit;margin:0;white-space:nowrap}
+.st-key-volver button:hover{background:rgba(244,241,234,.12);border-color:#f0a7b2;color:#fff}
+.st-key-volver button:focus-visible{outline:2px solid #f0a7b2;outline-offset:2px}
 .st-key-volver-abajo{margin-top:8px}
 div[data-baseweb="select"]>div,.stDateInput input{background:#fff;border:1px solid #cfc9b9;border-radius:10px;min-height:44px}
 div[data-testid="stExpander"]{border:1px solid #ddd8cb;border-radius:14px;background:#fbfaf6;margin-top:8px}
