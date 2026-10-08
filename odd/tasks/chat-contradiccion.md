@@ -16,8 +16,12 @@ Make `app.data.ask_group_question` answer a contradictory ficha by exposing ever
 - Caveat to report: the new benchmark gain measures the mechanism on synthetic fixtures, not real-data quality.
 
 ## Tasks
-- [ ] C1 Chat: `ChatResponse.contradiccion`, answer lists all versions with citations + pending-review line; tests first
-- [ ] C2 UI: chat renders the contradiction warning (app/app.py)
-- [ ] C3 Synthetic fichas file for the 6 SYN-*-CONTRADICTION groups
-- [ ] C4 Runner: observed type 3-way, synthetic records read synthetic fichas, contradiccion scored; tests
-- [ ] C5 Re-run real benchmark, regenerate report, record, full suite, commit(s), push
+- [x] C1 Chat: `ChatResponse.contradiccion`, answer lists all versions with citations + pending-review line; tests first
+- [x] C2 UI: chat renders the contradiction warning (app/app.py)
+- [x] C3 Synthetic fichas file for the 6 SYN-*-CONTRADICTION groups
+- [x] C4 Runner: observed type 3-way, synthetic records read synthetic fichas, contradiccion scored; tests
+- [x] C5 Re-run real benchmark, regenerate report, record, full suite, commit(s), push
+
+## Evidence
+- C1-C4: worker-built; RED by stashing each source file (4/1/7 failures), GREEN: 15 chat + 15 runner tests; full suite 320 passed.
+- C5: real benchmark re-run: type match 67.5% -> 82.5%; contradiccion 0/6 -> 6/6, recall 100%; respuesta unchanged 70.8% (7 still abstain). Report states the synthetic scope caveat.

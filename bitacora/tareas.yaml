@@ -128,7 +128,7 @@
   tarea: Ejecutar T01–T10 y benchmark de desarrollo
   responsable: Guille
   estado: Hecho
-  fecha: 2026-10-08T12:39-05:00
+  fecha: 2026-10-08T12:57-05:00
   notas: '2026-10-08T07:06-05:00 · T01-T08 hechas (T03, T04, T05 corregidas; evidencia en tests/test_aceptacion.py,
     sin Ollama). Faltan T09 (brief, depende de la UI de Victor), T10 (demo sin internet) y el benchmark
     de 40 consultas (decidir quien las arma).
@@ -143,7 +143,13 @@
     2026-10-08T12:39-05:00 · 2026-10-08T12:39-05:00 · T09 Pasó (con observaciones). Benchmark de 40 consultas
     corrido con motor/evaluar_benchmark.py sobre el chat extractivo: acierto de tipo 67,5 % (respuesta
     70,8 %, abstención 100 %, contradicción 0 %: el chat no tiene tipo contradicción), recall de evidencia
-    27,1 %, abstención limpia 100 %. Detalle y revisión manual de forbidden_claims en documentacion/evidencia-benchmark.md.'
+    27,1 %, abstención limpia 100 %. Detalle y revisión manual de forbidden_claims en documentacion/evidencia-benchmark.md.
+
+    2026-10-08T12:57-05:00 · 2026-10-08T12:57-05:00 · Mejora: el chat ahora soporta el tipo contradicción
+    (expone todas las versiones citadas y la revisión pendiente, sin elegir ganadora). Acierto de tipo
+    global 67,5 % -> 82,5 %; contradicción 0 -> 100 % (6/6) y recall 100 %. Ojo: esas 6 consultas se evalúan
+    contra fichas sintéticas (data/fichas_sinteticas.jsonl); miden el mecanismo, no calidad sobre datos
+    reales. Siguen fallando 7 consultas de respuesta (término/recall).'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-012
