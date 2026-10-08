@@ -55,7 +55,7 @@ def _indicadores(con: duckdb.DuckDBPyConnection, tema: str, reglas: dict) -> lis
         return []
     filas = con.execute(
         """
-        SELECT id_evidencia, indicador_id, indicador_nombre, anio, valor, unidad, fuente_url
+        SELECT id_evidencia, indicador_id, indicador_nombre, anio, valor, unidad, fuente_url, pais_iso3
         FROM senales.indicadores
         WHERE pais_iso3 = 'PAN' AND valor IS NOT NULL
         QUALIFY row_number() OVER (PARTITION BY indicador_id ORDER BY anio DESC) = 1
@@ -65,7 +65,7 @@ def _indicadores(con: duckdb.DuckDBPyConnection, tema: str, reglas: dict) -> lis
     return [
         {
             "id_evidencia": f[0], "tipo": "indicador",
-            "campos": {"indicador_nombre": f[2], "anio": f[3], "valor": f[4], "unidad": f[5], "fuente_url": f[6]},
+            "campos": {"indicador_nombre": f[2], "pais_iso3": f[7], "anio": f[3], "valor": f[4], "unidad": f[5], "fuente_url": f[6]},
         }
         for f in filas
         if any(f[1].startswith(p) for p in prefijos)

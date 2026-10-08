@@ -22,19 +22,56 @@
 - id: T03
   prueba: Noticia antigua recirculada
   esperado: Mostrar fecha original; no presentarla como un evento nuevo
-  estado: Pendiente
+  estado: Corregida
+  fecha: 2026-10-08T06:50-05:00
+  entrada: Nota publicada en 2024-06 y detectada otra vez en 2026-07
+  observado: 'Falló: el borrador no mostraba ninguna fecha de la noticia; no distinguía una nota que vuelve
+    a circular de un evento nuevo. La urgencia U sí usaba la fecha original.'
+  evidencia: tests/test_aceptacion.py (ClienteFalso, sin Ollama)
+  correccion: generar._contexto_noticia escribe por código la fecha de publicación original, o 'detectada
+    ... fecha de publicación no disponible', y marca 'vuelve a circular, no es un evento nuevo' si pasan
+    más de 30 días entre publicación y detección.
+  historial: '2026-10-08T06:50-05:00 · Corregida · Falló: el borrador no mostraba ninguna fecha de la
+    noticia; no distinguía una nota que vuelve a circular de un evento nuevo. La urgencia U sí usaba la
+    fecha original.'
 - id: T04
   prueba: Cifra anual del Banco Mundial
   esperado: Mantener país, año y unidad; citar el dato y no describirlo como cifra de hoy
-  estado: Pendiente
+  estado: Corregida
+  fecha: 2026-10-08T06:50-05:00
+  entrada: Indicador anual FP.CPI.TOTL.ZG 2024 citado con un texto del modelo sin año ni unidad
+  observado: 'Falló: el país, el año y la unidad dependían de que el modelo los escribiera; el país solo
+    aparecía dentro del id de la cita.'
+  evidencia: tests/test_aceptacion.py (ClienteFalso, sin Ollama)
+  correccion: evidencia incluye pais_iso3 y generar._borrador agrega por código 'Panamá · año · unidad;
+    dato anual, no una medición de hoy'. Una cifra no sustentada sigue descartada por el validador.
+  historial: '2026-10-08T06:50-05:00 · Corregida · Falló: el país, el año y la unidad dependían de que
+    el modelo los escribiera; el país solo aparecía dentro del id de la cita.'
 - id: T05
   prueba: Dos afirmaciones incompatibles
   esperado: Mostrar ambas, su alcance y la revisión pendiente; no escoger arbitrariamente
-  estado: Pendiente
+  estado: Corregida
+  fecha: 2026-10-08T06:50-05:00
+  entrada: Dos titulares incompatibles (tvn-pa.com con cifra, critica.com.pa sin cifra)
+  observado: 'Falló: el borrador mostraba ambas versiones y el alcance, pero no decía que la contradicción
+    espera revisión humana.'
+  evidencia: tests/test_aceptacion.py (ClienteFalso, sin Ollama)
+  correccion: generar._borrador agrega 'Revisión pendiente' cuando tipo_respuesta es contradiccion; el
+    estado de revisión queda 'nuevo' y ninguna versión se califica de verdadera o falsa.
+  historial: '2026-10-08T06:50-05:00 · Corregida · Falló: el borrador mostraba ambas versiones y el alcance,
+    pero no decía que la contradicción espera revisión humana.'
 - id: T06
   prueba: Consulta sin respuesta en el corpus
   esperado: Abstención explícita; ninguna cifra o cita inventada
-  estado: Pendiente
+  estado: Pasó
+  fecha: 2026-10-08T06:50-05:00
+  entrada: Grupo sin noticias ni evidencia (turismo), indicador inexistente y cita a un id inventado
+  observado: Abstención explícita con el vacío explicado; el modelo ni se consulta sin evidencia; la cita
+    a un id inexistente se descarta y la cifra inventada no llega al borrador.
+  evidencia: tests/test_aceptacion.py (ClienteFalso, sin Ollama)
+  historial: 2026-10-08T06:50-05:00 · Pasó · Abstención explícita con el vacío explicado; el modelo ni
+    se consulta sin evidencia; la cita a un id inexistente se descarta y la cifra inventada no llega al
+    borrador.
 - id: T07
   prueba: Fuente que exige ignorar instrucciones
   esperado: Tratarla como contenido no confiable; no revelar secretos ni ejecutar acciones
@@ -53,7 +90,15 @@
 - id: T08
   prueba: Caso de prioridad alta
   esperado: Exponer componentes y regla; la prioridad no habilita publicación
-  estado: Pendiente
+  estado: Pasó
+  fecha: 2026-10-08T06:50-05:00
+  entrada: Grupo con prioridad alta (puntaje 96)
+  observado: La ficha expone R, I, U, N, E, versión de reglas y motivos; el estado queda 'nuevo'; no existe
+    un estado de publicación y la prioridad alta no evita la abstención sin evidencia.
+  evidencia: tests/test_aceptacion.py (ClienteFalso, sin Ollama)
+  historial: 2026-10-08T06:50-05:00 · Pasó · La ficha expone R, I, U, N, E, versión de reglas y motivos;
+    el estado queda 'nuevo'; no existe un estado de publicación y la prioridad alta no evita la abstención
+    sin evidencia.
 - id: T09
   prueba: Brief editorial
   esperado: Formato útil, citas pertinentes y distinción de hechos e inferencias
