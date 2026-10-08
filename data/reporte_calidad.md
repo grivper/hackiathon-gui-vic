@@ -1,10 +1,10 @@
 # Reporte de calidad
 
-Generado: 2026-10-07T03:11:14.280350+00:00
-Hash del manifest (mismo hash = mismos datos): `4af69b94c840d2722f654c2df0c6d0063ef3004455a937620e1dfde6c4a32187`
+Generado: 2026-10-08T04:14:58.310712+00:00
+Hash del manifest (mismo hash = mismos datos): `d4068230602a0a387e07799daa5ee8fc4bf66079dff84f16362a16b17ce2bda4`
 
 ## Filas por tabla
-- noticias: 30154
+- noticias: 30197
 - indicadores: 540
 - eventos (USGS): 208
 - excluidos: 0
@@ -16,10 +16,10 @@ Hash del manifest (mismo hash = mismos datos): `4af69b94c840d2722f654c2df0c6d006
 - url: 0
 - medio: 0
 - idioma: 0
-- fecha_publicacion: 30004
-- fecha_deteccion: 49
+- fecha_publicacion: 30001
+- fecha_deteccion: 92
 - fecha_extraccion: 0
-- tema: 30003
+- tema: 30046
 - origen: 0
 - alcance_texto: 0
 
@@ -55,13 +55,13 @@ Hash del manifest (mismo hash = mismos datos): `4af69b94c840d2722f654c2df0c6d006
 - 2026-07: 2889
 - 2026-08: 2609
 - 2026-09: 2815
-- 2026-10: 570
+- 2026-10: 613
 
 ## Noticias por origen
-- tvn_sitemap: 29853
+- tvn_sitemap: 29850
 - gdelt: 151
-- tvn_rss|tvn_sitemap: 101
-- tvn_rss: 49
+- tvn_rss|tvn_sitemap: 104
+- tvn_rss: 92
 
 ## Cuadrícula Banco Mundial (país × indicador × año)
 - países: 6, indicadores: 6, años: 15
