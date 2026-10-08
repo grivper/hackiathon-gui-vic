@@ -41,8 +41,11 @@ lo commitea; la otra solo hace `git pull`.
 
 Para el paquete oficial, el contrato (sección 7) excluye lo que esté fuera de [2024-01-01, 2025-10-01). Por defecto
 la carga no filtra por fecha (el RSS de desarrollo solo trae noticias recientes). Para aplicar el rango:
-`python motor/cargar_db.py --rango 2024-01-01 2025-10-01`. Las noticias fuera de rango van a la tabla `excluidos`
-(las de fecha vacía se conservan) y con este flag la base siempre se reconstruye.
+`make db-oficial` (equivale a `python motor/cargar_db.py --rango 2024-01-01 2025-10-01`). Las noticias fuera de
+rango van a la tabla `excluidos` (las de fecha vacía se conservan) y la base siempre se reconstruye. Flujo para
+cargar el paquete oficial: copiar sus archivos a `data/processed/` y `data/manifest.json`, correr
+`make db-oficial` y después `make motor`, y revisar `data/reporte_calidad.md`. No commitear esos archivos
+oficiales sin acordarlo antes con quien es dueño del snapshot.
 
 ## Motor: clasificación por tema y agrupación de eventos
 

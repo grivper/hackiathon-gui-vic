@@ -1,4 +1,4 @@
-.PHONY: instalar datos procesar test sync db arrancar modelos clasificar agrupar puntuar generar motor muestra evaluar
+.PHONY: instalar datos procesar test sync db db-oficial arrancar modelos clasificar agrupar puntuar generar motor muestra evaluar
 
 instalar:
 	pip install -r requirements.txt
@@ -17,6 +17,9 @@ sync:           ## sincroniza la bitácora con Notion
 
 db:             ## carga data/processed/* en DuckDB y genera el reporte de calidad
 	python motor/cargar_db.py
+
+db-oficial:     ## como db, pero aplica el rango del contrato [2024-01-01, 2025-10-01); siempre reconstruye
+	python motor/cargar_db.py --rango 2024-01-01 2025-10-01
 
 arrancar: instalar db  ## instala dependencias y carga la base DuckDB (setup en un comando)
 
