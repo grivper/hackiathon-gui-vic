@@ -42,6 +42,41 @@ class InboxGroup:
 
 
 @dataclass(frozen=True)
+class ChatResponse:
+    """A mock or future LLM response with explicit citations."""
+
+    respuesta: str
+    abstencion: bool
+    citas: list[str]
+
+
+def ask_group_question(grupo_id: str, question: str) -> ChatResponse:
+    """Mock CU-04: Returns a cited response or abstention.
+
+    Pending Guille's TAR-009 LLM generation integration.
+    """
+
+    question_lower = question.lower()
+    if "cuándo" in question_lower or "cuando" in question_lower or "fecha" in question_lower:
+        return ChatResponse(
+            respuesta="El evento ocurrió a principios de enero de 2026, según reportan múltiples fuentes locales.",
+            abstencion=False,
+            citas=["E-1", "E-2"]
+        )
+    if "quién" in question_lower or "quien" in question_lower:
+        return ChatResponse(
+            respuesta="El anuncio fue realizado por representantes del sector oficial.",
+            abstencion=False,
+            citas=["E-4"]
+        )
+    return ChatResponse(
+        respuesta="No hay evidencia suficiente en este grupo de noticias para responder a esa consulta.",
+        abstencion=True,
+        citas=[]
+    )
+
+
+@dataclass(frozen=True)
 class EvidenceRow:
     """A read-only group member and its source metadata."""
 

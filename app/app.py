@@ -12,6 +12,7 @@ from app.data import (
     EvidenceRow,
     InboxGroup,
     ScoreUnavailableError,
+    ask_group_question,
     fetch_group_evidence,
     fetch_inbox_filter_options,
     fetch_inbox_groups,
@@ -166,6 +167,47 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
                 )
 
 
+def render_group_chat(group: InboxGroup) -> None:
+    """Render a chat interface for cited CU-04 queries per group."""
+
+    with st.expander("Consulta citada (IA)", expanded=False):
+        st.caption("Consultá sobre este grupo. La IA responderá basándose **solo** en la evidencia.")
+
+        chat_key = f"chat_{group.grupo_id}"
+        if chat_key not in st.session_state:
+            st.session_state[chat_key] = []
+
+        for msg in st.session_state[chat_key]:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+                if msg.get("citas"):
+                    st.caption(f"Citas: {', '.join(msg['citas'])}")
+
+        if question := st.chat_input("Escribí tu consulta acá...", key=f"input_{group.grupo_id}"):
+            # Immediate render of user question
+            st.session_state[chat_key].append({"role": "user", "content": question})
+            with st.chat_message("user"):
+                st.markdown(question)
+
+            # Mock LLM generation
+            with st.spinner("Buscando en la evidencia..."):
+                response = ask_group_question(group.grupo_id, question)
+
+            msg_data = {
+                "role": "assistant",
+                "content": response.respuesta,
+                "citas": response.citas
+            }
+            st.session_state[chat_key].append(msg_data)
+
+            with st.chat_message("assistant"):
+                st.markdown(response.respuesta)
+                if response.abstencion:
+                    st.warning("Abstención: La respuesta puede estar limitada por falta de datos.")
+                if response.citas:
+                    st.caption(f"Citas: {', '.join(response.citas)}")
+
+
 def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Render score, evidence, corroboration, and repetition as distinct facts."""
 
@@ -196,6 +238,7 @@ def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> No
             st.caption("Sin repetición detectada en este grupo.")
         render_official_context(group.contexto_oficial, group.evento_usgs_id)
         render_group_evidence(group, evidence_rows)
+        render_group_chat(group)
 
 
 def main() -> None:
