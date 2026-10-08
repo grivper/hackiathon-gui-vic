@@ -303,9 +303,13 @@
 - id: TAR-025
   tarea: Medir tiempo manual frente a asistido en una tarea equivalente
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:21-05:00
-  notas: ''
+  estado: Hecho
+  fecha: 2026-10-08T16:30-05:00
+  notas: >-
+    Prueba realizada con el grupo de 5 noticias de logística/Canal. Tiempo
+    manual estimado en la redacción: ~20 minutos (búsqueda, cruce de fuentes y
+    redacción). Tiempo asistido: ~1.25 minutos (~63s de generación + 10s de
+    revisión). Reducción del tiempo del 93%. Dato clave para el pitch.
   tipo: Tarea
   epica: EPI-005
 - id: TAR-026
