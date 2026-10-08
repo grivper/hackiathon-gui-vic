@@ -184,8 +184,8 @@
 - id: TAR-018
   tarea: 'Interfaz: ficha de evidencia del grupo con procedencias, corroboración y fecha original'
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-06T23:18-05:00
+  estado: Hecho
+  fecha: 2026-10-07T20:32-05:00
   notas: ''
   tipo: Tarea
   epica: EPI-004

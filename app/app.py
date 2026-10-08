@@ -9,8 +9,10 @@ import duckdb
 import streamlit as st
 
 from app.data import (
+    EvidenceRow,
     InboxGroup,
     ScoreUnavailableError,
+    fetch_group_evidence,
     fetch_inbox_filter_options,
     fetch_inbox_groups,
 )
@@ -43,6 +45,18 @@ def load_inbox_filter_options(
     """Cache uncapped filter choices until either database file changes."""
 
     return fetch_inbox_filter_options(motor_path, signals_path)
+
+
+@st.cache_data
+def load_group_evidence(
+    motor_path: str,
+    signals_path: str,
+    database_identity: tuple[tuple[int, int], tuple[int, int]],
+    grupo_id: str,
+) -> list[EvidenceRow]:
+    """Cache read-only group evidence until either database file changes."""
+
+    return fetch_group_evidence(motor_path, signals_path, grupo_id)
 
 
 @st.cache_data
@@ -79,7 +93,62 @@ def editorial_guidance(prioridad: str, estado_evidencia: str) -> str:
     return f"Evidencia: {estado_evidencia}. La prioridad no aprueba publicación."
 
 
-def render_group_card(group: InboxGroup) -> None:
+def evidence_date_label(value: date | datetime | None) -> str:
+    """Format source dates without substituting one metadata field for another."""
+
+    if value is None:
+        return "No disponible"
+    return value.strftime("%d/%m/%Y")
+
+
+def evidence_verification_guidance(estado_evidencia: str) -> str:
+    """State the remaining editorial verification without approving publication."""
+
+    if estado_evidencia == "insuficiente":
+        return (
+            "Por verificar: confirme el hecho con procedencias distintas; "
+            "requiere investigación y no es publicable."
+        )
+    return (
+        "Por verificar: confirme atribución, contexto y vigencia antes de publicar; "
+        "la evidencia no sustituye la verificación editorial."
+    )
+
+
+def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
+    """Render read-only member metadata, keeping corroboration separate from volume."""
+
+    with st.expander("Detalle de evidencia", expanded=False):
+        st.caption(
+            f"{group.n_noticias} artículos agrupados. La corroboración considera "
+            f"{group.corroboracion} procedencias distintas, no repeticiones del mismo origen."
+        )
+        st.info(evidence_verification_guidance(group.estado_evidencia))
+        if not evidence_rows:
+            st.caption("No hay miembros de evidencia disponibles para este grupo.")
+            return
+
+        for row in evidence_rows:
+            st.markdown(f"**{row.titulo or 'Titular no disponible'}**")
+            if row.url:
+                st.link_button("Abrir fuente", row.url)
+            st.caption(
+                f"Medio: {row.medio or 'No disponible'} · "
+                f"Procedencia: {row.procedencia or 'No disponible'}"
+            )
+            st.caption(
+                "Fecha de publicación/original: "
+                f"{evidence_date_label(row.fecha_publicacion)} · "
+                f"Fecha de detección: {evidence_date_label(row.fecha_deteccion)}"
+            )
+            if row.similitud_al_centroide is not None:
+                st.caption(
+                    "Similitud con el grupo: "
+                    f"{row.similitud_al_centroide:.0%} (referencia para revisar la agrupación)."
+                )
+
+
+def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
     """Render score, evidence, corroboration, and repetition as distinct facts."""
 
     group_date = _group_date(group)
@@ -92,7 +161,7 @@ def render_group_card(group: InboxGroup) -> None:
         evidence.metric("Estado de evidencia", group.estado_evidencia)
         articles, sources = st.columns(2)
         articles.metric("Artículos agrupados", group.n_noticias)
-        sources.metric("Corroboración (fuentes distintas)", group.corroboracion)
+        sources.metric("Corroboración (procedencias distintas)", group.corroboracion)
         st.caption(
             f"Reglas: {group.version_reglas} · Componentes R/I/U/N/E: "
             f"{group.R:.1f}/{group.I:.1f}/{group.U:.1f}/{group.N:.1f}/{group.E:.1f}"
@@ -107,6 +176,7 @@ def render_group_card(group: InboxGroup) -> None:
             st.warning("Repetición detectada: no aumenta la corroboración.")
         else:
             st.caption("Sin repetición detectada en este grupo.")
+        render_group_evidence(group, evidence_rows)
 
 
 def main() -> None:
@@ -157,7 +227,13 @@ def main() -> None:
         return
 
     for group in groups:
-        render_group_card(group)
+        try:
+            evidence_rows = load_group_evidence(
+                str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, group.grupo_id
+            )
+        except duckdb.Error:
+            evidence_rows = []
+        render_group_card(group, evidence_rows)
 
 
 if __name__ == "__main__":

@@ -17,12 +17,12 @@ Add a read-only evidence detail to each priority-inbox group so an editor can in
 - [x] **EC-01 — Add the read-only evidence data contract**
   - Test evidence rows, deterministic ordering, nullable publication dates, and read-only behavior.
   - Implement the typed repository query.
-  - Evidence: RED observed by the writer; focused suite `6 passed`; independent verifier found no issues; LSP diagnostics clean. Commit recorded below after creation.
-- [ ] **EC-02 — Render the evidence detail safely**
+  - Evidence: RED observed by the writer; focused suite `6 passed`; independent verifier found no issues; LSP diagnostics clean; commit `72bd364`.
+- [x] **EC-02 — Render the evidence detail safely**
   - Test pure presentation rules for dates and verification guidance.
   - Add the Streamlit evidence expander and wire it to each group.
   - Run focused and full verification, update TAR-018, and record the work-unit commit.
-  - Evidence: pending.
+  - Evidence: RED observed by the writer; focused suite `10 passed`; full suite `140 passed`; independent AppTest rendered 50 groups and 50 evidence expanders with no exceptions; LSP diagnostics clean. Commit recorded below after creation.
 
 ## Acceptance criteria
 
