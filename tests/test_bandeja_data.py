@@ -6,14 +6,18 @@ from datetime import date, datetime
 import duckdb
 import pytest
 
+import json
+
 from app.data import (
     EvidenceRow,
     ScoreUnavailableError,
     ask_group_question,
     fetch_group_evidence,
+    fetch_group_ficha,
+    fetch_inbox_filter_options,
     fetch_inbox_groups,
-    generate_group_draft,
     open_inbox_repository,
+    persist_ficha_review_state,
 )
 
 
@@ -173,11 +177,127 @@ def test_ask_group_question_returns_abstention_when_unrelated():
     assert not response.citas
 
 
-def test_generate_group_draft_starts_in_nuevo_state():
-    draft = generate_group_draft("G-1")
-    assert draft.estado_revision == "nuevo"
-    assert "E-1" in draft.citas
-    assert len(draft.afirmaciones) > 0
+def _create_fichas_table(motor_path, rows):
+    connection = duckdb.connect(str(motor_path))
+    try:
+        connection.execute(
+            "CREATE TABLE fichas (id_caso TEXT, estado_revision TEXT, tipo_respuesta TEXT, "
+            "ficha TEXT, generado_en TIMESTAMP)"
+        )
+        connection.executemany(
+            "INSERT INTO fichas VALUES (?, ?, ?, ?, ?)", rows
+        )
+    finally:
+        connection.close()
+
+
+def test_fetch_group_ficha_returns_none_when_table_is_missing(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    assert fetch_group_ficha(motor_path, signals_path, "G-NUEVO") is None
+
+
+def test_fetch_group_ficha_returns_none_when_no_row_matches(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    _create_fichas_table(
+        motor_path,
+        [
+            (
+                "G-OTRO",
+                "nuevo",
+                "respuesta",
+                json.dumps({"borrador": "x", "citas": [], "afirmaciones": []}),
+                datetime(2026, 1, 1),
+            )
+        ],
+    )
+
+    assert fetch_group_ficha(motor_path, signals_path, "G-NUEVO") is None
+
+
+def test_fetch_group_ficha_parses_a_real_response_with_citations(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    ficha_json = json.dumps(
+        {
+            "borrador": "El evento ocurrió en enero.",
+            "citas": [{"id_evidencia": "E-1", "campo": "titulo"}],
+            "afirmaciones": [{"texto": "El evento ocurrió en enero.", "id_evidencia": "N-1", "campo": "titulo"}],
+            "tipo_respuesta": "respuesta",
+            "motivo_abstencion": None,
+            "estado_revision": "nuevo",
+        }
+    )
+    _create_fichas_table(
+        motor_path,
+        [("G-NUEVO", "en revisión", "respuesta", ficha_json, datetime(2026, 1, 2, 9, 0))],
+    )
+
+    ficha = fetch_group_ficha(motor_path, signals_path, "G-NUEVO")
+
+    assert ficha is not None
+    assert ficha.id_caso == "G-NUEVO"
+    assert ficha.estado_revision == "en revisión"  # outer column is authoritative
+    assert ficha.tipo_respuesta == "respuesta"
+    assert ficha.borrador == "El evento ocurrió en enero."
+    assert ficha.citas == [("E-1", "titulo")]
+    assert ficha.afirmaciones == ["El evento ocurrió en enero."]
+    assert ficha.motivo_abstencion is None
+    assert ficha.generado_en == datetime(2026, 1, 2, 9, 0)
+
+
+def test_fetch_group_ficha_parses_an_abstention_without_a_draft(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    ficha_json = json.dumps(
+        {
+            "borrador": None,
+            "citas": [],
+            "afirmaciones": [],
+            "tipo_respuesta": "abstencion",
+            "motivo_abstencion": "No hay corroboración suficiente.",
+            "estado_revision": "nuevo",
+        }
+    )
+    _create_fichas_table(
+        motor_path,
+        [("G-NUEVO", "nuevo", "abstencion", ficha_json, datetime(2026, 1, 2))],
+    )
+
+    ficha = fetch_group_ficha(motor_path, signals_path, "G-NUEVO")
+
+    assert ficha.tipo_respuesta == "abstencion"
+    assert ficha.borrador is None
+    assert ficha.motivo_abstencion == "No hay corroboración suficiente."
+
+
+def test_persist_ficha_review_state_updates_the_outer_column(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+    ficha_json = json.dumps(
+        {"borrador": "x", "citas": [], "afirmaciones": [], "tipo_respuesta": "respuesta",
+         "motivo_abstencion": None, "estado_revision": "nuevo"}
+    )
+    _create_fichas_table(
+        motor_path, [("G-NUEVO", "nuevo", "respuesta", ficha_json, datetime(2026, 1, 2))]
+    )
+
+    persist_ficha_review_state(motor_path, "G-NUEVO", "aprobado como borrador")
+
+    ficha = fetch_group_ficha(motor_path, signals_path, "G-NUEVO")
+    assert ficha.estado_revision == "aprobado como borrador"
+
+
+def test_persist_ficha_review_state_rejects_unknown_states(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    with pytest.raises(ValueError):
+        persist_ficha_review_state(motor_path, "G-NUEVO", "publicado")
+
+
+def test_persist_ficha_review_state_is_a_noop_without_the_table(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    persist_ficha_review_state(motor_path, "G-NUEVO", "nuevo")  # must not raise or create the table
+
+    assert fetch_group_ficha(motor_path, signals_path, "G-NUEVO") is None
 
 
 def test_fetch_group_evidence_returns_empty_for_an_unknown_group_and_keeps_databases_read_only(tmp_path):
@@ -227,6 +347,44 @@ def test_fetch_inbox_groups_requires_the_scoring_table(tmp_path):
 
     with pytest.raises(ScoreUnavailableError, match="Ejecute el motor de puntaje"):
         fetch_inbox_groups(motor_path, signals_path)
+
+
+def test_fetch_inbox_filter_options_returns_distinct_topics_and_date_bounds(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path)
+
+    topics, min_date, max_date = fetch_inbox_filter_options(motor_path, signals_path)
+
+    assert topics == ["economia", "educacion", "salud"]
+    assert min_date == date(2026, 1, 3)
+    assert max_date == date(2026, 1, 5)
+
+
+def test_fetch_inbox_filter_options_requires_the_scoring_table(tmp_path):
+    motor_path, signals_path = _create_databases(tmp_path, with_scores=False)
+
+    with pytest.raises(ScoreUnavailableError, match="Ejecute el motor de puntaje"):
+        fetch_inbox_filter_options(motor_path, signals_path)
+
+
+def test_fetch_inbox_filter_options_returns_empty_bounds_when_no_groups_exist(tmp_path):
+    motor_path = tmp_path / "motor.duckdb"
+    signals_path = tmp_path / "senales.duckdb"
+    motor = duckdb.connect(str(motor_path))
+    try:
+        motor.execute("CREATE TABLE grupos (grupo_id TEXT, fecha_max TIMESTAMP)")
+        motor.execute(
+            "CREATE TABLE puntaje (grupo_id TEXT, tema TEXT)"
+        )
+    finally:
+        motor.close()
+    signals = duckdb.connect(str(signals_path))
+    signals.close()
+
+    topics, min_date, max_date = fetch_inbox_filter_options(motor_path, signals_path)
+
+    assert topics == []
+    assert min_date is None
+    assert max_date is None
 
 
 def test_open_inbox_repository_keeps_motor_database_read_only(tmp_path):

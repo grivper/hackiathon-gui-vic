@@ -9,14 +9,16 @@ import duckdb
 import streamlit as st
 
 from app.data import (
+    VALID_REVIEW_STATES,
     EvidenceRow,
     InboxGroup,
     ScoreUnavailableError,
     ask_group_question,
     fetch_group_evidence,
+    fetch_group_ficha,
     fetch_inbox_filter_options,
     fetch_inbox_groups,
-    generate_group_draft,
+    persist_ficha_review_state,
 )
 
 
@@ -150,6 +152,7 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
 
         for row in evidence_rows:
             st.markdown(f"**{row.titulo or 'Titular no disponible'}**")
+            st.caption(f"ID de evidencia: {row.id_noticia}")
             if row.url:
                 st.link_button("Abrir fuente", row.url)
             st.caption(
@@ -171,8 +174,12 @@ def render_group_evidence(group: InboxGroup, evidence_rows: list[EvidenceRow]) -
 def render_group_chat(group: InboxGroup) -> None:
     """Render a chat interface for cited CU-04 queries per group."""
 
-    with st.expander("Consulta citada (IA)", expanded=False):
-        st.caption("Consultá sobre este grupo. La IA responderá basándose **solo** en la evidencia.")
+    with st.expander("Consulta citada (simulada)", expanded=False):
+        st.warning(
+            "Respuesta simulada: aún no usa el LLM ni la evidencia real "
+            "(pendiente TAR-020/TAR-028)."
+        )
+        st.caption("Consultá sobre este grupo. La respuesta de ejemplo no está basada en evidencia real.")
 
         chat_key = f"chat_{group.grupo_id}"
         if chat_key not in st.session_state:
@@ -206,67 +213,68 @@ def render_group_chat(group: InboxGroup) -> None:
                 if response.abstencion:
                     st.warning("Abstención: La respuesta puede estar limitada por falta de datos.")
                 if response.citas:
-                    st.caption(f"Citas: {', '.join(response.citas)}")
+                    st.caption(f"Citas simuladas: {', '.join(response.citas)}")
 
 
 def render_group_draft(group: InboxGroup) -> None:
-    """Render an editorial draft interface with mandatory review states."""
+    """Render the real TAR-009 editorial draft with mandatory review states.
+
+    Reads a fresh ficha on every render (not cached): the selectbox key is
+    scoped to the ficha's own generation timestamp, so a regenerated ficha
+    for the same group never inherits a previous approval left over in the
+    widget's session state.
+    """
 
     with st.expander("Borrador y revisión (IA)", expanded=False):
-        st.caption(
-            "Generá un borrador citable basado exclusivamente en la evidencia del grupo. "
-            "Aprobar el borrador no lo publica automáticamente."
+        st.caption("Aprobar el borrador no lo publica automáticamente.")
+
+        ficha = fetch_group_ficha(MOTOR_PATH, SIGNALS_PATH, group.grupo_id)
+        if ficha is None:
+            st.info("Borrador no generado para este grupo (ejecutar make generar).")
+            return
+
+        if ficha.tipo_respuesta == "abstencion":
+            st.warning("Abstención: no hay evidencia suficiente para redactar un borrador.")
+            if ficha.motivo_abstencion:
+                st.caption(f"Motivo: {ficha.motivo_abstencion}")
+        else:
+            if ficha.tipo_respuesta == "contradiccion":
+                st.warning("Contradicción detectada entre las fuentes citadas.")
+            st.caption(
+                "Borrador citable basado exclusivamente en la evidencia del grupo."
+            )
+            st.markdown(ficha.borrador or "")
+            if ficha.afirmaciones:
+                with st.popover("Ver afirmaciones base"):
+                    for a in ficha.afirmaciones:
+                        st.markdown(f"- {a}")
+            if ficha.citas:
+                citas_label = ", ".join(
+                    f"{id_evidencia} · {campo}" for id_evidencia, campo in ficha.citas
+                )
+                st.caption(f"Citas empleadas: {citas_label}")
+
+        st.markdown("---")
+        st.markdown("**Revisión editorial**")
+        try:
+            index = VALID_REVIEW_STATES.index(ficha.estado_revision)
+        except ValueError:
+            index = 0
+
+        new_state = st.selectbox(
+            "Estado del borrador",
+            list(VALID_REVIEW_STATES),
+            index=index,
+            key=f"select_{group.grupo_id}_{ficha.generado_en}"
         )
 
-        draft_key = f"draft_{group.grupo_id}"
-        state_key = f"draft_state_{group.grupo_id}"
+        if new_state != ficha.estado_revision:
+            persist_ficha_review_state(MOTOR_PATH, group.grupo_id, new_state)
 
-        if st.button("Generar borrador", key=f"btn_draft_{group.grupo_id}"):
-            with st.spinner("Redactando borrador con citas..."):
-                response = generate_group_draft(group.grupo_id)
-                st.session_state[draft_key] = response
-                st.session_state[state_key] = response.estado_revision
-
-        if draft_key in st.session_state:
-            draft = st.session_state[draft_key]
-
-            st.markdown(draft.borrador)
-            if draft.afirmaciones:
-                with st.popover("Ver afirmaciones base"):
-                    for a in draft.afirmaciones:
-                        st.markdown(f"- {a}")
-            if draft.citas:
-                st.caption(f"Citas empleadas: {', '.join(draft.citas)}")
-
-            st.markdown("---")
-            st.markdown("**Revisión editorial**")
-            current_state = st.session_state.get(state_key, "nuevo")
-
-            # The exact 5 states mandated by the brief
-            valid_states = [
-                "nuevo",
-                "en revisión",
-                "requiere evidencia",
-                "aprobado como borrador",
-                "descartado"
-            ]
-            try:
-                index = valid_states.index(current_state)
-            except ValueError:
-                index = 0
-
-            new_state = st.selectbox(
-                "Estado del borrador",
-                valid_states,
-                index=index,
-                key=f"select_{group.grupo_id}"
-            )
-            st.session_state[state_key] = new_state
-
-            if new_state == "aprobado como borrador":
-                st.success("Borrador aprobado. (Nota: Esto no publica el artículo en el CMS).")
-            elif new_state == "requiere evidencia":
-                st.warning("Se requiere más investigación o evidencia de otras fuentes.")
+        if new_state == "aprobado como borrador":
+            st.success("Borrador aprobado. (Nota: Esto no publica el artículo en el CMS).")
+        elif new_state == "requiere evidencia":
+            st.warning("Se requiere más investigación o evidencia de otras fuentes.")
 
 
 def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> None:
@@ -275,7 +283,7 @@ def render_group_card(group: InboxGroup, evidence_rows: list[EvidenceRow]) -> No
     group_date = _group_date(group)
     with st.container(border=True):
         st.subheader(group.titulo_representativo)
-        st.caption(f"Tema: {group.tema} · Fecha más reciente: {group_date:%d/%m/%Y}")
+        st.caption(f"Tema: {group.tema} · Fecha más reciente: {evidence_date_label(group_date)}")
         score, priority, evidence = st.columns(3)
         score.metric("Puntaje", f"{group.puntaje:.1f}")
         priority.metric("Prioridad", group.prioridad)
@@ -357,6 +365,7 @@ def main() -> None:
             )
         except duckdb.Error:
             evidence_rows = []
+            st.warning("No se pudo cargar la evidencia de este grupo.")
         render_group_card(group, evidence_rows)
 
 
