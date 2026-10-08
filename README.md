@@ -191,10 +191,17 @@ jurado. El espacio personal queda como respaldo.
 
 `make generar` usa un LLM local por Ollama (sin API externa). El código valida las citas y decide la abstención; el modelo solo redacta.
 
-1. Instalá Ollama (https://ollama.com) y bajá un modelo: `ollama pull gemma3:4b` (modelo vigente para la demo).
-2. Con el servidor en marcha: `LLM_MODELO=gemma3:4b make generar`, o `make generar GRUPOS="--grupo G-xxxx"` para grupos concretos (`--forzar` regenera fichas ya revisadas).
-3. Variables opcionales: `OLLAMA_HOST`, `LLM_NUM_THREAD` (núcleos físicos, 4 por defecto), `LLM_NUM_CTX` (4096), `LLM_NUM_PREDICT` (768).
-4. Para el benchmark oficial de la máquina de demo, con los overrides de entorno desactivados, usa `.venv/Scripts/python.exe motor/medir_llm.py --modelo gemma3:4b --n 10`. El comando informa mediana, p95 y cuántas salidas conservan JSON y citas válidas; la evidencia oficial queda en `documentacion/evidencia-modelo-real.md`.
+1. Instalá Ollama (https://ollama.com) y bajá un modelo: `ollama pull gemma3:4b` (modelo vigente para la demo). Si el binario no está en el `PATH` (instalación en `~/.local/ollama`), usá la ruta completa y apuntá a los modelos: `export OLLAMA_MODELS=~/.local/ollama/models`.
+2. Levantá el servidor y dejalo corriendo en una terminal aparte: `ollama serve` (o `~/.local/ollama/bin/ollama serve`). Comprobá que responde con `curl localhost:11434/api/tags`; debe listar `gemma3:4b`.
+3. Con el servidor en marcha, desde la raíz del repo y con el venv activo, generá las fichas:
+   - `LLM_MODELO=gemma3:4b make generar`: toma `--top 5 --min-noticias 2` por defecto. Con los datos actuales casi todos los grupos tienen una sola noticia, así que esto genera muy pocas fichas.
+   - `make generar GRUPOS="--top 10 --min-noticias 1"`: los N grupos de mayor puntaje, sin filtrar por cantidad de noticias.
+   - `make generar GRUPOS="--grupo G-xxxx --grupo G-yyyy"`: grupos concretos (`--forzar` regenera fichas ya revisadas por una persona).
+   Tarda unos 19 s por ficha (mediana medida en la máquina de demo).
+4. Qué escribe: hace upsert por grupo en la tabla `fichas` de `data/motor.duckdb` y **reescribe `data/fichas.jsonl` completo desde esa tabla**. Si tu `motor.duckdb` local no tiene las fichas que ya estaban en el jsonl commiteado, esas líneas desaparecen del archivo. Antes de commitear mirá `git diff --stat data/fichas.jsonl` y regenerá los grupos que falten (`--grupo ...`) para no perder fichas.
+5. Qué se ve en la app: las tarjetas con ficha muestran el borrador y el selector de estado de revisión; el resto muestra "Borrador no generado para este grupo (ejecutar `make generar`)". Recargá la página de Streamlit después de generar.
+6. Variables opcionales: `OLLAMA_HOST`, `LLM_NUM_THREAD` (núcleos físicos, 4 por defecto), `LLM_NUM_CTX` (4096), `LLM_NUM_PREDICT` (768).
+7. Para el benchmark oficial de la máquina de demo, con los overrides de entorno desactivados, usa `.venv/Scripts/python.exe motor/medir_llm.py --modelo gemma3:4b --n 10`. El comando informa mediana, p95 y cuántas salidas conservan JSON y citas válidas; la evidencia oficial queda en `documentacion/evidencia-modelo-real.md`.
 
 La medición oficial de la máquina de demo (Ollama 0.40.1, `gemma3:4b`, n=10) obtuvo mediana 18,86863055 s, p95 41,04204075 s, 9,856653 tok/s, JSON válido 10/10 y al menos una cita válida 9/10 (TAR-022). No alcanzó la meta de mediana ≤ 15 s; por esa decisión, las fichas finales se pregeneran antes de la demo. Las corridas n=3 exploratoria y n=5 de desarrollo permanecen separadas como contexto histórico en la evidencia oficial.
 
