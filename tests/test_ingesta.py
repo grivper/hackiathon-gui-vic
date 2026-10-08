@@ -146,6 +146,165 @@ def test_gdelt_divide_ventana_al_llegar_a_250(tmp_path, monkeypatch):
     assert len(list((tmp_path / "raw" / "gdelt").glob("*.json"))) == 2
 
 
+def test_gdelt_reintenta_ante_throttling_de_texto_plano(tmp_path, monkeypatch):
+    ds.PAUSA_EXTRA = False
+    pausas = []
+    monkeypatch.setattr(ds.time, "sleep", lambda s: pausas.append(s))
+    llamadas = []
+
+    class RespThrottle:
+        status_code = 200
+        text = "Please limit requests to one every 5 seconds or contact us."
+
+        def json(self):
+            raise ValueError("no es json")
+
+    class RespOk:
+        status_code = 200
+        text = ""
+
+        def json(self):
+            return {"articles": [{"url": "https://x.com/1", "title": "t"}]}
+
+    def falso(url, params=None):
+        llamadas.append(params["startdatetime"])
+        return RespThrottle() if len(llamadas) < 3 else RespOk()
+
+    monkeypatch.setattr(ds, "obtener", falso)
+    consulta = {"id": "eco", "tema": "economia", "query": "Panama economy"}
+    ini = datetime(2026, 9, 1, tzinfo=timezone.utc)
+    fin = datetime(2026, 9, 8, tzinfo=timezone.utc)
+    ds._gdelt_ventana(CFG["gdelt"], tmp_path / "raw", consulta, ini, fin)
+
+    assert len(llamadas) == 3                 # dos fallos por throttling y un \xe9xito
+    assert pausas == []                        # PAUSA_EXTRA=False: no se duerme de verdad en pruebas
+    archivos = list((tmp_path / "raw" / "gdelt").glob("*.json"))
+    assert len(archivos) == 1
+    guardado = json.loads(archivos[0].read_text(encoding="utf-8"))
+    assert guardado["error"] is None
+    assert len(guardado["articulos"]) == 1
+
+
+def test_gdelt_pausa_creciente_al_reintentar_con_pausa_extra_activa(tmp_path, monkeypatch):
+    ds.PAUSA_EXTRA = True
+    pausas = []
+    monkeypatch.setattr(ds.time, "sleep", lambda s: pausas.append(s))
+    llamadas = []
+
+    class RespThrottle:
+        status_code = 200
+        text = "Please limit requests to one every 5 seconds or contact us."
+
+        def json(self):
+            raise ValueError("no es json")
+
+    class RespOk:
+        status_code = 200
+        text = ""
+
+        def json(self):
+            return {"articles": [{"url": "https://x.com/1", "title": "t"}]}
+
+    def falso(url, params=None):
+        llamadas.append(params["startdatetime"])
+        return RespThrottle() if len(llamadas) < 3 else RespOk()
+
+    monkeypatch.setattr(ds, "obtener", falso)
+    consulta = {"id": "eco", "tema": "economia", "query": "Panama economy"}
+    ini = datetime(2026, 9, 1, tzinfo=timezone.utc)
+    fin = datetime(2026, 9, 8, tzinfo=timezone.utc)
+    try:
+        ds._gdelt_ventana(CFG["gdelt"], tmp_path / "raw", consulta, ini, fin)
+    finally:
+        ds.PAUSA_EXTRA = False
+
+    assert len(llamadas) == 3
+    # La primera pausa es la de rate-limit normal (pausa_segundos); las siguientes
+    # son las pausas crecientes entre reintentos por throttling.
+    assert pausas[1:] == [10, 20]
+
+
+def test_gdelt_agota_reintentos_y_guarda_error(tmp_path, monkeypatch):
+    ds.PAUSA_EXTRA = False
+    monkeypatch.setattr(ds.time, "sleep", lambda s: None)
+    llamadas = []
+
+    class RespThrottle:
+        status_code = 200
+        text = "Please limit requests to one every 5 seconds or contact us."
+
+        def json(self):
+            raise ValueError("no es json")
+
+    def falso(url, params=None):
+        llamadas.append(params["startdatetime"])
+        return RespThrottle()
+
+    monkeypatch.setattr(ds, "obtener", falso)
+    consulta = {"id": "eco", "tema": "economia", "query": "Panama economy"}
+    ini = datetime(2026, 9, 1, tzinfo=timezone.utc)
+    fin = datetime(2026, 9, 8, tzinfo=timezone.utc)
+    ds._gdelt_ventana(CFG["gdelt"], tmp_path / "raw", consulta, ini, fin)
+
+    assert len(llamadas) == ds.MAX_INTENTOS_LIMITE_GDELT
+    archivos = list((tmp_path / "raw" / "gdelt").glob("*.json"))
+    guardado = json.loads(archivos[0].read_text(encoding="utf-8"))
+    assert guardado["error"] is not None
+
+
+def test_gdelt_omite_ventana_ya_descargada(tmp_path, monkeypatch):
+    ds.PAUSA_EXTRA = False
+    consulta = {"id": "eco", "tema": "economia", "query": "Panama economy"}
+    ini = datetime(2026, 9, 1, tzinfo=timezone.utc)
+    fin = datetime(2026, 9, 8, tzinfo=timezone.utc)
+    nombre = f"eco_{ini.strftime('%Y%m%d%H%M%S')}_{fin.strftime('%Y%m%d%H%M%S')}.json"
+    destino = tmp_path / "raw" / "gdelt" / nombre
+    ds.guardar_json(destino, {
+        "fuente": "gdelt", "consulta_id": "eco", "tema": "economia", "params": {},
+        "fecha_extraccion": "2026-10-06T17:05:00Z", "http_status": 200, "error": None,
+        "truncado": False, "articulos": [{"url": "https://x.com/1", "title": "t"}],
+    })
+
+    def falla(url, params=None):
+        raise AssertionError("no deberia reconsultar una ventana ya descargada")
+
+    monkeypatch.setattr(ds, "obtener", falla)
+    ds._gdelt_ventana(CFG["gdelt"], tmp_path / "raw", consulta, ini, fin)
+    assert len(list((tmp_path / "raw" / "gdelt").glob("*.json"))) == 1
+
+
+def test_gdelt_reconsulta_ventana_previa_con_error(tmp_path, monkeypatch):
+    ds.PAUSA_EXTRA = False
+    consulta = {"id": "eco", "tema": "economia", "query": "Panama economy"}
+    ini = datetime(2026, 9, 1, tzinfo=timezone.utc)
+    fin = datetime(2026, 9, 8, tzinfo=timezone.utc)
+    nombre = f"eco_{ini.strftime('%Y%m%d%H%M%S')}_{fin.strftime('%Y%m%d%H%M%S')}.json"
+    destino = tmp_path / "raw" / "gdelt" / nombre
+    ds.guardar_json(destino, {
+        "fuente": "gdelt", "consulta_id": "eco", "tema": "economia", "params": {},
+        "fecha_extraccion": "2026-10-06T17:05:00Z", "http_status": 200,
+        "error": "HTTP 500", "truncado": False, "articulos": [],
+    })
+    llamadas = []
+
+    class RespOk:
+        status_code = 200
+        text = ""
+
+        def json(self):
+            return {"articles": [{"url": "https://x.com/1", "title": "t"}]}
+
+    def falso(url, params=None):
+        llamadas.append(params["startdatetime"])
+        return RespOk()
+
+    monkeypatch.setattr(ds, "obtener", falso)
+    ds._gdelt_ventana(CFG["gdelt"], tmp_path / "raw", consulta, ini, fin)
+    assert len(llamadas) == 1
+    guardado = json.loads(destino.read_text(encoding="utf-8"))
+    assert guardado["error"] is None
+
+
 def test_normalizar_url():
     a = ds.normalizar_url("https://www.TVN-2.com/nota/?utm_source=x&id=5#arriba")
     b = ds.normalizar_url("http://tvn-2.com/nota?id=5")

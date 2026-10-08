@@ -50,6 +50,7 @@ CONFIG = Path(__file__).resolve().parent / "config.yaml"
 UTC = timezone.utc
 UA = "hackiathon-tvn-snapshot/0.1 (prototipo academico)"
 PAUSA_EXTRA = True  # las pruebas lo desactivan
+MAX_INTENTOS_LIMITE_GDELT = 5  # reintentos ante el throttling de texto plano de GDELT
 
 COLUMNAS_NOTICIAS = ["id_noticia", "titulo", "url", "medio", "idioma", "fecha_publicacion",
                      "fecha_deteccion", "fecha_extraccion", "tema", "origen", "alcance_texto"]
@@ -251,15 +252,32 @@ def _gdelt_ventana(g: dict, raw: Path, consulta: dict, ini: datetime, fin: datet
         "startdatetime": ini.strftime("%Y%m%d%H%M%S"),
         "enddatetime": fin.strftime("%Y%m%d%H%M%S"),
     }
+    nombre = f"{consulta['id']}_{params['startdatetime']}_{params['enddatetime']}.json"
+    destino = raw / "gdelt" / nombre
+    if destino.exists():
+        previo = leer_json(destino)
+        if previo.get("error") is None and previo.get("articulos"):
+            log(f"  GDELT {consulta['id']} {ini:%Y-%m-%d %H:%M} → {fin:%Y-%m-%d %H:%M}: "
+                "ya descargada, se omite")
+            return
+
     if PAUSA_EXTRA:
         time.sleep(g.get("pausa_segundos", 6))
     t = ahora()
-    r = obtener(g["url"], params)
-    articulos, error = [], None
-    try:
-        articulos = (r.json() or {}).get("articles") or []
-    except ValueError:
-        error = (r.text or "").strip()[:300] or f"HTTP {r.status_code}"
+    r, articulos, error = None, [], None
+    for intento in range(MAX_INTENTOS_LIMITE_GDELT):
+        r = obtener(g["url"], params)
+        try:
+            articulos = (r.json() or {}).get("articles") or []
+            error = None
+            break
+        except ValueError:
+            error = (r.text or "").strip()[:300] or f"HTTP {r.status_code}"
+            ultimo_intento = intento == MAX_INTENTOS_LIMITE_GDELT - 1
+            if "limit requests" not in error.lower() or ultimo_intento:
+                break
+            if PAUSA_EXTRA:
+                time.sleep(10 * (intento + 1))
 
     # Si se alcanzó el máximo, la ventana tiene más artículos: se divide en dos.
     if len(articulos) >= 250 and (fin - ini) > timedelta(hours=2) and profundidad < 6:
@@ -268,8 +286,7 @@ def _gdelt_ventana(g: dict, raw: Path, consulta: dict, ini: datetime, fin: datet
         _gdelt_ventana(g, raw, consulta, medio, fin, profundidad + 1)
         return
 
-    nombre = f"{consulta['id']}_{params['startdatetime']}_{params['enddatetime']}.json"
-    guardar_json(raw / "gdelt" / nombre, {
+    guardar_json(destino, {
         "fuente": "gdelt", "consulta_id": consulta["id"], "tema": consulta["tema"],
         "params": params, "fecha_extraccion": iso(t), "http_status": r.status_code,
         "error": error, "truncado": len(articulos) >= 250, "articulos": articulos,
