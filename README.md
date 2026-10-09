@@ -1,7 +1,42 @@
 # HackIAthon · Reto TVN Media
 
-Entrega: jueves 8 de octubre de 2026, 23:59 (hora de Panamá). Equipo: Guille (datos, motor e IA)
-y Víctor (producto, interfaz, Notion y pruebas). Plan detallado: `documentacion/traspaso-hackiathon-tvn.md`.
+Copiloto de inteligencia informativa para equipos editoriales: convierte fuentes dispersas en un tema
+investigable con evidencia citada y un borrador responsable. Los embeddings organizan, un LLM local solo
+redacta y el código valida las citas, puntúa y se abstiene cuando no hay evidencia.
+
+Equipo: Guille (datos, motor e IA) y Víctor (producto, interfaz, Notion y pruebas). Entregado el jueves
+8 de octubre de 2026, antes de las 23:59 (hora de Panamá). Plan detallado:
+`documentacion/traspaso-hackiathon-tvn.md`.
+
+## Estado de la entrega
+
+- **Repositorio público:** https://github.com/grivper/hackiathon-gui-vic
+- **Notion del evento (página con los 3 enlaces):**
+  https://conscious-handbell-91a.notion.site/HackIAthon-TVN-Media-GUI-VIC-Entrega-final-3f46d0f0b114812783d5e65d79e5465a
+- **Pruebas automáticas:** 378 pruebas con pytest (`make test`). Las pruebas de aceptación T01 a T10 están
+  en `bitacora/pruebas.yaml`; T03, T04 y T05 fallaron primero y se corrigieron.
+- **Modelos:** embeddings `paraphrase-multilingual-MiniLM-L12-v2` y LLM local `gemma3:4b` con Ollama 0.40.1
+  (solo CPU, sin API externa). Ver DEC-006 y DEC-008.
+
+### Resultados y límites (resumen)
+
+| Métrica | Resultado |
+|---|---|
+| Cobertura de citas | 100 % (12 / 12 afirmaciones, validación por código) |
+| Validez del sustento (revisión humana) | 66,7 % (8 / 12); segunda opinión 82,6 % (19 / 23). Meta del 90 % no cumplida |
+| Abstención correcta | 10 / 10 en casos sintéticos; 7 de 24 consultas respondibles se abstuvieron por error |
+| Macro-F1 de clasificación | 0,339 con embeddings frente a 0,145 con TF-IDF (93 etiquetas humanas) |
+| Precision@5 | 4 / 5 (revisión de Víctor) y 2 / 5 (segunda opinión) |
+| Tiempo por ficha (n = 10) | mediana 18,87 s, p95 41,04 s; meta de 15 s no cumplida |
+
+Limitaciones conocidas: muestras pequeñas (12 a 23 afirmaciones, 93 etiquetas), revisiones humanas hechas
+por el equipo y no ciegas, y el sistema solo ve titulares y metadatos (no etiqueta noticias como verdaderas
+o falsas). El detalle y los casos fallidos están en `bitacora/paginas/metricas.md`,
+`documentacion/evaluacion-humana-final.md`, `documentacion/segunda-opinion-humana.md` y
+`documentacion/evidencia-benchmark.md`.
+
+La bitácora de trabajo del equipo (tareas, decisiones y reparto entre Guille y Víctor) está resumida en
+`documentacion/anexo-bitacora-equipo.md`.
 
 ## Empezar (compañero nuevo)
 
@@ -15,6 +50,13 @@ Con el entorno virtual creado y las bases DuckDB preparadas, inicia la interfaz 
 
 ```
 .venv\Scripts\python.exe -m streamlit run app/app.py
+```
+
+En Linux o macOS, con el entorno virtual activo (`. .venv/bin/activate`), después de `make arrancar` y
+`make motor`:
+
+```
+streamlit run app/app.py
 ```
 
 **Quién sincroniza:** solo una persona ejecuta `python notion_sync.py`. El estado de la sincronización
@@ -177,9 +219,28 @@ sincronizado se sobrescriben. Los comentarios en Notion sí se conservan.
 4. Ejecuta `python notion_sync.py`. Detecta el destino nuevo, respalda el estado anterior
    y crea todo desde los archivos del repositorio.
 
+**Cómo se hizo la migración real y cómo mantenerla.** Para no mezclar el Notion de simulación con el del
+evento, las credenciales del evento viven en `.env.oficial` (ignorado por git) y su estado de
+sincronización en `.notion_state.evento.json` (también ignorado). La sincronización del evento **no es
+automática**: se ejecuta a mano, en una copia limpia del repositorio (`git worktree add --detach
+/tmp/ev_wt origin/main`) con `.env.oficial` como `.env` y el estado del evento como `.notion_state.json`.
+La página de entrega con los 3 enlaces y el anexo de la bitácora se crearon en ese Notion; el
+repositorio sigue siendo la fuente de verdad. Nunca subas ningún token a git.
+
 Notion marcará como fecha de creación el día de la migración. La cronología real queda en
 la propiedad **Fecha** de cada registro y en el historial de git; conviene mencionarlo al
 jurado. El espacio personal queda como respaldo.
+
+## Evaluación humana de las métricas
+
+Dos scripts preparan y calculan la revisión humana (detalle en `documentacion/evaluacion-humana-final.md`):
+
+- `python motor/preparar_revision.py` genera en `data/revision/` la planilla de validez del sustento
+  (`validez_sustento.csv`, afirmaciones reales con su fuente citada) y los candidatos de Precision@5 sin
+  puntaje ni rango (`precision5_candidatos.csv`). La clave con el ranking del sistema
+  (`precision5_clave.csv`) no se sube a git, para que la revisión sea a ciegas.
+- `python motor/calcular_revision.py` calcula validez (las ambiguas cuentan como no respaldadas) y
+  Precision@5 con numerador y denominador.
 
 ## Si algo falla
 
