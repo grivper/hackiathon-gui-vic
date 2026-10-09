@@ -85,3 +85,17 @@ def test_ficha_opens_for_a_group_that_only_appears_when_a_filter_is_applied(monk
     assert not at.exception
     assert at.session_state["ficha_id"] == group_id
     assert f"Registro editorial {group_id}" in _text(at)
+
+
+def test_topic_filter_shows_readable_names_but_keeps_the_raw_ids(monkeypatch):
+    at = _app(monkeypatch)
+    labels = list(at.selectbox[0].options)
+
+    assert labels[0] == "Todos"
+    assert "Servicios públicos" in labels and "Economía" in labels
+    assert not any("_" in label for label in labels)
+    assert "servicios_publicos" not in labels
+    # selecting still works with the raw id used by the queries
+    at.selectbox[0].select("servicios_publicos").run()
+    assert not at.exception
+    assert at.selectbox[0].value == "servicios_publicos"

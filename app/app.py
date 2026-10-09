@@ -549,7 +549,12 @@ def main() -> None:
     with st.container(key="filtros"):
         topic_column, start_column, end_column = st.columns([2, 1, 1])
         with topic_column:
-            selected_topic = st.selectbox("Tema", ["Todos", *topics], key="filtro_tema")
+            selected_topic = st.selectbox(
+                "Tema",
+                ["Todos", *topics],
+                key="filtro_tema",
+                format_func=lambda topic: topic if topic == "Todos" else estilos.tema_label(topic),
+            )
         with start_column:
             start_date = st.date_input(
                 "Desde", value=min_date, min_value=min_date, max_value=max_date, key="filtro_desde"
