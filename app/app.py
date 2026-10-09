@@ -330,7 +330,7 @@ def render_generate_draft(group: InboxGroup) -> None:
     st.markdown(
         estilos.empty_note_html(
             "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo "
-            "genera este grupo."
+            "genera el borrador de esta entrada."
         ),
         unsafe_allow_html=True,
     )

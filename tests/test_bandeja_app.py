@@ -622,7 +622,7 @@ def test_empty_state_is_one_keyed_card_with_the_button_and_the_local_model_note(
     keys = [c.kwargs.get("key") for c in widgets["container"].call_args_list]
     assert "vacio_G-1" in keys
     rendered = " ".join(str(c.args[0]) for c in widgets["markdown"].call_args_list)
-    assert "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo genera este grupo." in rendered
+    assert "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo genera el borrador de esta entrada." in rendered
 
 
 def test_an_existing_draft_is_wrapped_in_a_white_card_container(monkeypatch):
