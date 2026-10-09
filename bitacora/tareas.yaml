@@ -370,3 +370,76 @@
     no pisar el mismo archivo. Muestra chica (93): no sobreajustar.'
   tipo: Tarea
   epica: EPI-003
+- id: TAR-032
+  tarea: 'Corregir métricas finales: latencia oficial, numeradores, denominadores, casos y errores'
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-08T21:37-05:00
+  notas: 'Fuente de verdad: bitacora/paginas/metricas.md. No inventar tokens ni costos.'
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-033
+  tarea: Completar evidencia técnica de T01 y T02 con conteos, IDs y errores conservados
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: Editar solo bitacora/pruebas.yaml para evitar conflictos.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-034
+  tarea: Registrar a Guille como revisor de las cinco fichas finales y preparar lotes de validación para
+    Víctor
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: Preservar la ficha con evidencia insuficiente G-9dd46610ff94.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-035
+  tarea: Revisar 30 afirmaciones y calcular validez del sustento con razones por caso
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: Marcar respaldada, no respaldada o ambigua; guardar cita y motivo.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-036
+  tarea: Evaluar independientemente Precision@5 de los cinco temas mejor posicionados
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: Registrar relevante sí/no, motivo y cálculo relevantes/5.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-037
+  tarea: Auditar T03-T10 e informar campos faltantes sin editar pruebas.yaml
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: Enviar hallazgos a Guille para evitar conflictos de edición.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-038
+  tarea: Preparar en el Notion del evento la página con enlaces técnico, funcional y Pitch Day
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: No ejecutar notion_sync.py hasta que main tenga la documentación final.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-039
+  tarea: Sincronizar una sola vez el Notion del evento y verificar los tres enlaces públicos
+  responsable: Víctor
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: Hacer pull de main primero; probar enlaces en incógnito.
+  tipo: Tarea
+  epica: EPI-005
+- id: TAR-040
+  tarea: Enviar correo final con enlace del repositorio y los tres enlaces de Notion
+  responsable: Guille
+  estado: Pendiente
+  fecha: 2026-10-08T21:38-05:00
+  notas: 'Destino: hackiathon@viamatica.com; límite 2026-10-08 23:59 Panamá.'
+  tipo: Tarea
+  epica: EPI-005
