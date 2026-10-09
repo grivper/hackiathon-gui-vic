@@ -100,7 +100,8 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .aviso div div{margin-top:4px}
 [class*="st-key-vacio_"]{background:#fff;border:1px dashed #b9b29f;border-radius:14px;padding:24px;gap:18px}
 [class*="st-key-borrador_"]{background:#fff;border:1px solid #ddd8cb;border-radius:14px;padding:20px}
-.vacio-head{display:flex;align-items:center;gap:14px}
+.vacio-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+[class*="st-key-vacio_"] .stButton{margin-bottom:8px}
 .vacio-ico{flex:none;width:48px;height:48px;border-radius:50%;background:#ebe7da;color:#3b392f;
   display:flex;align-items:center;justify-content:center}
 .vacio-t{font-size:19px;font-weight:600}

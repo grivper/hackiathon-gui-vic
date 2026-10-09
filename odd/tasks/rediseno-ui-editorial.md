@@ -79,3 +79,6 @@ User decision: generate per entry on demand instead of batch, with three guards 
 - Empty state is one keyed card (`vacio_<id>`): circular icon, title "Borrador no generado para este grupo", "Ejecutar `make generar`" (grey code, not green), the "Generar borrador con IA" button and, below a divider, the local-model note with a lock icon. When Ollama is down the same slot shows the reason instead.
 - An existing draft is wrapped in a white card (`borrador_<id>`), notice kept above. Draft body moved to `_render_draft_body` (same logic and texts).
 - Button logic and widget key (`generar_<id>`) unchanged. Removed the old `.empty` block and `empty_draft_html`. 375 tests pass; verified in Chrome.
+
+## Pass 15: wording and spacing in the empty-state card
+The note now says the button "solo genera el borrador de esta entrada" ("grupo" confused the user: a group is one inbox entry, not a topic). The `gap:18px` from the spec never applied (it sits on the key wrapper, not the inner block), so the button touched the title; spacing is now explicit (22px under the title, 8px under the button). Measured in Chrome: 24px title to button, 26px button to note.
