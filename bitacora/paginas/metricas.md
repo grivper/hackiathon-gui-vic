@@ -5,16 +5,14 @@ Datos: snapshot con manifest `81640bd328e6`. Modelo local `gemma3:4b` (Ollama 0.
 
 ## Resumen
 
-| Métrica | Resultado | Numerador / denominador | Estado |
-|---|---|---|---|
-| Cobertura de citas | 100 % | 12 / 12 afirmaciones con citas estructurales | Medida |
-| Validez del sustento | 66,7 % | 8 / 12 afirmaciones válidas (1 ambigua, 3 no respaldadas) | Medida (meta ≥90 % no cumplida) |
-| Abstención correcta | 100 % | 10 / 10 (6 sin evidencia + 4 adversarias) | Medida, casos sintéticos |
-| Abstenciones incorrectas | 29,2 % | 7 / 24 consultas respondibles | Medida |
-| Macro-F1 (embeddings) | 0,339 | 93 etiquetas humanas | Medida |
-| Macro-F1 (baseline TF-IDF) | 0,145 | 93 etiquetas humanas | Medida |
-| Precision@5 | 80 % | 4 / 5 registros relevantes en el top-5 | Medida |
-| Tiempo mediano / p95 | 18,87 s / 41,04 s | n = 10 | Medida |
+- **Cobertura de citas:** 100 %. 12 / 12 afirmaciones con citas estructurales. Medida.
+- **Validez del sustento:** 66,7 %. 8 / 12 afirmaciones válidas (1 ambigua, 3 no respaldadas). Medida; la meta de 90 % no se cumple.
+- **Abstención correcta:** 100 %. 10 / 10 (6 sin evidencia y 4 adversarias). Medida con casos sintéticos.
+- **Abstenciones incorrectas:** 29,2 %. 7 / 24 consultas respondibles. Medida.
+- **Macro-F1 con embeddings:** 0,339. Sobre 93 etiquetas humanas. Medida.
+- **Macro-F1 del baseline TF-IDF:** 0,145. Sobre 93 etiquetas humanas. Medida.
+- **Precision@5:** 80 %. 4 / 5 registros relevantes en el top 5. Medida.
+- **Tiempo mediano y p95:** 18,87 s y 41,04 s. n = 10. Medida.
 
 ## Detalle y errores conservados
 
