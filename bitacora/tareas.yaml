@@ -396,20 +396,27 @@
   tarea: Registrar a Guille como revisor de las cinco fichas finales y preparar lotes de validación para
     Víctor
   responsable: Guille
-  estado: En curso
-  fecha: 2026-10-08T21:45-05:00
+  estado: Hecho
+  fecha: 2026-10-08T21:52-05:00
   notas: 'Preservar la ficha con evidencia insuficiente G-9dd46610ff94.
 
     2026-10-08T21:45-05:00 · Guille registrado como revisor de las 5 fichas. Falta preparar los lotes
-    de 30 afirmaciones y los 5 temas de Precision@5 para Víctor.'
+    de 30 afirmaciones y los 5 temas de Precision@5 para Víctor.
+
+    2026-10-08T21:52-05:00 · Lotes preparados con motor/preparar_revision.py: data/revision/validez_sustento.csv
+    (23 afirmaciones reales) y precision5_candidatos.csv (20 grupos sin puntaje). Faltan 7 afirmaciones
+    para llegar a 30; requieren generar más fichas con Ollama.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-035
   tarea: Revisar 30 afirmaciones y calcular validez del sustento con razones por caso
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-08T21:38-05:00
-  notas: Marcar respaldada, no respaldada o ambigua; guardar cita y motivo.
+  estado: En curso
+  fecha: 2026-10-08T21:52-05:00
+  notas: 'Marcar respaldada, no respaldada o ambigua; guardar cita y motivo.
+
+    2026-10-08T21:52-05:00 · Revisar data/revision/validez_sustento.csv (23 filas); completar veredicto,
+    motivo y revisor.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-036
