@@ -22,7 +22,7 @@ Editor/a y periodista de TVN.
 ## Criterios de éxito
 - **Comprobado:** Reducción del tiempo operativo de 20 minutos a menos de 1.5 minutos (93% de ahorro de tiempo).
 - **Comprobado:** Un editor pasa de fuentes dispersas a un tema investigable, con evidencia trazable.
-- **Comprobado:** 100% de afirmaciones con citas en la generación final; abstención correcta y segura cuando no hay evidencia, sin alucinaciones.
+- **Comprobado:** 100% de las afirmaciones generadas tienen una cita validada por código y el sistema se abstiene cuando no hay evidencia. La validez del sustento medida por personas es 66,7 % (8/12) y 82,6 % (19/23) en una segunda revisión, por debajo de la meta del 90 %. Ver Pruebas y métricas.
 
 ## Accesos
 - Demo: Localhost (offline).
