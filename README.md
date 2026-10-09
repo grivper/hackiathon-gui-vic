@@ -52,11 +52,13 @@ python3 -m venv .venv
 . .venv/bin/activate                  # Windows: .venv\Scripts\activate
 pip install torch --index-url https://download.pytorch.org/whl/cpu   # versión CPU, antes que el resto
 make arrancar                         # instala dependencias y carga la base DuckDB del snapshot
-make motor                            # modelo de embeddings (1.ª vez), clasificación, agrupación y puntaje
+make motor                            # modelo de embeddings (1.ª vez), clasificación, agrupación y puntaje (unos 6 min en CPU la primera vez)
 streamlit run app/app.py              # abre la bandeja editorial en http://localhost:8501
 ```
 
 - `make arrancar` y `make motor` son idempotentes: se pueden repetir sin reconstruir lo que no cambió.
+- Verificado en un clon limpio (Python 3.12, Linux): `make arrancar` ~2 min, `make motor` ~6 min, la app
+  responde en el puerto 8501 y las 378 pruebas pasan. Los tiempos dependen de tu conexión y de tu CPU.
 - Las fichas con borrador citado vienen en `data/fichas.jsonl`, así que la app las muestra **sin Ollama**.
   Ollama solo se necesita para generar fichas nuevas (ver *Generación con LLM local*).
 - Comprobar la instalación: `make test` (378 pruebas) y `python notion_sync.py --dry-run` (valida la bitácora
