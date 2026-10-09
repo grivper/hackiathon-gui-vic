@@ -190,3 +190,14 @@ def test_css_keeps_button_text_visible_in_every_state():
     for state in (":visited", ":focus:not(:active)", ":active", ":hover"):
         assert state in CSS
     assert "color:#f4f1ea !important" in CSS
+
+
+def test_rank_is_zero_padded_and_never_wraps():
+    nine = row_content_html(9, "turismo", "f", "x", [])
+    ten = row_content_html(10, "turismo", "f", "x", [])
+    hundred = row_content_html(100, "turismo", "f", "x", [])
+
+    assert '<div class="rank">09</div>' in nine
+    assert '<div class="rank">10</div>' in ten
+    assert '<div class="rank">100</div>' in hundred
+    assert "white-space:nowrap" in CSS.split("\n.rank{")[1].split("}")[0]

@@ -55,3 +55,6 @@ The summary paragraph is now five rows (badge, criterion chips/label, value + th
 
 ## Pass 9: larger text
 All CSS font sizes between 11 and 16px went up by 2px (metadata, chips, labels, notes, body) and native Streamlit text got explicit sizes (paragraphs 17px, captions 15px, labels 15px, inputs and buttons 17px, expander titles 18px). Headlines and big numbers unchanged. Verified in Chrome on both pages.
+
+## Pass 10: rank numbers
+Ranks 1-9 are zero-padded (01..09) and the rank cell no longer wraps: two-digit numbers (10, 11, ...) sit side by side on one line (nowrap, min-width 64px, tabular figures).

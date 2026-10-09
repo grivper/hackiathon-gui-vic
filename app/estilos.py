@@ -54,7 +54,7 @@ div[class*="st-key-row-"]:hover{box-shadow:0 8px 24px rgba(21,23,28,.10);transfo
 .row-main .rank{flex:none}
 
 /* bandeja row */
-.rank{font-family:'Newsreader',serif;font-size:44px;font-weight:600;color:#a3162f;width:48px;line-height:1}
+.rank{font-family:'Newsreader',serif;font-size:44px;font-weight:600;color:#a3162f;min-width:64px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
 .tema{font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#a3162f}
 .meta{font-size:15px;color:#5a5648}
 .row-main h3{font-family:'Newsreader',serif;font-size:24px;line-height:1.25;font-weight:600;margin:6px 0 10px;padding:0;text-wrap:balance}
@@ -212,7 +212,7 @@ def row_content_html(
 
     return (
         '<div class="row-main">'
-        f'<div class="rank">{int(rank)}</div>'
+        f'<div class="rank">{int(rank):02d}</div>'
         '<div style="min-width:0">'
         f'<span class="tema">{e(tema_label(tema))}</span> <span class="meta">· {e(fecha)}</span>'
         f"<h3>{e(titulo)}</h3>{chips_html(chips)}</div></div>"
