@@ -1,10 +1,29 @@
 # Métricas de la ejecución
 > Reportar numerador, denominador y fallos; no esconder errores tras un promedio.
 
-- **Cobertura de citas:** 100% (todas las afirmaciones generadas están ligadas a una cita validada estructuralmente por el código).
-- **Validez de sustento:** 100% (revisión manual de las 5 fichas editoriales no detectó alucinaciones). Meta de >90% cumplida.
-- **Abstención correcta:** 100.0% (10/10 abstenciones puras y 4/4 casos adversarios rechazados limpiamente en el benchmark).
-- **Abstenciones incorrectas:** 7 casos (preguntas soportadas que el sistema rechazó por exceso de cautela o formato).
-- **Clasificación (macro-F1 vs. baseline):** 0.339 (embeddings) vs 0.145 (baseline TF-IDF).
-- **Precision@5 del ranking:** 100% (los 5 registros de mayor puntaje evaluados son altamente relevantes para TVN Media).
-- **Tiempo mediano y p95 por consulta:** Mediana: 34.0 s, p95: 56.5 s (evaluado con modelo `gemma3:4b` local).
+Datos: snapshot con manifest `81640bd328e6`. Modelo local `gemma3:4b` (Ollama 0.40.1, solo CPU). Costo de API: USD 0 (sin servicio externo). Los tokens se reportan solo donde fueron medidos.
+
+## Resumen
+
+| Métrica | Resultado | Numerador / denominador | Estado |
+|---|---|---|---|
+| Cobertura de citas | 100 % | 5 / 5 fichas con todas las afirmaciones citadas (12 afirmaciones) | Medida |
+| Validez del sustento | Pendiente | Revisión humana de 30 afirmaciones en curso (TAR-035) | Pendiente |
+| Abstención correcta | 100 % | 10 / 10 (6 sin evidencia + 4 adversarias) | Medida, casos sintéticos |
+| Abstenciones incorrectas | 29,2 % | 7 / 24 consultas respondibles | Medida |
+| Macro-F1 (embeddings) | 0,339 | 93 etiquetas humanas | Medida |
+| Macro-F1 (baseline TF-IDF) | 0,145 | 93 etiquetas humanas | Medida |
+| Precision@5 | Pendiente | Selección independiente en curso (TAR-036) | Exploratoria |
+| Tiempo mediano / p95 | 18,87 s / 41,04 s | n = 10 | Medida |
+
+## Detalle y errores conservados
+
+- **Cobertura de citas:** estructural; el código valida que cada afirmación apunte a una evidencia existente. No equivale a validez del sustento.
+- **Validez del sustento:** el reto exige al menos 30 afirmaciones revisadas por una persona, con meta de 90 %. Las 5 fichas tienen solo 12 afirmaciones, por eso no se declara cumplida. Reservas ya detectadas en T09: USGS mencionado sin cita en una ficha y mezcla de cifras mensuales y anuales.
+- **Abstención correcta:** los 10 casos son sintéticos (benchmark TAR-011). Miden el mecanismo, no la calidad sobre datos reales.
+- **Abstenciones incorrectas (7):** TAR023-007, 008, 009, 011, 016, 017 y 018. Eran consultas con evidencia disponible y el sistema se abstuvo (recall de evidencia 0 %). Acierto de respuesta: 17 / 24 (70,8 %).
+- **Benchmark global:** 40 consultas, acierto de tipo 82,5 %; contradicciones 6 / 6, evaluadas contra fichas sintéticas. Recall promedio de evidencia en consultas de respuesta: 27,1 %. Detalle: `documentacion/evidencia-benchmark.md`.
+- **Macro-F1:** muestra pequeña con soportes por clase bajos (turismo n = 2, regulación n = 3). Se probaron 8 variantes de ajuste; se descartaron porque mejoraban la muestra de 93 pero empeoraban el control independiente de 24 titulares. Detalle: `data/evaluacion_clasificacion.md`.
+- **Precision@5:** el ranking de puntaje existe, pero la comparación contra la selección de una persona independiente todavía no está registrada. Hasta entonces se informa como exploratoria.
+- **Rendimiento:** la meta de mediana de 15 s no se cumplió (18,87 s). Mediana de 9,86 tokens/s; JSON válido 10 / 10; al menos una cita válida 9 / 10. Por eso las fichas finales se pre-generan antes de la demo. Detalle: `documentacion/evidencia-modelo-real.md`.
+- **Ahorro de tiempo:** tarea manual estimada en 20 min frente a 1,25 min asistida (una sola tarea medida; dato orientativo).
