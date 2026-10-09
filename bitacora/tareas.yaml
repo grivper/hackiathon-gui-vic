@@ -445,24 +445,34 @@
 - id: TAR-038
   tarea: Preparar en el Notion del evento la página con enlaces técnico, funcional y Pitch Day
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-08T21:38-05:00
-  notas: No ejecutar notion_sync.py hasta que main tenga la documentación final.
+  estado: Hecho
+  fecha: 2026-10-08T23:27-05:00
+  notas: 'No ejecutar notion_sync.py hasta que main tenga la documentación final.
+
+    2026-10-08T23:27-05:00 · Página principal con los 3 enlaces creada en el Notion del evento y publicada:
+    https://conscious-handbell-91a.notion.site/HackIAthon-TVN-Media-GUI-VIC-Entrega-final-3f46d0f0b114812783d5e65d79e5465a'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-039
   tarea: Sincronizar una sola vez el Notion del evento y verificar los tres enlaces públicos
   responsable: Víctor
-  estado: Pendiente
-  fecha: 2026-10-08T21:38-05:00
-  notas: Hacer pull de main primero; probar enlaces en incógnito.
+  estado: Hecho
+  fecha: 2026-10-08T23:27-05:00
+  notas: 'Hacer pull de main primero; probar enlaces en incógnito.
+
+    2026-10-08T23:27-05:00 · Sincronización única al Notion del evento (8 páginas, 45 tareas, 8 decisiones,
+    10 pruebas, 5 fuentes, 5 fichas) y raíz publicada. La verificación de las sub-páginas desde un navegador
+    sin sesión quedó pendiente por límite de consultas (429) de Notion.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-040
   tarea: Enviar correo final con enlace del repositorio y los tres enlaces de Notion
   responsable: Guille
-  estado: Pendiente
-  fecha: 2026-10-08T21:38-05:00
-  notas: 'Destino: hackiathon@viamatica.com; límite 2026-10-08 23:59 Panamá.'
+  estado: Hecho
+  fecha: 2026-10-08T23:27-05:00
+  notas: 'Destino: hackiathon@viamatica.com; límite 2026-10-08 23:59 Panamá.
+
+    2026-10-08T23:27-05:00 · Correo final enviado a hackiathon@viamatica.com el 2026-10-08 a las 23:26
+    (Panamá) con el repositorio público y los 3 enlaces de Notion.'
   tipo: Tarea
   epica: EPI-005
