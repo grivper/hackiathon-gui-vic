@@ -58,3 +58,7 @@ All CSS font sizes between 11 and 16px went up by 2px (metadata, chips, labels, 
 
 ## Pass 10: rank numbers
 Ranks 1-9 are zero-padded (01..09) and the rank cell no longer wraps: two-digit numbers (10, 11, ...) sit side by side on one line (nowrap, min-width 64px, tabular figures).
+
+## Pass 11: ficha did not open for some inbox rows (user screenshot)
+Bug in this feature: the ficha page looked its group up in the UNFILTERED inbox, which is capped at 50 rows (`fetch_inbox_groups(limit=50)`). A row visible under a filter (e.g. Tema = economía, rank 05) but outside the global top 50 was not found and the app bounced back to the inbox. The lookup now uses the same filters as the inbox (kept in session state). Regression test picks a real group that only appears under a filter. Verified in Chrome with Tema = economía, opening "Cooperación en seguridad y economía…".
+Known limit (by design, not changed): every query returns at most 50 groups; the motor holds 25,136 scored groups.

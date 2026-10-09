@@ -55,3 +55,33 @@ def test_open_ficha_then_back_restores_the_bandeja(monkeypatch):
     assert not at.exception
     assert at.session_state["ficha_id"] is None
     assert any(b.key and b.key.startswith("abrir_") for b in at.button)
+
+
+def test_ficha_opens_for_a_group_that_only_appears_when_a_filter_is_applied(monkeypatch):
+    """The inbox is capped at 50 groups per query. A group outside the unfiltered top 50
+    must still open from a filtered list (it used to bounce back to the inbox)."""
+
+    from app import data
+
+    signals = MOTOR.parent / "senales.duckdb"
+    unfiltered = {g.grupo_id for g in data.fetch_inbox_groups(MOTOR, signals)}
+    topics, _, _ = data.fetch_inbox_filter_options(MOTOR, signals)
+    target = None
+    for topic in topics:
+        for group in data.fetch_inbox_groups(MOTOR, signals, topic=topic):
+            if group.grupo_id not in unfiltered:
+                target = (topic, group.grupo_id)
+                break
+        if target:
+            break
+    if target is None:
+        pytest.skip("every filtered group is already in the unfiltered top 50")
+    topic, group_id = target
+
+    at = _app(monkeypatch)
+    at.selectbox[0].select(topic).run()
+    next(b for b in at.button if b.key == f"abrir_{group_id}").click().run()
+
+    assert not at.exception
+    assert at.session_state["ficha_id"] == group_id
+    assert f"Registro editorial {group_id}" in _text(at)

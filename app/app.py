@@ -519,9 +519,15 @@ def main() -> None:
         return
 
     if ficha_id:
+        # Look the group up with the SAME filters as the inbox: it is capped at 50 rows
+        # per query, so a group listed under a filter may not be in the unfiltered top 50.
+        saved_topic = st.session_state.get("filtro_tema", "Todos")
         try:
             every_group = load_inbox(
-                str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint, None, min_date, max_date
+                str(MOTOR_PATH), str(SIGNALS_PATH), fingerprint,
+                None if saved_topic == "Todos" else saved_topic,
+                st.session_state.get("filtro_desde", min_date),
+                st.session_state.get("filtro_hasta", max_date),
             )
         except ScoreUnavailableError:
             st.warning("Puntaje no disponible. Ejecute el motor de puntaje antes de consultar la bandeja.")
