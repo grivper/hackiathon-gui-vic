@@ -385,11 +385,14 @@
   tarea: Completar evidencia técnica de T01 y T02 con conteos, IDs y errores conservados
   responsable: Guille
   estado: Hecho
-  fecha: 2026-10-08T21:45-05:00
+  fecha: 2026-10-08T22:54-05:00
   notas: 'Editar solo bitacora/pruebas.yaml para evitar conflictos.
 
     2026-10-08T21:45-05:00 · T01 y T02 completados con fixture, conteos reales, motivos de rechazo y distribución
-    de procedencias.'
+    de procedencias.
+
+    2026-10-08T22:54-05:00 · T01 a T10 completados con entradas, conteos y evidencia reproducible; auditoría
+    TAR-037 atendida.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-034
