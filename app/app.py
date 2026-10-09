@@ -18,6 +18,7 @@ else:
 
 VALID_REVIEW_STATES = data_module.VALID_REVIEW_STATES
 EvidenceRow = data_module.EvidenceRow
+GroupFicha = data_module.GroupFicha
 InboxGroup = data_module.InboxGroup
 ScoreUnavailableError = data_module.ScoreUnavailableError
 ask_group_question = data_module.ask_group_question
@@ -324,11 +325,14 @@ def render_generate_draft(group: InboxGroup) -> None:
         "Generar borrador con IA", key=f"generar_{group.grupo_id}", disabled=not available
     )
     if not available:
-        st.caption(reason)
+        st.markdown(estilos.empty_note_html(reason), unsafe_allow_html=True)
         return
-    st.caption(
-        "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo "
-        "genera este grupo."
+    st.markdown(
+        estilos.empty_note_html(
+            "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo "
+            "genera este grupo."
+        ),
+        unsafe_allow_html=True,
     )
     if not clicked:
         return
@@ -360,73 +364,80 @@ def render_group_draft(group: InboxGroup) -> None:
     """
 
     with st.expander("Paquete generado y revisión humana", expanded=True):
-        st.caption(
-            "Información generada: el borrador no equivale a información verificada "
-            "ni autoriza publicación."
+        st.markdown(
+            estilos.aviso_html(
+                "Información generada: el borrador no equivale a información verificada "
+                "ni autoriza publicación.",
+                "Aprobar el borrador no lo publica automáticamente.",
+            ),
+            unsafe_allow_html=True,
         )
-        st.caption("Aprobar el borrador no lo publica automáticamente.")
 
         ficha = fetch_group_ficha(
             MOTOR_PATH, SIGNALS_PATH, group.grupo_id, fichas_path=FICHAS_PATH
         )
         if ficha is None:
-            st.markdown(estilos.empty_draft_html(), unsafe_allow_html=True)
-            render_generate_draft(group)
+            with st.container(key=f"vacio_{group.grupo_id}"):
+                st.markdown(estilos.empty_head_html(), unsafe_allow_html=True)
+                render_generate_draft(group)
             return
 
-        if ficha.tipo_respuesta == "abstencion":
-            st.warning("Abstención: no hay evidencia suficiente para redactar un borrador.")
-            if ficha.borrador:
-                st.markdown(ficha.borrador)
-            if ficha.motivo_abstencion:
-                st.caption(f"Motivo: {ficha.motivo_abstencion}")
-        else:
-            if ficha.tipo_respuesta == "contradiccion":
-                st.warning("Contradicción detectada entre las fuentes citadas.")
-            st.caption(
-                "Borrador citable basado exclusivamente en la evidencia del grupo."
+        with st.container(key=f"borrador_{group.grupo_id}"):
+            _render_draft_body(group, ficha)
+
+
+def _render_draft_body(group: InboxGroup, ficha: GroupFicha) -> None:
+    """The generated draft, its citations and the mandatory review state."""
+
+    if ficha.tipo_respuesta == "abstencion":
+        st.warning("Abstención: no hay evidencia suficiente para redactar un borrador.")
+        if ficha.borrador:
+            st.markdown(ficha.borrador)
+        if ficha.motivo_abstencion:
+            st.caption(f"Motivo: {ficha.motivo_abstencion}")
+    else:
+        if ficha.tipo_respuesta == "contradiccion":
+            st.warning("Contradicción detectada entre las fuentes citadas.")
+        st.caption("Borrador citable basado exclusivamente en la evidencia del grupo.")
+        st.markdown(ficha.borrador or "")
+        if ficha.afirmaciones:
+            with st.popover("Ver afirmaciones base"):
+                for a in ficha.afirmaciones:
+                    st.markdown(f"- {a}")
+        if ficha.citas:
+            citas_label = ", ".join(
+                f"{id_evidencia} · {campo}" for id_evidencia, campo in ficha.citas
             )
-            st.markdown(ficha.borrador or "")
-            if ficha.afirmaciones:
-                with st.popover("Ver afirmaciones base"):
-                    for a in ficha.afirmaciones:
-                        st.markdown(f"- {a}")
-            if ficha.citas:
-                citas_label = ", ".join(
-                    f"{id_evidencia} · {campo}" for id_evidencia, campo in ficha.citas
-                )
-                st.caption(f"Citas empleadas: {citas_label}")
+            st.caption(f"Citas empleadas: {citas_label}")
 
-        st.markdown("---")
-        st.markdown("**Revisión editorial**")
-        if not ficha.persistable:
-            st.warning(
-                "Ficha JSONL de solo lectura: el estado no se puede guardar. "
-                "La persistencia requiere una ficha generada en DuckDB."
-            )
-            return
-
-        try:
-            index = VALID_REVIEW_STATES.index(ficha.estado_revision)
-        except ValueError:
-            index = 0
-
-        new_state = st.selectbox(
-            "Estado del borrador",
-            list(VALID_REVIEW_STATES),
-            index=index,
-            key=f"select_{group.grupo_id}_{ficha.generado_en}"
+    st.markdown("---")
+    st.markdown("**Revisión editorial**")
+    if not ficha.persistable:
+        st.warning(
+            "Ficha JSONL de solo lectura: el estado no se puede guardar. "
+            "La persistencia requiere una ficha generada en DuckDB."
         )
+        return
 
-        if new_state != ficha.estado_revision:
-            persist_ficha_review_state(MOTOR_PATH, group.grupo_id, new_state)
+    try:
+        index = VALID_REVIEW_STATES.index(ficha.estado_revision)
+    except ValueError:
+        index = 0
 
-        if new_state == "aprobado como borrador":
-            st.success(
-                "Borrador aprobado como borrador: ni publica ni autoriza su publicación."
-            )
-        elif new_state == "requiere evidencia":
-            st.warning("Se requiere más investigación o evidencia de otras fuentes.")
+    new_state = st.selectbox(
+        "Estado del borrador",
+        list(VALID_REVIEW_STATES),
+        index=index,
+        key=f"select_{group.grupo_id}_{ficha.generado_en}",
+    )
+
+    if new_state != ficha.estado_revision:
+        persist_ficha_review_state(MOTOR_PATH, group.grupo_id, new_state)
+
+    if new_state == "aprobado como borrador":
+        st.success("Borrador aprobado como borrador: ni publica ni autoriza su publicación.")
+    elif new_state == "requiere evidencia":
+        st.warning("Se requiere más investigación o evidencia de otras fuentes.")
 
 
 def _display_chips(group: InboxGroup) -> list[tuple[str, str]]:

@@ -94,9 +94,21 @@ div[class*="st-key-evid-"]{background:#fbfaf6;border:1px solid #ddd8cb;border-ra
 .kv .v{font-size:17px}
 .kv .v.na{color:#5a5648}
 
-.empty{display:flex;gap:12px;align-items:center;background:#fff;border:1px dashed #b9b29f;
-  border-radius:12px;padding:18px 20px;font-size:17px;color:#3b392f}
-.empty code{background:#ebe7da;border-radius:6px;padding:2px 6px;font-size:15px}
+.aviso{display:flex;gap:12px;align-items:flex-start;background:#fbe9bf;color:#4f3800;
+  border-radius:12px;padding:14px 16px;font-size:17px;line-height:1.5;margin-bottom:16px}
+.aviso svg{flex:none;margin-top:1px}
+.aviso div div{margin-top:4px}
+[class*="st-key-vacio_"]{background:#fff;border:1px dashed #b9b29f;border-radius:14px;padding:24px;gap:18px}
+[class*="st-key-borrador_"]{background:#fff;border:1px solid #ddd8cb;border-radius:14px;padding:20px}
+.vacio-head{display:flex;align-items:center;gap:14px}
+.vacio-ico{flex:none;width:48px;height:48px;border-radius:50%;background:#ebe7da;color:#3b392f;
+  display:flex;align-items:center;justify-content:center}
+.vacio-t{font-size:19px;font-weight:600}
+.vacio-s{font-size:16px;color:#5a5648;margin-top:3px}
+.vacio-s code,.vacio-nota code{background:#ebe7da;color:#15171c;border-radius:6px;padding:2px 6px;font-size:15px}
+.vacio-nota{display:flex;gap:10px;align-items:flex-start;border-top:1px solid #e6e1d3;
+  padding-top:16px;font-size:16px;line-height:1.5;color:#5a5648}
+.vacio-nota svg{flex:none;margin-top:2px}
 
 /* aside */
 .aside{background:#fff;border:1px solid #ddd8cb;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:18px}
@@ -374,11 +386,32 @@ def info_html(label: str, text: str, href: str | None = None, link_text: str | N
     return f'<div class="info">{_ICON_INFO}<div>{prefix}{body}</div></div>'
 
 
-def empty_draft_html() -> str:
+_ICON_LOCK = (
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 018 0v3"></path></svg>'
+)
+
+
+def aviso_html(strong: str, normal: str) -> str:
+    """Amber notice for the generated package: first sentence bold, second normal."""
+
+    return f'<div class="aviso">{_ICON_WARN}<div><b>{e(strong)}</b><div>{e(normal)}</div></div></div>'
+
+
+def empty_head_html() -> str:
+    """Head of the "no draft yet" card; the button and note follow inside the same card."""
+
     return (
-        f'<div class="empty">{_ICON_FILE}<div>Borrador no generado para este grupo '
-        "(ejecutar <code>make generar</code>).</div></div>"
+        '<div class="vacio-head">'
+        f'<div class="vacio-ico">{_ICON_FILE.replace("#5a5648", "currentColor").replace("22", "24")}</div>'
+        '<div><div class="vacio-t">Borrador no generado para este grupo</div>'
+        '<div class="vacio-s">Ejecutar <code>make generar</code></div></div></div>'
     )
+
+
+def empty_note_html(text: str) -> str:
+    return f'<div class="vacio-nota">{_ICON_LOCK}<div>{e(text)}</div></div>'
 
 
 def evidence_head_html(titulo: str, id_noticia: str, campo: str | None = None) -> str:

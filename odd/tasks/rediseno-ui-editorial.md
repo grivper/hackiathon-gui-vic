@@ -73,3 +73,9 @@ User decision: generate per entry on demand instead of batch, with three guards 
 - UI: `render_generate_draft` in the empty state; disabled with the reason when Ollama is down; spinner while generating; warning/error messages for the two refusal paths.
 - Tests: tests/test_generacion.py (10) and 6 UI tests. Verified in Chrome: generated one real draft (Festival Navideño), jsonl went from 7 to 8 lines with no deletions; the verification change to data/fichas.jsonl was reverted, not committed.
 - A ficha that already exists gets no button (regenerating is deterministic at temperature 0, so it would only reproduce the same text); the reviewed-state guard is enforced in the function as well.
+
+## Pass 14: "Paquete generado y revisión humana" (documentacion/PAQUETE_BORRADOR.md)
+- The two grey captions became one amber notice (first sentence bold, second normal, warning icon): `aviso_html`.
+- Empty state is one keyed card (`vacio_<id>`): circular icon, title "Borrador no generado para este grupo", "Ejecutar `make generar`" (grey code, not green), the "Generar borrador con IA" button and, below a divider, the local-model note with a lock icon. When Ollama is down the same slot shows the reason instead.
+- An existing draft is wrapped in a white card (`borrador_<id>`), notice kept above. Draft body moved to `_render_draft_body` (same logic and texts).
+- Button logic and widget key (`generar_<id>`) unchanged. Removed the old `.empty` block and `empty_draft_html`. 375 tests pass; verified in Chrome.

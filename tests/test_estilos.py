@@ -10,7 +10,9 @@ from app.estilos import (
     heading_html,
     section_html,
     tema_label,
-    empty_draft_html,
+    aviso_html,
+    empty_head_html,
+    empty_note_html,
     evidence_head_html,
     evidence_kv_html,
     hero_html,
@@ -152,11 +154,28 @@ def test_info_html_without_label_or_link_is_just_the_text():
     assert "<b>" not in out
 
 
-def test_empty_draft_html_keeps_the_exact_message():
-    out = empty_draft_html()
+def test_empty_state_card_pieces_keep_the_original_texts():
+    head = empty_head_html()
 
-    assert 'class="empty"' in out
-    assert "Borrador no generado para este grupo (ejecutar <code>make generar</code>)." in out
+    assert 'class="vacio-head"' in head and "<svg" in head
+    assert "Borrador no generado para este grupo" in head
+    assert 'Ejecutar <code>make generar</code>' in head
+
+    note = empty_note_html("Usa el modelo local <b>x</b>")
+    assert 'class="vacio-nota"' in note and "<svg" in note
+    assert "<b>x</b>" not in note and "&lt;b&gt;x" in note
+
+
+def test_aviso_puts_the_warning_in_bold_and_the_second_sentence_apart():
+    out = aviso_html(
+        "Información generada: el borrador no equivale a información verificada ni autoriza publicación.",
+        "Aprobar el borrador no lo publica automáticamente.",
+    )
+
+    assert out.startswith('<div class="aviso"><svg')
+    assert "<b>Información generada: el borrador no equivale a información verificada ni autoriza publicación.</b>" in out
+    assert "<div>Aprobar el borrador no lo publica automáticamente.</div>" in out
+    assert "<script>" not in aviso_html("<script>", "x")
 
 
 def test_evidence_head_escapes_title_and_id():
@@ -175,7 +194,7 @@ def test_evidence_kv_marks_missing_values_and_escapes():
 
 
 def test_css_styles_expanders_chat_and_empty_states():
-    for selector in ('stExpander', 'stChatInput', 'stChatMessage', ".kv", ".empty", ".info"):
+    for selector in ('stExpander', 'stChatInput', 'stChatMessage', ".kv", ".vacio-head", ".aviso", ".info", "st-key-vacio_", "st-key-borrador_"):
         assert selector in CSS
 
 

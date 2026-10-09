@@ -143,6 +143,7 @@ def _patch_draft_widgets(monkeypatch, *, selectbox_return="nuevo"):
         "spinner": MagicMock(),
         "error": Mock(),
         "rerun": Mock(),
+        "container": MagicMock(),
     }
     for name, mock in widgets.items():
         monkeypatch.setattr(f"app.app.st.{name}", mock)
@@ -162,7 +163,8 @@ def test_render_group_draft_shows_an_honest_message_when_no_ficha_exists(monkeyp
 
     widgets["info"].assert_not_called()
     rendered = " ".join(str(call.args[0]) for call in widgets["markdown"].call_args_list)
-    assert "Borrador no generado para este grupo (ejecutar <code>make generar</code>)." in rendered
+    assert "Borrador no generado para este grupo" in rendered
+    assert "Ejecutar <code>make generar</code>" in rendered
     widgets["selectbox"].assert_not_called()
 
 
@@ -533,7 +535,8 @@ def test_generate_button_is_disabled_and_explains_why_when_ollama_is_down(monkey
     render_group_draft(_GROUP)
 
     assert widgets["button"].call_args.kwargs["disabled"] is True
-    widgets["caption"].assert_any_call("Ollama no responde en http://x.")
+    rendered = " ".join(str(c.args[0]) for c in widgets["markdown"].call_args_list)
+    assert "Ollama no responde en http://x." in rendered
 
 
 def test_clicking_generate_saves_only_that_group_and_reloads(monkeypatch):
@@ -592,3 +595,45 @@ def test_a_ficha_that_already_exists_has_no_generate_button(monkeypatch):
     assert not any(
         c.args and c.args[0] == "Generar borrador con IA" for c in widgets["button"].call_args_list
     )
+
+
+
+def test_draft_expander_opens_with_one_amber_notice_holding_both_warnings(monkeypatch):
+    widgets = _no_ficha(monkeypatch)
+
+    render_group_draft(_GROUP)
+
+    rendered = [str(c.args[0]) for c in widgets["markdown"].call_args_list]
+    notice = next(r for r in rendered if 'class="aviso"' in r)
+    assert "<b>Información generada: el borrador no equivale a información verificada ni autoriza publicación.</b>" in notice
+    assert "Aprobar el borrador no lo publica automáticamente." in notice
+    # no loose grey captions repeat the two sentences
+    assert not any(
+        "Aprobar el borrador" in str(c) or "Información generada" in str(c)
+        for c in widgets["caption"].call_args_list
+    )
+
+
+def test_empty_state_is_one_keyed_card_with_the_button_and_the_local_model_note(monkeypatch):
+    widgets = _no_ficha(monkeypatch)
+
+    render_group_draft(_GROUP)
+
+    keys = [c.kwargs.get("key") for c in widgets["container"].call_args_list]
+    assert "vacio_G-1" in keys
+    rendered = " ".join(str(c.args[0]) for c in widgets["markdown"].call_args_list)
+    assert "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo genera este grupo." in rendered
+
+
+def test_an_existing_draft_is_wrapped_in_a_white_card_container(monkeypatch):
+    widgets = _patch_draft_widgets(monkeypatch)
+    monkeypatch.setattr(
+        "app.app.fetch_group_ficha",
+        Mock(return_value=_ficha_with_claims([("EEUU dona equipos", ["N-1"])])),
+    )
+    monkeypatch.setattr("app.app.persist_ficha_review_state", Mock())
+
+    render_group_draft(_GROUP)
+
+    keys = [c.kwargs.get("key") for c in widgets["container"].call_args_list]
+    assert "borrador_G-1" in keys
