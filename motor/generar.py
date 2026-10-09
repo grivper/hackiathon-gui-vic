@@ -216,6 +216,38 @@ def escribir_fichas(motor_db: Path, fichas: list[dict], jsonl: Path) -> None:
     jsonl.write_text("".join(json.dumps(t, ensure_ascii=False, sort_keys=True) + "\n" for t in todas), encoding="utf-8")
 
 
+def guardar_ficha(motor_db: Path, ficha: dict, jsonl: Path) -> None:
+    """Guarda UNA ficha sin tocar las demás (la usa el botón de la interfaz).
+
+    La tabla recibe un upsert de esa fila. El JSONL se fusiona por `id_caso`: las líneas de
+    otras fichas se conservan aunque la base local no las tenga (a diferencia de
+    `escribir_fichas`, que reescribe el export completo desde la tabla).
+    """
+    con = duckdb.connect(str(motor_db))
+    try:
+        _crear_tabla(con)
+        con.execute("BEGIN TRANSACTION")
+        con.execute("DELETE FROM fichas WHERE id_caso = ?", [ficha["id_caso"]])
+        con.execute(
+            "INSERT INTO fichas VALUES (?, ?, ?, ?, ?)",
+            [ficha["id_caso"], ficha.get("estado_revision"), ficha.get("tipo_respuesta"),
+             json.dumps(ficha, ensure_ascii=False, sort_keys=True), datetime.now(timezone.utc)],
+        )
+        con.execute("COMMIT")
+    finally:
+        con.close()
+    previas: list[dict] = []
+    if jsonl.exists():
+        previas = [json.loads(linea) for linea in jsonl.read_text(encoding="utf-8").splitlines() if linea.strip()]
+    fusion = {f["id_caso"]: f for f in previas}
+    fusion[ficha["id_caso"]] = ficha
+    jsonl.parent.mkdir(parents=True, exist_ok=True)
+    jsonl.write_text(
+        "".join(json.dumps(fusion[k], ensure_ascii=False, sort_keys=True) + "\n" for k in sorted(fusion)),
+        encoding="utf-8",
+    )
+
+
 def _grupos_top(motor_db: Path, n: int, min_noticias: int) -> list[str]:
     con = duckdb.connect(str(motor_db), read_only=True)
     try:

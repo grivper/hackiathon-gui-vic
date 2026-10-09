@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 
+import app.app as app_module
 from app.app import (
     database_fingerprint,
     editorial_guidance,
@@ -119,10 +120,11 @@ def test_render_official_context_displays_available_sources(monkeypatch):
     monkeypatch.setattr("app.app.st.markdown", st_markdown)
     render_official_context("PIB: 5%", "usgs-123")
     st_markdown.assert_any_call("**Contexto oficial (Banco Mundial / USGS)**")
-    st_info.assert_any_call("**Indicadores Banco Mundial:** PIB: 5%")
-    st_info.assert_any_call(
-        "**Evento sísmico verificado (USGS):** [usgs-123](https://earthquake.usgs.gov/earthquakes/eventpage/usgs-123)"
-    )
+    st_info.assert_not_called()
+    rendered = " ".join(str(call.args[0]) for call in st_markdown.call_args_list)
+    assert "Indicadores Banco Mundial:" in rendered and "PIB: 5%" in rendered
+    assert "Evento sísmico verificado (USGS):" in rendered
+    assert "https://earthquake.usgs.gov/earthquakes/eventpage/usgs-123" in rendered
 
 
 def _patch_draft_widgets(monkeypatch, *, selectbox_return="nuevo"):
@@ -137,10 +139,16 @@ def _patch_draft_widgets(monkeypatch, *, selectbox_return="nuevo"):
         "success": Mock(),
         "selectbox": Mock(return_value=selectbox_return),
         "popover": MagicMock(),
+        "button": Mock(return_value=False),
+        "spinner": MagicMock(),
+        "error": Mock(),
+        "rerun": Mock(),
+        "container": MagicMock(),
     }
     for name, mock in widgets.items():
         monkeypatch.setattr(f"app.app.st.{name}", mock)
     monkeypatch.setattr("app.app.st.session_state", {})
+    monkeypatch.setattr("app.app.generacion.estado_ollama", Mock(return_value=(True, "")))
     return widgets
 
 
@@ -153,9 +161,10 @@ def test_render_group_draft_shows_an_honest_message_when_no_ficha_exists(monkeyp
 
     render_group_draft(_GROUP)
 
-    widgets["info"].assert_any_call(
-        "Borrador no generado para este grupo (ejecutar make generar)."
-    )
+    widgets["info"].assert_not_called()
+    rendered = " ".join(str(call.args[0]) for call in widgets["markdown"].call_args_list)
+    assert "Borrador no generado para este grupo" in rendered
+    assert "Ejecutar <code>make generar</code>" in rendered
     widgets["selectbox"].assert_not_called()
 
 
@@ -354,3 +363,277 @@ def test_render_group_chat_unsupported_question_abstains_without_citations(monke
 
     assert any("abstención" in str(call).lower() for call in widgets["warning"].call_args_list)
     assert not any("Citas" in str(call) for call in widgets["caption"].call_args_list)
+
+
+def test_render_group_chat_keeps_the_input_below_every_message(monkeypatch):
+    """Messages must go into a container created BEFORE the input, otherwise Streamlit
+    draws the new question and answer under the input and the history above it."""
+
+    calls = []
+    history_box = MagicMock()
+    history_box.__enter__ = Mock(side_effect=lambda: calls.append("enter_box"))
+    history_box.__exit__ = Mock(return_value=False)
+
+    def fake_container(*args, **kwargs):
+        calls.append("container")
+        return history_box
+
+    def fake_chat_input(*args, **kwargs):
+        calls.append("chat_input")
+        return "¿Qué pasó?"
+
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", fake_container)
+    monkeypatch.setattr("app.app.st.chat_input", fake_chat_input)
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.spinner", MagicMock())
+    monkeypatch.setattr("app.app.st.session_state", {})
+    for name in ("caption", "warning", "markdown"):
+        monkeypatch.setattr(f"app.app.st.{name}", Mock())
+    monkeypatch.setattr(
+        "app.app.ask_group_question", Mock(return_value=ChatResponse("Hecho.", False, []))
+    )
+
+    render_group_chat(_GROUP)
+
+    assert calls.index("container") < calls.index("chat_input")
+    assert "enter_box" in calls
+
+
+# --------------------------------------------------------------------------- chat: example questions and fixed-height history
+
+def _ficha_with_claims(claims):
+    return GroupFicha(
+        id_caso="G-1", estado_revision="nuevo", tipo_respuesta="respuesta",
+        borrador="x", citas=[], afirmaciones=[c for c, _ in claims],
+        motivo_abstencion=None, generado_en=None, claim_citations=claims,
+    )
+
+
+def test_suggest_questions_are_answerable_and_come_from_the_real_claims(monkeypatch):
+    from app.data import suggest_questions
+
+    ficha = _ficha_with_claims(
+        [
+            ("EEUU dona equipos por $500,000 para habilitar albergues", ["N-1"]),
+            ("El Canal de Panamá inaugura la temporada de cruceros", ["N-2"]),
+            ("Claim sin cita", []),
+        ]
+    )
+
+    questions = suggest_questions(ficha, limit=3)
+
+    assert 1 <= len(questions) <= 2  # the uncited claim is never used
+    monkeypatch.setattr("app.data.fetch_group_ficha", lambda *a, **k: ficha)
+    for question in questions:
+        answer = data_module_ask(question)
+        assert answer.abstencion is False and answer.citas
+
+
+def data_module_ask(question):
+    from app.data import ask_group_question
+
+    return ask_group_question("G-1", question, motor_path="m", signals_path="s")
+
+
+def test_suggest_questions_returns_nothing_without_ficha_or_cited_claims():
+    from app.data import suggest_questions
+
+    assert suggest_questions(None) == []
+    assert suggest_questions(_ficha_with_claims([("Sin cita", [])])) == []
+
+
+def test_render_group_chat_always_uses_a_fixed_height_history_box(monkeypatch):
+    seen = []
+
+    def fake_container(*args, **kwargs):
+        seen.append(kwargs.get("height"))
+        return MagicMock()
+
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", fake_container)
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.caption", Mock())
+    monkeypatch.setattr("app.app.st.markdown", Mock())
+    monkeypatch.setattr("app.app.st.button", Mock(return_value=False))
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.session_state", {})
+
+    render_group_chat(_GROUP)
+
+    assert seen == [app_module.CHAT_HISTORY_HEIGHT]
+
+
+def test_render_group_chat_shows_example_questions_only_while_the_history_is_empty(monkeypatch):
+    markdown = Mock()
+    button = Mock(return_value=False)
+    ficha = _ficha_with_claims([("EEUU dona equipos para albergues", ["N-1"])])
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", lambda *a, **k: MagicMock())
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.caption", Mock())
+    monkeypatch.setattr("app.app.st.markdown", markdown)
+    monkeypatch.setattr("app.app.st.button", button)
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=ficha))
+
+    monkeypatch.setattr("app.app.st.session_state", {})
+    render_group_chat(_GROUP)
+    assert button.call_count >= 1  # one button per example question
+
+    button.reset_mock()
+    monkeypatch.setattr(
+        "app.app.st.session_state",
+        {"chat_G-1": [{"role": "user", "content": "q"}]},
+    )
+    render_group_chat(_GROUP)
+    button.assert_not_called()
+
+
+def test_render_group_chat_without_ficha_explains_why_there_are_no_examples(monkeypatch):
+    caption = Mock()
+    monkeypatch.setattr("app.app.st.expander", MagicMock())
+    monkeypatch.setattr("app.app.st.container", lambda *a, **k: MagicMock())
+    monkeypatch.setattr("app.app.st.chat_input", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.chat_message", MagicMock())
+    monkeypatch.setattr("app.app.st.caption", caption)
+    monkeypatch.setattr("app.app.st.markdown", Mock())
+    monkeypatch.setattr("app.app.st.button", Mock(return_value=False))
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=None))
+    monkeypatch.setattr("app.app.st.session_state", {})
+
+    render_group_chat(_GROUP)
+
+    assert any("borrador" in str(c).lower() for c in caption.call_args_list)
+
+
+
+# --------------------------------------------------------------------------- on-demand draft button
+
+def _no_ficha(monkeypatch, *, ollama=(True, ""), clicked=False):
+    widgets = _patch_draft_widgets(monkeypatch)
+    widgets["button"].return_value = clicked
+    monkeypatch.setattr("app.app.generacion.estado_ollama", Mock(return_value=ollama))
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=None))
+    return widgets
+
+
+def test_empty_draft_offers_a_generate_button_when_ollama_is_up(monkeypatch):
+    widgets = _no_ficha(monkeypatch)
+
+    render_group_draft(_GROUP)
+
+    call = widgets["button"].call_args
+    assert call.args[0] == "Generar borrador con IA"
+    assert call.kwargs["key"] == "generar_G-1" and not call.kwargs.get("disabled")
+
+
+def test_generate_button_is_disabled_and_explains_why_when_ollama_is_down(monkeypatch):
+    widgets = _no_ficha(monkeypatch, ollama=(False, "Ollama no responde en http://x."))
+
+    render_group_draft(_GROUP)
+
+    assert widgets["button"].call_args.kwargs["disabled"] is True
+    rendered = " ".join(str(c.args[0]) for c in widgets["markdown"].call_args_list)
+    assert "Ollama no responde en http://x." in rendered
+
+
+def test_clicking_generate_saves_only_that_group_and_reloads(monkeypatch):
+    from app.generacion import GenerationResult
+
+    widgets = _no_ficha(monkeypatch, clicked=True)
+    generate = Mock(return_value=GenerationResult("generada", {"id_caso": "G-1"}))
+    monkeypatch.setattr("app.app.generacion.generar_borrador", generate)
+
+    render_group_draft(_GROUP)
+
+    assert generate.call_args.args[0] == "G-1"
+    widgets["rerun"].assert_called_once()
+
+
+def test_generation_refused_for_a_reviewed_ficha_shows_a_warning(monkeypatch):
+    from app.generacion import GenerationResult
+
+    widgets = _no_ficha(monkeypatch, clicked=True)
+    monkeypatch.setattr(
+        "app.app.generacion.generar_borrador",
+        Mock(return_value=GenerationResult("ya_revisada", detail="Estado actual: descartado.")),
+    )
+
+    render_group_draft(_GROUP)
+
+    assert any("revis" in str(c).lower() for c in widgets["warning"].call_args_list)
+    widgets["rerun"].assert_not_called()
+
+
+def test_a_model_failure_is_reported_and_can_be_retried(monkeypatch):
+    from app.generacion import GenerationResult
+
+    widgets = _no_ficha(monkeypatch, clicked=True)
+    monkeypatch.setattr(
+        "app.app.generacion.generar_borrador",
+        Mock(return_value=GenerationResult("error_modelo", detail="conexion")),
+    )
+
+    render_group_draft(_GROUP)
+
+    assert widgets["error"].called
+    widgets["rerun"].assert_not_called()
+
+
+def test_a_ficha_that_already_exists_has_no_generate_button(monkeypatch):
+    widgets = _patch_draft_widgets(monkeypatch)
+    monkeypatch.setattr(
+        "app.app.fetch_group_ficha",
+        Mock(return_value=_ficha_with_claims([("EEUU dona equipos", ["N-1"])])),
+    )
+    monkeypatch.setattr("app.app.persist_ficha_review_state", Mock())
+
+    render_group_draft(_GROUP)
+
+    assert not any(
+        c.args and c.args[0] == "Generar borrador con IA" for c in widgets["button"].call_args_list
+    )
+
+
+
+def test_draft_expander_opens_with_one_amber_notice_holding_both_warnings(monkeypatch):
+    widgets = _no_ficha(monkeypatch)
+
+    render_group_draft(_GROUP)
+
+    rendered = [str(c.args[0]) for c in widgets["markdown"].call_args_list]
+    notice = next(r for r in rendered if 'class="aviso"' in r)
+    assert "<b>Información generada: el borrador no equivale a información verificada ni autoriza publicación.</b>" in notice
+    assert "Aprobar el borrador no lo publica automáticamente." in notice
+    # no loose grey captions repeat the two sentences
+    assert not any(
+        "Aprobar el borrador" in str(c) or "Información generada" in str(c)
+        for c in widgets["caption"].call_args_list
+    )
+
+
+def test_empty_state_is_one_keyed_card_with_the_button_and_the_local_model_note(monkeypatch):
+    widgets = _no_ficha(monkeypatch)
+
+    render_group_draft(_GROUP)
+
+    keys = [c.kwargs.get("key") for c in widgets["container"].call_args_list]
+    assert "vacio_G-1" in keys
+    rendered = " ".join(str(c.args[0]) for c in widgets["markdown"].call_args_list)
+    assert "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo genera el borrador de esta entrada." in rendered
+
+
+def test_an_existing_draft_is_wrapped_in_a_white_card_container(monkeypatch):
+    widgets = _patch_draft_widgets(monkeypatch)
+    monkeypatch.setattr(
+        "app.app.fetch_group_ficha",
+        Mock(return_value=_ficha_with_claims([("EEUU dona equipos", ["N-1"])])),
+    )
+    monkeypatch.setattr("app.app.persist_ficha_review_state", Mock())
+
+    render_group_draft(_GROUP)
+
+    keys = [c.kwargs.get("key") for c in widgets["container"].call_args_list]
+    assert "borrador_G-1" in keys

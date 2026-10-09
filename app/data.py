@@ -242,6 +242,41 @@ def _query_terms(text: str) -> set[str]:
     }
 
 
+def _distinctive_term(claim: str, used: set[str]) -> str | None:
+    """Longest content word of a claim, as written, that is not already suggested."""
+
+    import re
+
+    best: str | None = None
+    for token in re.findall(r"[^\W_]+", claim):
+        normalized = _query_terms(token)
+        if len(token) < 5 or token.isdigit() or not normalized:
+            continue
+        if next(iter(normalized)) in used:
+            continue
+        if best is None or len(token) > len(best):
+            best = token
+    return best
+
+
+def suggest_questions(ficha: GroupFicha | None, limit: int = 3) -> list[str]:
+    """Example questions built from the ficha's own cited claims, so each is answerable."""
+
+    if ficha is None:
+        return []
+    questions: list[str] = []
+    used: set[str] = set()
+    for claim, citation_ids in ficha.claim_citations:
+        if not citation_ids or len(questions) >= limit:
+            continue
+        term = _distinctive_term(claim, used)
+        if term is None:
+            continue
+        used.update(_query_terms(term))
+        questions.append(f"¿Qué dice la ficha sobre {term}?")
+    return questions
+
+
 def _answer_contradiction(ficha: GroupFicha) -> ChatResponse | None:
     """Expose every cited version of a contradictory ficha without picking a winner.
 

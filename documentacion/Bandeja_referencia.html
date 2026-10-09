@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Bandeja editorial</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600;6..72,700&family=Source+Sans+3:wght@400;600;700&display=swap');
+body{margin:0;background:#f4f1ea;font-family:'Source Sans 3',system-ui,sans-serif;color:#15171c}
+.serif{font-family:'Newsreader',Georgia,serif}
+a.open{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;background:#15171c;color:#f4f1ea;text-decoration:none;font-weight:600;font-size:15px;box-sizing:border-box;white-space:nowrap}
+a.open:hover{background:#a3162f}
+.row{transition:box-shadow .15s, transform .15s}
+.row:hover{box-shadow:0 8px 24px rgba(21,23,28,.10);transform:translateY(-1px)}
+select,input{font-family:inherit}
+</style>
+</helmet>
+<div style="min-height: 900px; display: flex; flex-direction: column">
+
+<header style="background: #15171c; color: #f4f1ea; border-bottom: 4px solid #a3162f">
+<div style="max-width: 1280px; margin: 0 auto; padding: 36px clamp(16px, 3vw, 40px) 40px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px; box-sizing: border-box">
+<div style="display: flex; flex-direction: column; gap: 10px; min-width: 0">
+<div style="font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #e5a3ae">TVN Media / GUI-VIC</div>
+<h1 class="serif" style="margin: 0; font-size: 56px; line-height: 1.02; font-weight: 600; letter-spacing: -1px">Inteligencia editorial</h1>
+<div style="font-size: 16px; color: #c9c5b9">Priorización local para revisión humana</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 36px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div class="serif" style="font-size: 52px; line-height: 1; font-weight: 600">50</div>
+<div style="font-size: 13px; color: #c9c5b9">Registros priorizados</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div class="serif" style="font-size: 52px; line-height: 1; font-weight: 600; color: #f0a7b2">50</div>
+<div style="font-size: 13px; color: #c9c5b9">Prioridad alta</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div class="serif" style="font-size: 52px; line-height: 1; font-weight: 600; color: #f2c777">50</div>
+<div style="font-size: 13px; color: #c9c5b9">Requieren evidencia</div>
+</div>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1280px; width: 100%; margin: 0 auto; padding: 28px clamp(16px, 3vw, 40px) 56px; display: flex; flex-direction: column; gap: 22px; box-sizing: border-box">
+
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; padding: 16px 18px; background: #fbfaf6; border: 1px solid #ddd8cb; border-radius: 14px">
+<div style="display: flex; flex-direction: column; gap: 6px; flex: 2 1 220px">
+<label for="tema" style="font-size: 13px; font-weight: 600; color: #4a473c">Tema</label>
+<select id="tema" style="height: 44px; padding: 0 12px; border: 1px solid #cfc9b9; border-radius: 10px; background: #fff; font-size: 15px; color: #15171c">
+<option>Todos</option>
+</select>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 160px">
+<label for="desde" style="font-size: 13px; font-weight: 600; color: #4a473c">Desde</label>
+<input id="desde" type="text" value="2024/09/20" style="height: 44px; padding: 0 12px; border: 1px solid #cfc9b9; border-radius: 10px; background: #fff; font-size: 15px; color: #15171c; box-sizing: border-box">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 160px">
+<label for="hasta" style="font-size: 13px; font-weight: 600; color: #4a473c">Hasta</label>
+<input id="hasta" type="text" value="2026/10/08" style="height: 44px; padding: 0 12px; border: 1px solid #cfc9b9; border-radius: 10px; background: #fff; font-size: 15px; color: #15171c; box-sizing: border-box">
+</div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px">
+<h2 class="serif" style="margin: 0; font-size: 28px; font-weight: 600">Bandeja de revisión</h2>
+<div style="font-size: 13px; color: #5a5648">Orden: mayor puntaje, luego urgencia (U) y finalmente identificador.</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+
+<article class="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px 28px; padding: 22px 24px; background: #fff; border: 1px solid #ddd8cb; border-radius: 16px">
+<div class="serif" style="font-size: 44px; line-height: 1; font-weight: 600; color: #a3162f; width: 48px">1</div>
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #a3162f">Servicios públicos</span>
+<span style="color: #8a8573">·</span>
+<span style="font-size: 13px; color: #5a5648">07/10/2026</span>
+</div>
+<h3 class="serif" style="margin: 0; font-size: 24px; line-height: 1.25; font-weight: 600; text-wrap: balance">EEUU dona a Panamá equipos por $500,000 para habilitar albergues y atender emergencias</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: #fbe9bf; color: #5e4300; font-size: 13px; font-weight: 600">Evidencia insuficiente · 1 registros</span>
+<span style="display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: #ebe7da; color: #3b392f; font-size: 13px; font-weight: 600">1 procedencias distintas</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; width: 190px; max-width: 100%">
+<div style="font-size: 13px; font-weight: 600; color: #4a473c">Atención</div>
+<div class="serif" style="font-size: 48px; line-height: 1; font-weight: 600">90.0</div>
+<div style="height: 6px; border-radius: 99px; background: #e6e1d3; overflow: hidden"><div style="width: 90%; height: 100%; background: #a3162f"></div></div>
+</div>
+<a class="open" href="Ficha.dc.html">Abrir ficha <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+</article>
+
+<article class="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px 28px; padding: 22px 24px; background: #fff; border: 1px solid #ddd8cb; border-radius: 16px">
+<div class="serif" style="font-size: 44px; line-height: 1; font-weight: 600; color: #a3162f; width: 48px">2</div>
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #a3162f">Turismo</span>
+<span style="color: #8a8573">·</span>
+<span style="font-size: 13px; color: #5a5648">07/10/2026</span>
+</div>
+<h3 class="serif" style="margin: 0; font-size: 24px; line-height: 1.25; font-weight: 600; text-wrap: balance">Canal de Panamá: Carnival Miracle inaugura temporada de cruceros 2026-2027; se contemplan más de 220 tránsitos</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: #fbe9bf; color: #5e4300; font-size: 13px; font-weight: 600">Evidencia insuficiente · 1 registros</span>
+<span style="display: inline-flex; align-items: center; min-height: 28px; padding: 0 12px; border-radius: 999px; background: #ebe7da; color: #3b392f; font-size: 13px; font-weight: 600">1 procedencias distintas</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; width: 190px; max-width: 100%">
+<div style="font-size: 13px; font-weight: 600; color: #4a473c">Atención</div>
+<div class="serif" style="font-size: 48px; line-height: 1; font-weight: 600">90.0</div>
+<div style="height: 6px; border-radius: 99px; background: #e6e1d3; overflow: hidden"><div style="width: 90%; height: 100%; background: #a3162f"></div></div>
+</div>
+<a class="open" href="Ficha.dc.html">Abrir ficha <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+</article>
+
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
