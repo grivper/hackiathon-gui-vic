@@ -373,9 +373,12 @@
 - id: TAR-032
   tarea: 'Corregir métricas finales: latencia oficial, numeradores, denominadores, casos y errores'
   responsable: Guille
-  estado: Pendiente
-  fecha: 2026-10-08T21:37-05:00
-  notas: 'Fuente de verdad: bitacora/paginas/metricas.md. No inventar tokens ni costos.'
+  estado: Hecho
+  fecha: 2026-10-08T21:41-05:00
+  notas: 'Fuente de verdad: bitacora/paginas/metricas.md. No inventar tokens ni costos.
+
+    2026-10-08T21:41-05:00 · metricas.md corregido: latencia oficial 18,87/41,04 s, numeradores y denominadores;
+    validez y Precision@5 marcadas pendientes de revisión humana (TAR-035/036).'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-033
