@@ -65,3 +65,11 @@ Known limit (by design, not changed): every query returns at most 50 groups; the
 
 ## Pass 12: readable topic filter
 The Tema dropdown listed raw ids (`economia`, `servicios_publicos`). It now shows the same human labels as the cards ("Economía", "Servicios públicos") through `format_func`; the value used by the queries is still the raw id. Test added (labels readable, selecting by id still works).
+
+## Pass 13: "Generar borrador con IA" button (one group at a time)
+User decision: generate per entry on demand instead of batch, with three guards (Ollama check, only that ficha written, never overwrite a human review).
+- `motor/generar.py: guardar_ficha`: upserts one row and merges the jsonl by `id_caso` (other lines kept even if the local table lacks them).
+- `app/generacion.py`: `estado_ollama` (server + model) and `generar_borrador` (refuses reviewed states without calling the model; a `llm_error` is not persisted so it can be retried; a legitimate abstention is saved).
+- UI: `render_generate_draft` in the empty state; disabled with the reason when Ollama is down; spinner while generating; warning/error messages for the two refusal paths.
+- Tests: tests/test_generacion.py (10) and 6 UI tests. Verified in Chrome: generated one real draft (Festival Navideño), jsonl went from 7 to 8 lines with no deletions; the verification change to data/fichas.jsonl was reverted, not committed.
+- A ficha that already exists gets no button (regenerating is deterministic at temperature 0, so it would only reproduce the same text); the reviewed-state guard is enforced in the function as well.

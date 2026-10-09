@@ -10,10 +10,11 @@ import streamlit as st
 
 if __package__:
     from . import data as data_module
-    from . import estilos
+    from . import estilos, generacion
 else:
     import data as data_module
     import estilos
+    import generacion
 
 VALID_REVIEW_STATES = data_module.VALID_REVIEW_STATES
 EvidenceRow = data_module.EvidenceRow
@@ -268,7 +269,7 @@ def render_group_chat(group: InboxGroup) -> None:
                 else:
                     st.caption(
                         "Todavía no hay borrador para este grupo: el chat solo responde "
-                        "sobre fichas generadas (make generar)."
+                        "sobre fichas generadas. Genere el borrador más abajo."
                     )
             for msg in st.session_state[chat_key]:
                 with st.chat_message(msg["role"]):
@@ -315,6 +316,40 @@ def render_group_chat(group: InboxGroup) -> None:
                             st.caption(f"Citas verificadas: {', '.join(response.citas)}")
 
 
+def render_generate_draft(group: InboxGroup) -> None:
+    """Button that generates the draft of THIS group only, when the local LLM is available."""
+
+    available, reason = generacion.estado_ollama()
+    clicked = st.button(
+        "Generar borrador con IA", key=f"generar_{group.grupo_id}", disabled=not available
+    )
+    if not available:
+        st.caption(reason)
+        return
+    st.caption(
+        "Usa el modelo local (sin enviar datos fuera). Tarda unos 20 segundos y solo "
+        "genera este grupo."
+    )
+    if not clicked:
+        return
+    with st.spinner("Generando el borrador con evidencia citada…"):
+        result = generacion.generar_borrador(
+            group.grupo_id, MOTOR_PATH, SIGNALS_PATH, FICHAS_PATH
+        )
+    if result.status == "generada":
+        st.rerun()
+    elif result.status == "ya_revisada":
+        st.warning(
+            "Este borrador ya fue revisado por una persona y no se sobrescribe. "
+            f"{result.detail}"
+        )
+    else:
+        st.error(
+            "El modelo no devolvió una salida utilizable; no se guardó nada. "
+            f"Puede reintentar. {result.detail}"
+        )
+
+
 def render_group_draft(group: InboxGroup) -> None:
     """Render the real TAR-009 editorial draft with mandatory review states.
 
@@ -336,6 +371,7 @@ def render_group_draft(group: InboxGroup) -> None:
         )
         if ficha is None:
             st.markdown(estilos.empty_draft_html(), unsafe_allow_html=True)
+            render_generate_draft(group)
             return
 
         if ficha.tipo_respuesta == "abstencion":

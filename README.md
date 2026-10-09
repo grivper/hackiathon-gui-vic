@@ -200,6 +200,16 @@ jurado. El espacio personal queda como respaldo.
    Tarda unos 19 s por ficha (mediana medida en la máquina de demo).
 4. Qué escribe: hace upsert por grupo en la tabla `fichas` de `data/motor.duckdb` y **reescribe `data/fichas.jsonl` completo desde esa tabla**. Si tu `motor.duckdb` local no tiene las fichas que ya estaban en el jsonl commiteado, esas líneas desaparecen del archivo. Antes de commitear mirá `git diff --stat data/fichas.jsonl` y regenerá los grupos que falten (`--grupo ...`) para no perder fichas.
 5. Qué se ve en la app: las tarjetas con ficha muestran el borrador y el selector de estado de revisión; el resto muestra "Borrador no generado para este grupo (ejecutar `make generar`)". Recargá la página de Streamlit después de generar.
+### Generar un borrador desde la interfaz (una sola ficha)
+
+En la ficha de un grupo sin borrador aparece el botón **Generar borrador con IA**. Es la alternativa a `make generar` cuando solo falta ese grupo:
+
+- **Requisitos:** Ollama en marcha (`ollama serve`) y el modelo descargado (`gemma3:4b` por defecto, o el de `LLM_MODELO`). La app lo comprueba al abrir la ficha: si Ollama no responde o falta el modelo, el botón queda desactivado y explica el motivo.
+- **Qué hace:** genera solo ese grupo (unos 20 s, mediana medida; hasta ~40 s). Todo corre en local.
+- **Qué escribe:** una fila en la tabla `fichas` de `data/motor.duckdb` y una línea en `data/fichas.jsonl`. A diferencia de `make generar`, **no reescribe el jsonl completo**: fusiona por `id_caso` y conserva las demás líneas aunque tu base local no las tenga (`motor.generar.guardar_ficha`). Aun así el jsonl cambia (una línea nueva), así que aparece como cambio en git; revisalo con `git diff --stat data/fichas.jsonl` antes de commitear.
+- **Qué no hace:** no sobrescribe un borrador que una persona ya revisó (estados `en revisión`, `aprobado como borrador`, `descartado`); el botón solo aparece en grupos sin ficha, y la función lo rechaza igualmente. Si el modelo falla a mitad de camino (`llm_error`), no guarda nada y se puede reintentar. Una abstención legítima (por ejemplo sin evidencia) sí se guarda, porque es un resultado editorial.
+- **Código:** `app/generacion.py` (comprobación de Ollama y `generar_borrador`), botón en `render_generate_draft` de `app/app.py`.
+
 6. Variables opcionales: `OLLAMA_HOST`, `LLM_NUM_THREAD` (núcleos físicos, 4 por defecto), `LLM_NUM_CTX` (4096), `LLM_NUM_PREDICT` (768).
 7. Para el benchmark oficial de la máquina de demo, con los overrides de entorno desactivados, usa `.venv/Scripts/python.exe motor/medir_llm.py --modelo gemma3:4b --n 10`. El comando informa mediana, p95 y cuántas salidas conservan JSON y citas válidas; la evidencia oficial queda en `documentacion/evidencia-modelo-real.md`.
 

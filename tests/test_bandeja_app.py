@@ -139,10 +139,15 @@ def _patch_draft_widgets(monkeypatch, *, selectbox_return="nuevo"):
         "success": Mock(),
         "selectbox": Mock(return_value=selectbox_return),
         "popover": MagicMock(),
+        "button": Mock(return_value=False),
+        "spinner": MagicMock(),
+        "error": Mock(),
+        "rerun": Mock(),
     }
     for name, mock in widgets.items():
         monkeypatch.setattr(f"app.app.st.{name}", mock)
     monkeypatch.setattr("app.app.st.session_state", {})
+    monkeypatch.setattr("app.app.generacion.estado_ollama", Mock(return_value=(True, "")))
     return widgets
 
 
@@ -499,3 +504,91 @@ def test_render_group_chat_without_ficha_explains_why_there_are_no_examples(monk
     render_group_chat(_GROUP)
 
     assert any("borrador" in str(c).lower() for c in caption.call_args_list)
+
+
+
+# --------------------------------------------------------------------------- on-demand draft button
+
+def _no_ficha(monkeypatch, *, ollama=(True, ""), clicked=False):
+    widgets = _patch_draft_widgets(monkeypatch)
+    widgets["button"].return_value = clicked
+    monkeypatch.setattr("app.app.generacion.estado_ollama", Mock(return_value=ollama))
+    monkeypatch.setattr("app.app.fetch_group_ficha", Mock(return_value=None))
+    return widgets
+
+
+def test_empty_draft_offers_a_generate_button_when_ollama_is_up(monkeypatch):
+    widgets = _no_ficha(monkeypatch)
+
+    render_group_draft(_GROUP)
+
+    call = widgets["button"].call_args
+    assert call.args[0] == "Generar borrador con IA"
+    assert call.kwargs["key"] == "generar_G-1" and not call.kwargs.get("disabled")
+
+
+def test_generate_button_is_disabled_and_explains_why_when_ollama_is_down(monkeypatch):
+    widgets = _no_ficha(monkeypatch, ollama=(False, "Ollama no responde en http://x."))
+
+    render_group_draft(_GROUP)
+
+    assert widgets["button"].call_args.kwargs["disabled"] is True
+    widgets["caption"].assert_any_call("Ollama no responde en http://x.")
+
+
+def test_clicking_generate_saves_only_that_group_and_reloads(monkeypatch):
+    from app.generacion import GenerationResult
+
+    widgets = _no_ficha(monkeypatch, clicked=True)
+    generate = Mock(return_value=GenerationResult("generada", {"id_caso": "G-1"}))
+    monkeypatch.setattr("app.app.generacion.generar_borrador", generate)
+
+    render_group_draft(_GROUP)
+
+    assert generate.call_args.args[0] == "G-1"
+    widgets["rerun"].assert_called_once()
+
+
+def test_generation_refused_for_a_reviewed_ficha_shows_a_warning(monkeypatch):
+    from app.generacion import GenerationResult
+
+    widgets = _no_ficha(monkeypatch, clicked=True)
+    monkeypatch.setattr(
+        "app.app.generacion.generar_borrador",
+        Mock(return_value=GenerationResult("ya_revisada", detail="Estado actual: descartado.")),
+    )
+
+    render_group_draft(_GROUP)
+
+    assert any("revis" in str(c).lower() for c in widgets["warning"].call_args_list)
+    widgets["rerun"].assert_not_called()
+
+
+def test_a_model_failure_is_reported_and_can_be_retried(monkeypatch):
+    from app.generacion import GenerationResult
+
+    widgets = _no_ficha(monkeypatch, clicked=True)
+    monkeypatch.setattr(
+        "app.app.generacion.generar_borrador",
+        Mock(return_value=GenerationResult("error_modelo", detail="conexion")),
+    )
+
+    render_group_draft(_GROUP)
+
+    assert widgets["error"].called
+    widgets["rerun"].assert_not_called()
+
+
+def test_a_ficha_that_already_exists_has_no_generate_button(monkeypatch):
+    widgets = _patch_draft_widgets(monkeypatch)
+    monkeypatch.setattr(
+        "app.app.fetch_group_ficha",
+        Mock(return_value=_ficha_with_claims([("EEUU dona equipos", ["N-1"])])),
+    )
+    monkeypatch.setattr("app.app.persist_ficha_review_state", Mock())
+
+    render_group_draft(_GROUP)
+
+    assert not any(
+        c.args and c.args[0] == "Generar borrador con IA" for c in widgets["button"].call_args_list
+    )
