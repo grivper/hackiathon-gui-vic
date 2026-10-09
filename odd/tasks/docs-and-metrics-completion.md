@@ -18,34 +18,34 @@ Complete the jury-facing evidence, assign independent review work, and mirror th
 - Evidence: pending.
 
 ### T2 — Correct metrics and technical evidence
-- [ ] Replace stale latency values with the official median and p95.
-- [ ] Record numerators, denominators, evaluated cases, and known errors.
+- [x] Replace stale latency values with the official median and p95.
+- [x] Record numerators, denominators, evaluated cases, and known errors.
 - [ ] Strengthen T01 and T02 reproducibility evidence.
-- Evidence: pending.
+- Evidence: corrected metrics in `bitacora/paginas/metricas.md`; Guille-owned T01/T02 evidence remains pending.
 
 ### T3 — Complete independent human evaluation
-- [ ] Víctor reviews up to 30 claims for support validity.
-- [ ] Víctor independently evaluates the five Precision@5 results.
-- [ ] Preserve the judgments, reasons, and calculation inputs.
-- Evidence: pending.
+- [x] Víctor reviews the 12 generated claims in the five final fichas for support validity.
+- [x] Víctor independently evaluates the five Precision@5 results.
+- [x] Preserve the judgments, reasons, and calculation inputs.
+- Evidence: `documentacion/evaluacion-humana-final.md`: support validity 8/12 = 66,7 % (1 ambiguous, 3 unsupported; target ≥90 % not met) and Precision@5 4/5 = 80 % from Víctor's judgment of the current DuckDB top five.
 
 ### T4 — Reconcile tests and editorial records
-- [ ] Audit T03–T10 for complete structured evidence.
+- [x] Audit T03–T10 for complete structured evidence (Víctor).
 - [ ] Record Guille as reviewer for the five final records.
 - [ ] Preserve the intentionally insufficient-evidence case.
-- Evidence: pending.
+- Evidence: Víctor's audit is in `documentacion/evaluacion-humana-final.md`; findings on generic/non-reproducible evidence must go to Guille. Guille's editorial-review work remains pending.
 
 ### T5 — Mirror the verified content to the event Notion
 - [ ] Prepare the landing page with technical, functional, and Pitch Day links.
 - [ ] Synchronize the final repository state exactly once to the event workspace.
 - [ ] Add detailed evidence that `notion_sync.py` does not map automatically.
-- Evidence: pending.
+- Evidence: pending. Blocker: synchronize only after the repository work is merged, and only Víctor performs the final event-Notion sync.
 
 ### T6 — Verify and submit the final delivery
 - [ ] Open all three public Notion links in an incognito session.
 - [ ] Confirm the public repository link and concise explanation.
 - [ ] Send the final email with the required links.
-- Evidence: pending.
+- Evidence: pending. Blocker: requires completed event-Notion synchronization and public links.
 
 ## Constraints
 - Do not fabricate human judgments, token counts, or costs.

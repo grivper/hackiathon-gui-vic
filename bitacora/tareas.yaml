@@ -414,28 +414,32 @@
 - id: TAR-035
   tarea: Revisar 30 afirmaciones y calcular validez del sustento con razones por caso
   responsable: Víctor
-  estado: En curso
-  fecha: 2026-10-08T21:52-05:00
-  notas: 'Marcar respaldada, no respaldada o ambigua; guardar cita y motivo.
+  estado: Hecho
+  fecha: 2026-10-08T22:55-05:00
+  notas: 'Evaluadas las 12 afirmaciones generadas de las cinco fichas finales: 8/12 respaldadas (66,7%),
+    1 ambigua y 3 no respaldadas; meta >=90% no cumplida. Evidencia: documentacion/evaluacion-humana-final.md.
 
-    2026-10-08T21:52-05:00 · Revisar data/revision/validez_sustento.csv (23 filas); completar veredicto,
-    motivo y revisor.'
+    2026-10-08T22:55-05:00 · Segunda opinión (Guille): 19/23 = 82,6 % sobre 23 afirmaciones reales (2
+    ambiguas, 2 no respaldadas; 90,5 % sin ambiguas), 15 min 21 s. Ver documentacion/segunda-opinion-humana.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-036
   tarea: Evaluar independientemente Precision@5 de los cinco temas mejor posicionados
   responsable: Víctor
-  estado: Pendiente
+  estado: Hecho
   fecha: 2026-10-08T21:38-05:00
-  notas: Registrar relevante sí/no, motivo y cálculo relevantes/5.
+  notas: 'Juicio de Víctor sobre el top cinco actual de DuckDB (puntaje DESC, U DESC, grupo_id): 4 relevantes
+    y 1 no relevante; Precision@5 = 4/5 = 80%. Evidencia: documentacion/evaluacion-humana-final.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-037
   tarea: Auditar T03-T10 e informar campos faltantes sin editar pruebas.yaml
   responsable: Víctor
-  estado: Pendiente
+  estado: Hecho
   fecha: 2026-10-08T21:38-05:00
-  notas: Enviar hallazgos a Guille para evitar conflictos de edición.
+  notas: 'T03-T10 tienen campos estructurados; T06/T08/T09 tienen correcciones genéricas, T07 evidencia
+    no reproducible y T10 entrada/corrección genéricas. bitacora/pruebas.yaml no fue editado; hallazgos
+    para Guille (TAR-033). Evidencia: documentacion/evaluacion-humana-final.md.'
   tipo: Tarea
   epica: EPI-005
 - id: TAR-038
