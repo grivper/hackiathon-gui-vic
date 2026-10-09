@@ -38,11 +38,30 @@ o falsas). El detalle y los casos fallidos están en `bitacora/paginas/metricas.
 La bitácora de trabajo del equipo (tareas, decisiones y reparto entre Guille y Víctor) está resumida en
 `documentacion/anexo-bitacora-equipo.md`.
 
-## Empezar (compañero nuevo)
+## Instalación y ejecución rápida
 
-1. `git clone https://github.com/grivper/hackiathon-gui-vic.git` y `cd hackiathon-gui-vic`.
-2. `make instalar`.
-3. Para ver el avance, abre las páginas de Notion que te compartieron. No necesitas el token.
+Para probar el proyecto **no hace falta ningún token** (Notion y Ollama son opcionales).
+
+**Requisitos:** Python 3.12 (la versión con la que se probó), `git` y `make` (en Windows, ver más abajo),
+unos 3 GB libres y conexión a internet solo la primera vez (dependencias y modelo de embeddings, unos 460 MB).
+
+```bash
+git clone https://github.com/grivper/hackiathon-gui-vic.git
+cd hackiathon-gui-vic
+python3 -m venv .venv
+. .venv/bin/activate                  # Windows: .venv\Scripts\activate
+pip install torch --index-url https://download.pytorch.org/whl/cpu   # versión CPU, antes que el resto
+make arrancar                         # instala dependencias y carga la base DuckDB del snapshot
+make motor                            # modelo de embeddings (1.ª vez), clasificación, agrupación y puntaje
+streamlit run app/app.py              # abre la bandeja editorial en http://localhost:8501
+```
+
+- `make arrancar` y `make motor` son idempotentes: se pueden repetir sin reconstruir lo que no cambió.
+- Las fichas con borrador citado vienen en `data/fichas.jsonl`, así que la app las muestra **sin Ollama**.
+  Ollama solo se necesita para generar fichas nuevas (ver *Generación con LLM local*).
+- Comprobar la instalación: `make test` (378 pruebas) y `python notion_sync.py --dry-run` (valida la bitácora
+  sin llamar a Notion).
+- Para ver el avance del equipo basta abrir las páginas de Notion; el token solo lo necesita quien sincroniza.
 
 ### Bandeja editorial en Windows (sin GNU Make)
 
